@@ -11,6 +11,8 @@ CREATE TABLE users (
     profile_picture VARCHAR(255) DEFAULT 'assets/img/default.png',
     rating INT DEFAULT 0,
     role ENUM('user', 'admin') DEFAULT 'user',
+    email_confirmation_token VARCHAR(255),
+    email_confirmed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- Таблица постов

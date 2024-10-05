@@ -16,7 +16,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    fullName: {
+    full_name: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -25,7 +25,7 @@ const User = sequelize.define('User', {
         allowNull: false,
         unique: true,
     },
-    profilePicture: {
+    profile_picture: {
         type: DataTypes.STRING,
         defaultValue: 'assets/img/default.png',
     },
@@ -37,9 +37,17 @@ const User = sequelize.define('User', {
         type: DataTypes.ENUM('user', 'admin'),
         defaultValue: 'user',
     },
-    createdAt: {
+    created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
+    },
+    email_confirmed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    email_confirmation_token: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
 }, {
     tableName: 'users',
