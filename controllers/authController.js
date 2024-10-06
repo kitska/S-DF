@@ -128,9 +128,9 @@ exports.login = async (req, res) => {
 
         // Генерация JWT токена
         const token = jwt.sign(
-            { id: user.id, login: user.login, email: user.email }, // payload
-            process.env.JWT_SECRET, // Секретный ключ для подписи
-            { expiresIn: '1d' } // Время действия токена
+            { id: user.id, login: user.login, email: user.email, role: user.role }, // role добавлено в токен
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
         );
 
         res.status(200).json({ message: 'Вход выполнен успешно', token });
