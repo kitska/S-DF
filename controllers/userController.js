@@ -142,8 +142,7 @@ exports.updateUser = async (req, res) => {
     const { userId } = req.params;
     const { login, full_name } = req.body;
 
-    // Проверка: может обновлять только владелец профиля
-    if (req.user.id !== parseInt(userId, 10)) {
+    if (req.user.role !== 'admin' && req.user.id !== parseInt(userId, 10)) {
         return res.status(403).json({ message: 'Вы не можете обновить чужой профиль' });
     }
 
