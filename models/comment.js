@@ -9,7 +9,7 @@ const Comment = sequelize.define('Comment', {
         autoIncrement: true,
         primaryKey: true,
     },
-    postId: {
+    post_id: {
         type: DataTypes.INTEGER,
         references: {
             model: Post,
@@ -17,7 +17,7 @@ const Comment = sequelize.define('Comment', {
         },
         onDelete: 'CASCADE',
     },
-    authorId: {
+    author_id: {
         type: DataTypes.INTEGER,
         references: {
             model: User,
@@ -25,7 +25,7 @@ const Comment = sequelize.define('Comment', {
         },
         onDelete: 'CASCADE',
     },
-    publishDate: {
+    publish_date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
@@ -38,7 +38,7 @@ const Comment = sequelize.define('Comment', {
     timestamps: false,
 });
 
-Comment.belongsTo(Post, { foreignKey: 'postId' });
-Comment.belongsTo(User, { foreignKey: 'authorId' });
+Comment.belongsTo(Post, { foreignKey: 'post_id' });
+Comment.belongsTo(User, { foreignKey: 'author_id' });
 
 module.exports = Comment;

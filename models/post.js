@@ -8,7 +8,7 @@ const Post = sequelize.define('Post', {
         autoIncrement: true,
         primaryKey: true,
     },
-    authorId: {
+    author_id: {
         type: DataTypes.INTEGER,
         references: {
             model: User,
@@ -20,7 +20,7 @@ const Post = sequelize.define('Post', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    publishDate: {
+    publish_date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
@@ -37,5 +37,6 @@ const Post = sequelize.define('Post', {
     timestamps: false,
 });
 
-Post.belongsTo(User, { foreignKey: 'authorId' });
+Post.belongsTo(User, { foreignKey: 'author_id' });
+
 module.exports = Post;

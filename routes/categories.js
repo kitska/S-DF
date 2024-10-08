@@ -4,10 +4,10 @@ const categoryController = require('../controllers/categoryController');
 const { authenticateToken, isAdmin } = require('../middleware/authMW');
 
 router.get('/', categoryController.getAllCategories);
-router.get('/:categoryId', categoryController.getCategoryById);
-router.get('/:categoryId/posts', categoryController.getPostsForCategory);
+router.get('/:category_id', categoryController.getCategoryById);
+router.get('/:category_id/posts', categoryController.getPostsForCategory);
 router.post('/', authenticateToken, categoryController.createCategory);
-router.patch('/:categoryId', authenticateToken, isAdmin, categoryController.updateCategory);
-router.delete('/:categoryId', authenticateToken, isAdmin, categoryController.deleteCategory);
+router.patch('/:category_id', authenticateToken, isAdmin, categoryController.updateCategory);
+router.delete('/:category_id', authenticateToken, isAdmin, categoryController.deleteCategory);
 
 module.exports = router;

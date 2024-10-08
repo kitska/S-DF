@@ -10,7 +10,7 @@ const Like = sequelize.define('Like', {
         autoIncrement: true,
         primaryKey: true,
     },
-    authorId: {
+    author_id: {
         type: DataTypes.INTEGER,
         references: {
             model: User,
@@ -18,7 +18,7 @@ const Like = sequelize.define('Like', {
         },
         onDelete: 'CASCADE',
     },
-    postId: {
+    post_id: {
         type: DataTypes.INTEGER,
         references: {
             model: Post,
@@ -37,7 +37,7 @@ const Like = sequelize.define('Like', {
     type: {
         type: DataTypes.ENUM('like', 'dislike'),
     },
-    publishDate: {
+    publish_date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
@@ -46,8 +46,8 @@ const Like = sequelize.define('Like', {
     timestamps: false,
 });
 
-Like.belongsTo(Post, { foreignKey: 'postId' });
+Like.belongsTo(Post, { foreignKey: 'post_id' });
 Like.belongsTo(Comment, { foreignKey: 'commentId' });
-Like.belongsTo(User, { foreignKey: 'authorId' });
+Like.belongsTo(User, { foreignKey: 'author_id' });
 
 module.exports = Like;
