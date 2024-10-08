@@ -26,7 +26,7 @@ const Like = sequelize.define('Like', {
         },
         onDelete: 'SET NULL',
     },
-    commentId: {
+    comment_id: {
         type: DataTypes.INTEGER,
         references: {
             model: Comment,
@@ -47,7 +47,7 @@ const Like = sequelize.define('Like', {
 });
 
 Like.belongsTo(Post, { foreignKey: 'post_id' });
-Like.belongsTo(Comment, { foreignKey: 'commentId' });
+Like.belongsTo(Comment, { foreignKey: 'comment_id' });
 Like.belongsTo(User, { foreignKey: 'author_id' });
 
 module.exports = Like;

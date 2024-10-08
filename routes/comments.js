@@ -3,11 +3,11 @@ const router = express.Router();
 const commentController = require('../controllers/commentController');
 const { authenticateToken, isAdmin } = require('../middleware/authMW');
 
-router.get('/:commentId', commentController.getCommentById);
-router.get('/:commentId/like', commentController.getLikesForComment);
-router.post('/:commentId/like', authenticateToken, commentController.likeComment);
-router.patch('/:commentId', authenticateToken, commentController.updateComment);
-router.delete('/:commentId', authenticateToken, commentController.deleteComment);
-router.delete('/:commentId/like', authenticateToken, commentController.deleteLike);
+router.get('/:comment_id', commentController.getCommentById);
+router.get('/:comment_id/like', commentController.getLikesForComment);
+router.post('/:comment_id/like', authenticateToken, commentController.likeComment);
+router.patch('/:comment_id', authenticateToken, commentController.updateComment);
+router.delete('/:comment_id', authenticateToken, commentController.deleteComment);
+router.delete('/:comment_id/like', authenticateToken, commentController.deleteLike);
 
 module.exports = router;
