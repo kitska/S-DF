@@ -7,12 +7,6 @@ const PostCategory = require('./models/post_category');
 const Comment = require('./models/comment')
 const User = require('./models/user');
 const Like = require('./models/like');
-// const Post = require('./models/Post');
-// const { Comment } = require('./models/Comment');
-// const { Category } = require('./models/Category');
-// const { Like } = require('./models/Like');
-// const { RP } = require('../models/associations');
-// const { postCategory } = require('../models/associations');
 
 const DEFAULT_ADMIN = {
     email: 'admin@example.com',

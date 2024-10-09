@@ -292,9 +292,51 @@ exports.likePost = async (req, res) => {
     }
 };
 
-exports.updatePost = (req, res) => {
-    console.log(`Обновление поста с ID ${req.params.post_id}`);
-    res.json({ message: `Пост с ID ${req.params.post_id} обновлен` });
+exports.updatePost = async (req, res) => {
+    const postId = req.params.post_id;
+    const { title, content, categories, status } = req.body; // Извлечение данных из тела запроса
+
+    try {
+        // Получаем пост по ID
+        const post = await Post.findByPk(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Пост не найден' });
+        }
+
+        // Проверяем, является ли текущий пользователь автором поста
+        if (post.author_id !== req.user.id) {
+            return res.status(403).json({ message: 'У вас нет прав для обновления этого поста' });
+        }
+
+        // Обновляем данные поста
+        if (title) post.title = title;
+        if (content) post.content = content;
+        if (status) post.status = status;
+
+        await post.save(); // Сохраняем обновленный пост
+
+        // Обновление категорий
+        if (categories) {
+            // Удаляем старые связи категорий
+            await PostCategory.destroy({ where: { post_id: postId } });
+
+            // Добавляем новые категории
+            const categoryIds = Array.isArray(categories) ? categories : [categories]; // Убедимся, что categories - массив
+
+            const postCategoryData = categoryIds.map(categoryId => ({
+                post_id: postId,
+                category_id: categoryId,
+            }));
+
+            await PostCategory.bulkCreate(postCategoryData); // Создаем новые связи категорий
+        }
+
+        res.json({ message: `Пост с ID ${postId} обновлен`, post });
+    } catch (error) {
+        console.error('Ошибка при обновлении поста:', error);
+        res.status(500).json({ message: 'Ошибка при обновлении поста' });
+    }
 };
 
 exports.deletePost = async (req, res) => {
