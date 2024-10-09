@@ -62,6 +62,6 @@ CREATE TABLE likes (
     type ENUM('like', 'dislike'),
     publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE SET NULL,
-    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE SET NULL
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
 );

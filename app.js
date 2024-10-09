@@ -13,6 +13,9 @@ const commentRouter = require('./routes/comments');
 const app = express();
 app.use(express.json());
 
+const adminRouter = require('./admin');
+app.use('/admin', adminRouter)
+
 // Подключение роутеров
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);

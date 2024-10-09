@@ -24,7 +24,7 @@ const Like = sequelize.define('Like', {
             model: Post,
             key: 'id',
         },
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
     },
     comment_id: {
         type: DataTypes.INTEGER,
@@ -32,7 +32,7 @@ const Like = sequelize.define('Like', {
             model: Comment,
             key: 'id',
         },
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
     },
     type: {
         type: DataTypes.ENUM('like', 'dislike'),
