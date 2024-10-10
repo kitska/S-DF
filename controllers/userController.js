@@ -1,17 +1,15 @@
-// userController.js
 const User = require('../models/user');
 const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
 exports.getAllUsers = async (req, res) => {
     try {
-        // Получаем всех пользователей из базы данных
         const users = await User.findAll({
-            attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'], // Выбираем только нужные поля
+            attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
         });
 
-        // Возвращаем список пользователей
         res.status(200).json(users);
     } catch (error) {
         console.error('Ошибка при получении пользователей:', error);
@@ -19,21 +17,18 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-
 exports.getUserById = async (req, res) => {
-    const { userId } = req.params; // Извлекаем userId из параметров запроса
+    const { userId } = req.params;
 
     try {
-        // Поиск пользователя по ID
         const user = await User.findByPk(userId, {
-            attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'], // Выбираем нужные поля
+            attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
         });
 
         if (!user) {
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        // Возвращаем данные пользователя
         res.status(200).json(user);
     } catch (error) {
         console.error('Ошибка при получении пользователя:', error);
@@ -42,10 +37,9 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const { login, password, email, role, full_name } = req.body; // Добавлено поле full_name
+    const { login, password, email, role, full_name } = req.body;
 
     try {
-        // Проверка на существование пользователя с таким логином или email
         const existingUser = await User.findOne({ where: { login } });
         if (existingUser) {
             return res.status(400).json({ message: 'Пользователь с таким логином уже существует' });
@@ -56,17 +50,15 @@ exports.createUser = async (req, res) => {
             return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
         }
 
-        // Хеширование пароля
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Создание нового пользователя с подтвержденным email
         const newUser = await User.create({
             login,
             password: hashedPassword,
             email,
-            role, // Поле роли передается из запроса (например, 'user' или 'admin')
-            full_name, // Поле имени передается из запроса
-            email_confirmed: true, // Устанавливаем подтвержденную почту
+            role,
+            full_name,
+            email_confirmed: true,
         });
 
         res.status(201).json({ message: 'Пользователь успешно создан', user: newUser });
@@ -78,15 +70,13 @@ exports.createUser = async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Папка, куда будут загружаться аватары
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`); // Уникальное имя файла
+        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
     }
 });
-
-const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
 const fileFilter = (req, file, cb) => {
     if (allowedMimeTypes.includes(file.mimetype)) {
@@ -96,37 +86,30 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-
-// Инициализация загрузчика
 const upload = multer({ 
     storage: storage,
     fileFilter: fileFilter,
     limits: { fileSize: 8 * 1024 * 1024 }
-}).single('avatar'); // Поле 'avatar' должно содержать файл
-
+}).single('avatar');
 
 exports.uploadAvatar = (req, res) => {
-    // Используем multer для обработки загрузки
     upload(req, res, async (err) => {
         if (err) {
             return res.status(400).json({ message: 'Ошибка при загрузке аватара', error: err.message });
         }
 
-        // Если файл не был загружен
         if (!req.file) {
             return res.status(400).json({ message: 'Пожалуйста, загрузите файл изображения.' });
         }
 
         try {
-            // Найдите пользователя по ID, полученному из токена или параметров
-            const userId = req.user.id; // Предполагается, что пользователь уже аутентифицирован и его ID хранится в req.user3
+            const userId = req.user.id;
             const user = await User.findByPk(userId);
 
             if (!user) {
                 return res.status(404).json({ message: 'Пользователь не найден.' });
             }
 
-            // Обновляем аватар пользователя
             user.profile_picture = `/uploads/${req.file.filename}`;
             await user.save();
 
@@ -147,13 +130,11 @@ exports.updateUser = async (req, res) => {
     }
 
     try {
-        // Поиск пользователя по ID
         const user = await User.findByPk(userId);
         if (!user) {
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        // Обновление только логина и имени
         if (login) {
             const existingUser = await User.findOne({ where: { login } });
             if (existingUser && existingUser.id !== user.id) {
@@ -164,7 +145,6 @@ exports.updateUser = async (req, res) => {
 
         user.full_name = full_name || user.full_name;
 
-        // Сохранение обновленных данных
         await user.save();
 
         res.status(200).json({ message: 'Логин и имя пользователя успешно обновлены', user });
@@ -178,18 +158,15 @@ exports.deleteUser = async (req, res) => {
     const { userId } = req.params;
 
     try {
-        // Поиск пользователя по ID
         const user = await User.findByPk(userId);
         if (!user) {
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        // Проверка: может удалять либо администратор, либо владелец аккаунта
         if (req.user.role !== 'admin' && req.user.id !== user.id) {
             return res.status(403).json({ message: 'Вы не можете удалить этого пользователя' });
         }
 
-        // Удаление пользователя
         await user.destroy();
 
         res.status(200).json({ message: `Пользователь с ID ${userId} успешно удален` });

@@ -1,21 +1,18 @@
-// postController.js
 const Post = require('../models/post');
 const Category = require('../models/category');
 const PostCategory = require('../models/post_category');
-const Comment = require('../models/comment')
+const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
 
 exports.getAllPosts = async (req, res) => {
     try {
-        // Извлекаем параметры для пагинации
-        const page = parseInt(req.query.page) || 1; // Текущая страница, по умолчанию 1
-        const pageSize = parseInt(req.query.pageSize) || 10; // Размер страницы, по умолчанию 10 постов
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
 
-        const offset = (page - 1) * pageSize; // Смещение для базы данных
-        const limit = pageSize; // Лимит постов на страницу
+        const offset = (page - 1) * pageSize;
+        const limit = pageSize;
 
-        // Получаем посты с пагинацией, включая информацию об авторе и категориях
         const { count, rows: posts } = await Post.findAndCountAll({
             offset,
             limit,
@@ -27,20 +24,17 @@ exports.getAllPosts = async (req, res) => {
                 {
                     model: Category,
                     attributes: ['id', 'title'],
-                    through: { attributes: [] }, // Исключаем поля промежуточной таблицы
+                    through: { attributes: [] },
                 },
             ],
         });
 
-        // Если постов нет, возвращаем 404
         if (posts.length === 0) {
             return res.status(404).json({ message: 'Посты не найдены' });
         }
 
-        // Рассчитываем общее количество страниц
         const totalPages = Math.ceil(count / pageSize);
 
-        // Возвращаем результат с метаданными для пагинации
         res.status(200).json({
             message: 'Список всех постов',
             currentPage: page,
@@ -59,7 +53,6 @@ exports.getPostById = async (req, res) => {
     const { post_id } = req.params;
 
     try {
-        // Поиск поста по ID, включая автора и категории
         const post = await Post.findByPk(post_id, {
             include: [
                 {
@@ -68,18 +61,16 @@ exports.getPostById = async (req, res) => {
                 },
                 {
                     model: Category,
-                    attributes: ['id', 'title'], // Информация о категориях
-                    through: { attributes: [] }, // Исключаем промежуточные данные
+                    attributes: ['id', 'title'],
+                    through: { attributes: [] },
                 },
             ],
         });
 
-        // Если пост не найден, возвращаем 404
         if (!post) {
             return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
         }
 
-        // Возвращаем найденный пост
         res.status(200).json({
             message: `Пост с ID ${post_id}`,
             post,
@@ -94,17 +85,15 @@ exports.getCommentsForPost = async (req, res) => {
     const { post_id } = req.params;
 
     try {
-        // Проверяем, существует ли пост с данным ID
         const post = await Post.findByPk(post_id);
         if (!post) {
             return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
         }
 
-        // Получаем комментарии для поста
         const comments = await Comment.findAll({
             where: { post_id },
-            attributes: ['id', 'author_id', 'content', 'publish_date'], // Указываем поля, которые нужно вернуть
-            order: [['publish_date', 'DESC']], // Сортировка комментариев по дате
+            attributes: ['id', 'author_id', 'content', 'publish_date'],
+            order: [['publish_date', 'DESC']],
         });
 
         if (comments.length === 0) {
@@ -124,21 +113,18 @@ exports.getCommentsForPost = async (req, res) => {
 exports.createComment = async (req, res) => {
     const { post_id } = req.params;
     const { content } = req.body;
-    const user_id = req.user.id; // Предполагаем, что ID пользователя извлекается из токена аутентификации
+    const user_id = req.user.id;
 
-    // Проверка на наличие контента
     if (!content || content.trim() === '') {
         return res.status(400).json({ message: 'Поле "content" не может быть пустым' });
     }
 
     try {
-        // Проверяем, существует ли пост с данным ID
         const post = await Post.findByPk(post_id);
         if (!post) {
             return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
         }
 
-        // Создание комментария
         const newComment = await Comment.create({
             post_id,
             author_id: user_id,
@@ -159,26 +145,23 @@ exports.getCategoriesForPost = async (req, res) => {
     const { post_id } = req.params;
 
     try {
-        // Поиск поста по ID и получение связанных категорий
         const post = await Post.findByPk(post_id, {
             include: [
                 {
                     model: Category,
-                    attributes: ['id', 'title', 'description'], // Поля категории
-                    through: { attributes: [] }, // Исключаем промежуточные данные из таблицы PostCategory
+                    attributes: ['id', 'title', 'description'],
+                    through: { attributes: [] },
                 },
             ],
         });
 
-        // Если пост не найден, возвращаем 404
         if (!post) {
             return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
         }
 
-        // Возвращаем связанные категории
         res.status(200).json({
             message: `Категории для поста с ID ${post_id}`,
-            categories: post.Categories, // Массив категорий
+            categories: post.Categories,
         });
     } catch (error) {
         console.error(`Ошибка при получении категорий для поста с ID ${post_id}:`, error);
@@ -190,18 +173,15 @@ exports.getLikesForPost = async (req, res) => {
     try {
         const postId = req.params.post_id;
 
-        // Проверяем, существует ли пост
         const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: 'Пост не найден' });
         }
 
-        // Получаем количество лайков для указанного поста
         const likeCount = await Like.count({
             where: { post_id: postId }
         });
 
-        // Возвращаем количество лайков
         res.json({ postId, likeCount });
     } catch (error) {
         console.error(`Ошибка при получении лайков для поста с ID ${postId}:`, error);
@@ -213,35 +193,29 @@ exports.createPost = async (req, res) => {
     const { title, content, categories } = req.body;
 
     try {
-        // Проверяем, что все необходимые параметры присутствуют
         if (!title || !content || !categories || !Array.isArray(categories)) {
             return res.status(400).json({ message: 'Необходимо указать заголовок, содержимое и категории' });
         }
 
-        // Создаем новый пост
         const newPost = await Post.create({
             title,
             content,
-            author_id: req.user.id, // Предполагается, что пользователь авторизован и его ID доступен в req.user
+            author_id: req.user.id,
         });
 
-        // Привязка поста к категориям
         if (categories.length > 0) {
             const categoryPromises = categories.map(async (category_id) => {
-                // Проверяем существование категории
                 const category = await Category.findByPk(category_id);
                 if (!category) {
                     throw new Error(`Категория с ID ${category_id} не найдена`);
                 }
 
-                // Создаем связь в PostCategory
                 await PostCategory.create({
                     post_id: newPost.id,
                     category_id: category_id,
                 });
             });
 
-            // Ждем завершения всех асинхронных операций привязки
             await Promise.all(categoryPromises);
         }
 
@@ -257,19 +231,17 @@ exports.likePost = async (req, res) => {
 
     try {
         const postId = req.params.post_id;
-        const userId = req.user.id; // предполагается, что пользователь аутентифицирован
+        const userId = req.user.id;
 
         if (!type) {
             return res.status(400).json({ message: 'Необходимо указать тип' });
         }
 
-        // Найдем пост по ID
         const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: 'Пост не найден' });
         }
 
-        // Проверяем, лайкнул ли уже пользователь этот пост
         const existingLike = await Like.findOne({
             where: { post_id: postId, author_id: userId, comment_id: null }
         });
@@ -277,7 +249,6 @@ exports.likePost = async (req, res) => {
         if (existingLike) {
             return res.json({ message: `Лайк для поста с ID ${postId} уже есть` });
         } else {
-            // Создаем новый лайк для поста
             await Like.create({
                 post_id: postId,
                 author_id: userId,
@@ -294,42 +265,36 @@ exports.likePost = async (req, res) => {
 
 exports.updatePost = async (req, res) => {
     const postId = req.params.post_id;
-    const { title, content, categories, status } = req.body; // Извлечение данных из тела запроса
+    const { title, content, categories, status } = req.body;
 
     try {
-        // Получаем пост по ID
         const post = await Post.findByPk(postId);
 
         if (!post) {
             return res.status(404).json({ message: 'Пост не найден' });
         }
 
-        // Проверяем, является ли текущий пользователь автором поста
         if (post.author_id !== req.user.id) {
             return res.status(403).json({ message: 'У вас нет прав для обновления этого поста' });
         }
 
-        // Обновляем данные поста
         if (title) post.title = title;
         if (content) post.content = content;
         if (status) post.status = status;
 
-        await post.save(); // Сохраняем обновленный пост
+        await post.save();
 
-        // Обновление категорий
         if (categories) {
-            // Удаляем старые связи категорий
             await PostCategory.destroy({ where: { post_id: postId } });
 
-            // Добавляем новые категории
-            const categoryIds = Array.isArray(categories) ? categories : [categories]; // Убедимся, что categories - массив
+            const categoryIds = Array.isArray(categories) ? categories : [categories];
 
             const postCategoryData = categoryIds.map(categoryId => ({
                 post_id: postId,
                 category_id: categoryId,
             }));
 
-            await PostCategory.bulkCreate(postCategoryData); // Создаем новые связи категорий
+            await PostCategory.bulkCreate(postCategoryData);
         }
 
         res.json({ message: `Пост с ID ${postId} обновлен`, post });
@@ -343,13 +308,11 @@ exports.deletePost = async (req, res) => {
     try {
         const postId = req.params.post_id;
 
-        // Проверяем, существует ли пост
         const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: 'Пост не найден' });
         }
 
-        // Удаление поста
         await post.destroy();
         
         res.json({ message: `Пост с ID ${postId} удален` });
@@ -362,15 +325,13 @@ exports.deletePost = async (req, res) => {
 exports.deleteLike = async (req, res) => {
     try {
         const postId = req.params.post_id;
-        const userId = req.user.id; // Предполагается, что пользователь аутентифицирован
+        const userId = req.user.id;
 
-        // Найдем пост по ID, чтобы убедиться, что он существует
         const post = await Post.findByPk(postId);
         if (!post) {
             return res.status(404).json({ message: 'Пост не найден' });
         }
 
-        // Найдем существующий лайк для данного поста и пользователя
         const existingLike = await Like.findOne({
             where: { post_id: postId, author_id: userId, comment_id: null }
         });
@@ -379,7 +340,6 @@ exports.deleteLike = async (req, res) => {
             return res.status(404).json({ message: 'Лайк не найден' });
         }
 
-        // Удаляем лайк
         await existingLike.destroy();
         return res.json({ message: `Лайк для поста с ID ${postId} был удален` });
     } catch (error) {

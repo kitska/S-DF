@@ -27,7 +27,6 @@ const PostCategory = sequelize.define('PostCategory', {
     timestamps: false,
 });
 
-// Устанавливаем ассоциации после определения всех моделей
 Post.belongsToMany(Category, { through: PostCategory, foreignKey: 'post_id' });
 Category.belongsToMany(Post, { through: PostCategory, foreignKey: 'category_id' });
 

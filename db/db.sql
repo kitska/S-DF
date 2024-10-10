@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS sdf;
 
 USE sdf;
--- Таблица пользователей
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     login VARCHAR(255) NOT NULL UNIQUE,
@@ -15,7 +15,6 @@ CREATE TABLE users (
     email_confirmed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- Таблица постов
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     author_id INT,
@@ -26,14 +25,12 @@ CREATE TABLE posts (
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Таблица категорий
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT
 );
 
--- Связующая таблица постов и категорий (многие ко многим)
 CREATE TABLE post_categories (
     post_id INT,
     category_id INT,
@@ -42,7 +39,6 @@ CREATE TABLE post_categories (
     PRIMARY KEY (post_id, category_id)
 );
 
--- Таблица комментариев
 CREATE TABLE comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     post_id INT,
@@ -53,7 +49,6 @@ CREATE TABLE comments (
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Таблица лайков (для постов и комментариев)
 CREATE TABLE likes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     author_id INT,
