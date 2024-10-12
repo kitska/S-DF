@@ -10,7 +10,7 @@ const commentRouter = require('./routes/comments');
 const app = express();
 app.use(express.json());
 
-const adminRouter = require('./admin');
+const adminRouter = require('./services/admin');
 app.use('/admin', adminRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
@@ -33,6 +33,7 @@ const startServer = async () => {
 };
 
 startServer();
+
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Ресурс не найден' });
 });

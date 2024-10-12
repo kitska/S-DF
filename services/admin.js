@@ -1,23 +1,36 @@
 const AdminJS = require('adminjs');
 const AdminJSExpress = require('@adminjs/express');
 const AdminJSequalize = require('@adminjs/sequelize');
-const Post = require('./models/post');
-const Category = require('./models/category');
-const PostCategory = require('./models/post_category');
-const Comment = require('./models/comment')
-const User = require('./models/user');
-const Like = require('./models/like');
+const Post = require('../models/post');
+const Category = require('../models/category');
+const PostCategory = require('../models/post_category');
+const Comment = require('../models/comment')
+const User = require('../models/user');
+const Like = require('../models/like');
+const bcrypt = require('bcrypt');
 
-const DEFAULT_ADMIN = {
-    email: 'admin@example.com',
-    password: 'password',
-};
 
 const authenticate = async (email, password) => {
-    if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-        return Promise.resolve(DEFAULT_ADMIN);
+    // Находим пользователя с ролью 'admin' по email
+    const user = await User.findOne({
+        where: { email, role: 'admin' },
+    });
+
+    // Если пользователь не найден, возвращаем null
+    if (!user) {
+        return null;
     }
-    return null;
+
+    // Проверяем, соответствует ли введённый пароль хэшированному паролю в базе
+    const validPassword = await bcrypt.compare(password, user.password);
+    
+    // Если пароль не совпадает, возвращаем null
+    if (!validPassword) {
+        return null;
+    }
+
+    // Если всё успешно, возвращаем пользователя
+    return Promise.resolve({ email, password });
 };
 
 AdminJS.registerAdapter({
@@ -25,6 +38,50 @@ AdminJS.registerAdapter({
     Database: AdminJSequalize.Database,
 });
 
+// Установка отношений постов и категорий
+const makeRelationships = async (req) => {
+    if (req.record.params) {
+        const { id } = req.record.params;
+        let uniqueCategories = new Set();
+
+        // Собираем все категории, которые переданы в запросе
+        for (const key in req.record.params) {
+            if (key.startsWith('categories.')) {
+                const CategoryId = req.record.params[key];
+                uniqueCategories.add(CategoryId);
+            }
+        }
+
+        try {
+            // Получаем категории, которые соответствуют переданным CategoryId
+            const categories = await Category.findAll({
+                where: { id: Array.from(uniqueCategories) },
+            });
+
+            // Получаем пост по его ID и устанавливаем категории
+            const post = await Post.findByPk(id);
+            if (post) {
+                await post.setCategories(categories); // Устанавливаем категории для поста
+            }
+        } catch (err) {
+            console.error('Ошибка при установке категорий:', err);
+        }
+    }
+
+    return req;
+};
+
+// Локализация
+const locale = {
+    translations: {
+        labels: {},
+        messages: {
+            loginWelcome: 'Добро пожаловать на страницу администрирования. Введите данные для входа администратора.',
+        },
+    },
+};
+
+// Конфигурация AdminJS
 const admin = new AdminJS({
     resources: [
         {
@@ -55,6 +112,10 @@ const admin = new AdminJS({
                 filterProperties: ['id', 'title', 'author_id', 'status'],
                 editProperties: ['title', 'author_id', 'status', 'content'],
                 showProperties: ['id', 'title', 'author_id', 'status', 'content', 'publish_date'],
+                after: {
+                    edit: makeRelationships,
+                    new: makeRelationships,
+                },
             },
         },
         {
@@ -94,8 +155,13 @@ const admin = new AdminJS({
             },
         },
     ],
+    locale,
+    branding: {
+        companyName: 'Mythical Production',
+    },
 });
 
+// Конфигурация маршрутов для AdminJS с аутентификацией
 const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     admin,
     {
