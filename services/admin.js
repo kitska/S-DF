@@ -11,25 +11,20 @@ const bcrypt = require('bcrypt');
 
 
 const authenticate = async (email, password) => {
-    // Находим пользователя с ролью 'admin' по email
     const user = await User.findOne({
         where: { email, role: 'admin' },
     });
 
-    // Если пользователь не найден, возвращаем null
     if (!user) {
         return null;
     }
 
-    // Проверяем, соответствует ли введённый пароль хэшированному паролю в базе
     const validPassword = await bcrypt.compare(password, user.password);
     
-    // Если пароль не совпадает, возвращаем null
     if (!validPassword) {
         return null;
     }
 
-    // Если всё успешно, возвращаем пользователя
     return Promise.resolve({ email, password });
 };
 
@@ -38,13 +33,11 @@ AdminJS.registerAdapter({
     Database: AdminJSequalize.Database,
 });
 
-// Установка отношений постов и категорий
 const makeRelationships = async (req) => {
     if (req.record.params) {
         const { id } = req.record.params;
         let uniqueCategories = new Set();
 
-        // Собираем все категории, которые переданы в запросе
         for (const key in req.record.params) {
             if (key.startsWith('categories.')) {
                 const CategoryId = req.record.params[key];
@@ -53,15 +46,13 @@ const makeRelationships = async (req) => {
         }
 
         try {
-            // Получаем категории, которые соответствуют переданным CategoryId
             const categories = await Category.findAll({
                 where: { id: Array.from(uniqueCategories) },
             });
 
-            // Получаем пост по его ID и устанавливаем категории
             const post = await Post.findByPk(id);
             if (post) {
-                await post.setCategories(categories); // Устанавливаем категории для поста
+                await post.setCategories(categories);
             }
         } catch (err) {
             console.error('Ошибка при установке категорий:', err);
@@ -71,7 +62,6 @@ const makeRelationships = async (req) => {
     return req;
 };
 
-// Локализация
 const locale = {
     translations: {
         labels: {},
@@ -81,7 +71,6 @@ const locale = {
     },
 };
 
-// Конфигурация AdminJS
 const admin = new AdminJS({
     resources: [
         {
@@ -161,7 +150,6 @@ const admin = new AdminJS({
     },
 });
 
-// Конфигурация маршрутов для AdminJS с аутентификацией
 const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     admin,
     {
