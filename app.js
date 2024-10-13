@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { sequelize } = require('./db/db');
+const createDatabase = require('./db/initDataBase')
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
 const postRouter = require('./routes/posts');
@@ -20,8 +20,7 @@ app.use('/api/comments', commentRouter);
 
 const startServer = async () => {
     try {
-        await sequelize.sync();
-        console.log('База данных успешно синхронизирована');
+        await createDatabase();
 
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
