@@ -14,5 +14,7 @@ router.post('/:post_id/like', authenticateToken, postController.likePost);
 router.patch('/:post_id', authenticateToken, postController.updatePost);
 router.delete('/:post_id', authenticateToken, postController.deletePost);
 router.delete('/:post_id/like', authenticateToken, postController.deleteLike);
+router.post('/:post_id/favourite', authenticateToken, postController.addPostToFavourites);
+router.delete('/:post_id/favourite', authenticateToken, postController.removePostFromFavourites);
 
 module.exports = router;

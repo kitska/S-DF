@@ -7,10 +7,14 @@ const PostCategory = require('../models/post_category');
 const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
+const Favourite = require('../models/favourite');
 
 const setAssociations = () => {
   Post.belongsToMany(Category, { through: PostCategory, foreignKey: 'post_id' });
   Category.belongsToMany(Post, { through: PostCategory, foreignKey: 'category_id' });
+  
+  User.belongsToMany(Post, { through: Favourite, foreignKey: 'user_id' });
+  Post.belongsToMany(User, { through: Favourite, foreignKey: 'post_id' });
 
   Post.hasMany(Comment, { foreignKey: 'post_id' });
   Comment.belongsTo(Post, { foreignKey: 'post_id' });

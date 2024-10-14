@@ -3,6 +3,8 @@ const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+const Favourite = require('../models/favourite');
+const Post = require('../models/post');
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -176,3 +178,29 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+exports.getUserFavourites = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'Пользователь не найден' });
+        }
+
+        const favourites = await Favourite.findAll({
+            where: { user_id: userId },
+            include: [{
+                model: Post,
+                attributes: ['id', 'title', 'content', 'author_id'],
+            }],
+        });
+
+        if (favourites && favourites.length > 0) {
+            res.status(200).json(favourites);
+        } else {
+            res.status(404).json({ message: 'У пользователя нет избранных постов' });
+        }
+    } catch (error) {
+        console.error('Ошибка при получении избранных постов:', error);
+        res.status(500).json({ error: 'Ошибка при получении избранных постов' });
+    }
+};

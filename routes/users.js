@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const { authenticateToken, isAdmin } = require('../middleware/authMW');
 
 router.get('/', userController.getAllUsers);
+router.get('/favourites', authenticateToken, userController.getUserFavourites);
 router.get('/:userId', userController.getUserById);
 router.post('/', authenticateToken, isAdmin, userController.createUser);
 router.patch('/avatar', authenticateToken, userController.uploadAvatar);

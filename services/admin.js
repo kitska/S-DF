@@ -7,6 +7,7 @@ const PostCategory = require('../models/post_category');
 const Comment = require('../models/comment')
 const User = require('../models/user');
 const Like = require('../models/like');
+const Favourite = require('../models/favourite');
 const bcrypt = require('bcrypt');
 
 
@@ -37,11 +38,19 @@ const makeRelationships = async (req) => {
     if (req.record.params) {
         const { id } = req.record.params;
         let uniqueCategories = new Set();
+        let uniqueFavourites = new Set();
 
         for (const key in req.record.params) {
             if (key.startsWith('categories.')) {
                 const CategoryId = req.record.params[key];
                 uniqueCategories.add(CategoryId);
+            }
+        }
+
+        for (const key in req.record.params) {
+            if (key.startsWith('favourites.')) {
+                const UserId = req.record.params[key];
+                uniqueFavourites.add(UserId);
             }
         }
 
@@ -54,13 +63,23 @@ const makeRelationships = async (req) => {
             if (post) {
                 await post.setCategories(categories);
             }
+
+            const favourites = await Favourite.findAll({
+                where: { user_id: Array.from(uniqueFavourites) },
+            });
+
+            if (favourites.length > 0) {
+                await post.addFavourites(favourites);
+            }
+
         } catch (err) {
-            console.error('Ошибка при установке категорий:', err);
+            console.error('Ошибка при установке категорий или избранных:', err);
         }
     }
 
     return req;
 };
+
 
 const locale = {
     translations: {
@@ -141,6 +160,19 @@ const admin = new AdminJS({
                 filterProperties: ['post_id', 'category_id'],
                 editProperties: ['post_id', 'category_id'],
                 showProperties: ['post_id', 'category_id'],
+            },
+        },
+        {
+            resource: Favourite,
+            options: {
+                listProperties: ['id', 'user_id', 'post_id'],
+                filterProperties: ['id', 'user_id', 'post_id'],
+                editProperties: ['user_id', 'post_id'],
+                showProperties: ['id', 'user_id', 'post_id'],
+                after: {
+                    edit: makeRelationships,
+                    new: makeRelationships,
+                },
             },
         },
     ],

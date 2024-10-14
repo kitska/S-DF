@@ -4,6 +4,7 @@ const PostCategory = require('../models/post_category');
 const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
+const Favourite = require('../models/favourite');
 
 exports.getAllPosts = async (req, res) => {
     try {
@@ -345,5 +346,43 @@ exports.deleteLike = async (req, res) => {
     } catch (error) {
         console.error(`Ошибка при удалении лайка для поста с ID ${postId}:`, error);
         res.status(500).json({ message: 'Ошибка сервера при удалении лайка' });
+    }
+};
+
+exports.addPostToFavourites = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { post_id } = req.params;
+
+        const [favourite, created] = await Favourite.findOrCreate({
+            where: { user_id: userId, post_id },
+        });
+
+        if (created) {
+            res.status(201).json({ message: 'Пост добавлен в избранное' });
+        } else {
+            res.status(200).json({ message: 'Пост уже в избранном' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при добавлении поста в избранное' });
+    }
+};
+
+exports.removePostFromFavourites = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { post_id } = req.params;
+
+        const result = await Favourite.destroy({
+            where: { user_id: userId, post_id },
+        });
+
+        if (result) {
+            res.status(200).json({ message: 'Пост удален из избранного' });
+        } else {
+            res.status(404).json({ message: 'Пост не найден в избранном' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка при удалении поста из избранного' });
     }
 };
