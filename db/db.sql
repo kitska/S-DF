@@ -45,6 +45,7 @@ CREATE TABLE comments (
     author_id INT,
     publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
+    status ENUM('active', 'inactive') DEFAULT 'active', 
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );

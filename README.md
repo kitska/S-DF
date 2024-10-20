@@ -80,7 +80,7 @@ Make sure you have the following installed on your machine:
    > > - DB_PASSWORD - password for PG_USER (default value is `null`)
    > > - DB_HOST - postgres host address (default value is `localhost`)
    > > - DB_NAME - name of database.
-   > > - DB_PORT - database port (default value is `3001`)
+   > > - DB_PORT - database port (default value is `3306`)
 
 5. Start the application:
 

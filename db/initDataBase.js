@@ -46,13 +46,24 @@ const createDatabase = async () => {
 
     await connection.end();
 
-    setAssociations();
+    const tableExists = await sequelize.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = '${process.env.DB_NAME}'
+      LIMIT 1;
+    `);
 
-    await sequelize.sync({ force: false });
-    console.log('Таблицы успешно созданы на основе моделей');
+    if (tableExists[0].length === 0) {
+      setAssociations();
 
-    await insertTestData();
-    console.log('Тестовые данные успешно добавлены в таблицы');
+      await sequelize.sync({ force: false });
+      console.log('Таблицы успешно созданы на основе моделей');
+
+      await insertTestData();
+      console.log('Тестовые данные успешно добавлены в таблицы');
+    } else {
+      console.log('Таблицы уже созданы');
+    }
 
     return sequelize;
   } catch (error) {

@@ -74,7 +74,7 @@ exports.likeComment = async (req, res) => {
 
 exports.updateComment = async (req, res) => {
     const commentId = req.params.comment_id;
-    const { content } = req.body;
+    const { content, status } = req.body;
 
     try {
         const comment = await Comment.findByPk(commentId);
@@ -89,8 +89,13 @@ exports.updateComment = async (req, res) => {
 
         if (content) {
             comment.content = content;
-            await comment.save();
         }
+
+        if (status) {
+            comment.status = status;
+        }
+
+        await comment.save();
 
         res.status(200).json({ message: `Комментарий с ID ${commentId} обновлен`, comment });
     } catch (error) {

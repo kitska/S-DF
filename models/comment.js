@@ -33,6 +33,10 @@ const Comment = sequelize.define('Comment', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    status: {
+        type: DataTypes.ENUM('active', 'inactive'),
+        defaultValue: 'active',
+    },
 }, {
     tableName: 'comments',
     timestamps: false,

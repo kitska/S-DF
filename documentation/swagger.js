@@ -1,0 +1,17 @@
+const swaggerAutogen = require('swagger-autogen')();
+
+const doc = {
+	info: {
+		title: 'My API',
+		description: 'Описание вашего API',
+	},
+	host: 'localhost:3000',
+	schemes: ['http'],
+};
+
+const outputFile = './swagger-output.json';
+const routes = ['./app.js'];
+
+swaggerAutogen(outputFile, routes, doc).then(async () => {
+	await require('../app.js');
+});
