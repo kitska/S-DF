@@ -8,11 +8,23 @@ const Post = require('../models/post');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.pageSize) || 10;
+
+        const offset = (page - 1) * limit;
+
+        const { rows: users, count: total } = await User.findAndCountAll({
             attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
+            limit: limit,
+            offset: offset,
         });
 
-        res.status(200).json(users);
+        res.status(200).json({
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+            users
+        });
     } catch (error) {
         console.error('Ошибка при получении пользователей:', error);
         res.status(500).json({ message: 'Ошибка сервера при получении пользователей' });

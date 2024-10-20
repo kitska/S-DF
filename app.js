@@ -11,6 +11,9 @@ const app = express();
 app.use(express.json());
 
 const adminRouter = require('./services/admin');
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/views/root.html');
+});
 app.use('/admin', adminRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
@@ -36,3 +39,11 @@ startServer();
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Ресурс не найден' });
 });
+
+
+// // TODO: add 5 test rofls to db 
+// TODO: readme and documentation
+// TODO: USER get paginaton
+// TODO: filtering
+// TODO: comment active inactive
+// TODO: like dislike dispose update

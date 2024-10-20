@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "main": "app.js",
   "keywords": [],
-  "author": "",
+  "author": "Myth Cat",
   "license": "ISC",
   "description": "",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "@adminjs/express": "^5.1.0",
     "@adminjs/sequelize": "^3.0.0",
