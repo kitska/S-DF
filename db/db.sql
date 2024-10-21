@@ -15,6 +15,7 @@ CREATE TABLE users (
     email_confirmed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     author_id INT,
@@ -22,7 +23,7 @@ CREATE TABLE posts (
     publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('active', 'inactive') DEFAULT 'active',
     content TEXT NOT NULL,
-    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE categories (
@@ -34,8 +35,8 @@ CREATE TABLE categories (
 CREATE TABLE post_categories (
     post_id INT,
     category_id INT,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE,
     PRIMARY KEY (post_id, category_id)
 );
 
@@ -45,9 +46,9 @@ CREATE TABLE comments (
     author_id INT,
     publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
-    status ENUM('active', 'inactive') DEFAULT 'active', 
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE likes (
@@ -57,7 +58,7 @@ CREATE TABLE likes (
     comment_id INT,
     type ENUM('like', 'dislike'),
     publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 );

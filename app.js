@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const createDatabase = require('./db/initDataBase')
+const createDatabase = require('./db/initDataBase');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
 const postRouter = require('./routes/posts');
@@ -14,8 +14,8 @@ app.use(express.json());
 
 const adminRouter = require('./services/admin');
 app.get('/', (req, res) => {
-    const port = process.env.PORT || 3000;
-    res.send(`
+	const port = process.env.PORT || 3000;
+	res.send(`
       <html lang="en">
       <head>
           <meta charset="UTF-8">
@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
       </html>
     `);
 });
-app.use('/admin', adminRouter)
+app.use('/admin', adminRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/posts', postRouter);
@@ -63,22 +63,25 @@ app.use('/api/comments', commentRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const startServer = async () => {
-    try {
-        await createDatabase();
+	try {
+		await createDatabase();
 
-        const PORT = process.env.PORT || 3000;
-        app.listen(PORT, () => {
-            console.log(`Сервер запущен на: http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error('Ошибка при запуске сервера или синхронизации базы данных:', error);
-    }
+		const PORT = process.env.PORT || 3000;
+		app.listen(PORT, () => {
+			console.log(`Сервер запущен на: http://localhost:${PORT}`);
+		});
+	} catch (error) {
+		console.error(
+			'Ошибка при запуске сервера или синхронизации базы данных:',
+			error
+		);
+	}
 };
 
 startServer();
 
 app.use((req, res, next) => {
-    res.status(404).json({ message: 'Ресурс не найден' });
+	res.status(404).json({ message: 'Ресурс не найден' });
 });
 
 // ?? // TODO: filtering and sorting
