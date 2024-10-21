@@ -234,8 +234,8 @@ exports.likePost = async (req, res) => {
         const postId = req.params.post_id;
         const userId = req.user.id;
 
-        if (!type) {
-            return res.status(400).json({ message: 'Необходимо указать тип' });
+        if (!type || (type !== 'like' && type !== 'dislike')) {
+            return res.status(400).json({ message: 'Необходимо указать корректный тип: like или dislike' });
         }
 
         const post = await Post.findByPk(postId);
@@ -248,19 +248,34 @@ exports.likePost = async (req, res) => {
         });
 
         if (existingLike) {
-            return res.json({ message: `Лайк для поста с ID ${postId} уже есть` });
-        } else {
-            await Like.create({
-                post_id: postId,
-                author_id: userId,
-                type: type
-            });
-
-            return res.json({ message: `Пост с ID ${postId} был лайкнут` });
+            if (existingLike.type === type) {
+                return res.json({ message: `Вы уже поставили ${type === 'like' ? 'лайк' : 'дизлайк'} на этот пост` });
+            } else {
+                return res.status(400).json({ message: 'Нельзя поставить одновременно лайк и дизлайк' });
+            }
         }
+
+        await Like.create({
+            post_id: postId,
+            author_id: userId,
+            type: type
+        });
+
+        const postAuthor = await User.findByPk(post.author_id);
+
+        if (type === 'like') {
+            postAuthor.rating += 1;
+            await postAuthor.save();
+            return res.json({ message: `Пост с ID ${postId} был лайкнут` });
+        } else if (type === 'dislike') {
+            postAuthor.rating -= 1;
+            await postAuthor.save();
+            return res.json({ message: `Пост с ID ${postId} был дизлайкнут` });
+        }
+
     } catch (error) {
-        console.error(`Ошибка при обработке лайка для поста с ID ${req.params.post_id}:`, error);
-        res.status(500).json({ message: 'Ошибка сервера при лайке поста' });
+        console.error(`Ошибка при обработке лайка или дизлайка для поста с ID ${req.params.post_id}:`, error);
+        res.status(500).json({ message: 'Ошибка сервера при обработке лайка или дизлайка' });
     }
 };
 

@@ -9,6 +9,7 @@ const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
 const Favourite = require('../models/favourite');
+const { faker } = require('@faker-js/faker');
 
 const setAssociations = () => {
   Post.belongsToMany(Category, { through: PostCategory, foreignKey: 'post_id' });
@@ -76,10 +77,14 @@ const insertTestData = async () => {
   try {
     const testUsers = [
       { login: 'admin', password: 'password1', full_name: 'Admin One', email: 'Admin@example.com', email_confirmed: true, role: 'admin' },
-      { login: 'user2', password: 'password2', full_name: 'User Two', email: 'user2@example.com', email_confirmed: true },
-      { login: 'user3', password: 'password3', full_name: 'User Three', email: 'user3@example.com', email_confirmed: true },
-      { login: 'user4', password: 'password4', full_name: 'User Four', email: 'user4@example.com', email_confirmed: true },
-      { login: 'user5', password: 'password5', full_name: 'User Five', email: 'user5@example.com', email_confirmed: true },
+      ...Array.from({ length: 5 }).map(() => ({
+        login: faker.internet.userName(),
+        password: faker.internet.password(),
+        full_name: faker.person.fullName(),
+        email: faker.internet.email(),
+        rating: Math.floor(Math.random() * 100),
+        email_confirmed: true,
+      })),
     ];
 
     for (const user of testUsers) {
@@ -92,13 +97,10 @@ const insertTestData = async () => {
       });
     }
 
-    const testCategories = [
-      { title: 'Category 1', description: 'Description 1' },
-      { title: 'Category 2', description: 'Description 2' },
-      { title: 'Category 3', description: 'Description 3' },
-      { title: 'Category 4', description: 'Description 4' },
-      { title: 'Category 5', description: 'Description 5' },
-    ];
+    const testCategories = Array.from({ length: 5 }).map(() => ({
+      title: faker.commerce.department(),
+      description: faker.lorem.sentence(),
+    }));
 
     for (const category of testCategories) {
       await Category.findOrCreate({
@@ -107,13 +109,11 @@ const insertTestData = async () => {
       });
     }
 
-    const testPosts = [
-      { title: 'Post 1', content: 'Content for post 1', author_id: 1 },
-      { title: 'Post 2', content: 'Content for post 2', author_id: 2 },
-      { title: 'Post 3', content: 'Content for post 3', author_id: 3 },
-      { title: 'Post 4', content: 'Content for post 4', author_id: 4 },
-      { title: 'Post 5', content: 'Content for post 5', author_id: 5 },
-    ];
+    const testPosts = Array.from({ length: 5 }).map(() => ({
+      title: faker.lorem.sentence(),
+      content: faker.lorem.paragraphs(3),
+      author_id: faker.number.int({ min: 1, max: 5 }),
+    }));
 
     for (const post of testPosts) {
       await Post.findOrCreate({
@@ -122,21 +122,19 @@ const insertTestData = async () => {
       });
     }
 
-    const test_Categories = await Category.findAll();
-    const test_Posts = await Post.findAll();
+    const testCategoriesAll = await Category.findAll();
+    const testPostsAll = await Post.findAll();
 
-    for (const post of test_Posts) {
-      const categories = test_Categories.sort(() => 0.5 - Math.random()).slice(0, 2);
+    for (const post of testPostsAll) {
+      const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 2);
       await post.addCategories(categories);
     }
 
-    const testComments = [
-      { content: 'Comment 1', post_id: 1, author_id: 2 },
-      { content: 'Comment 2', post_id: 2, author_id: 3 },
-      { content: 'Comment 3', post_id: 3, author_id: 4 },
-      { content: 'Comment 4', post_id: 4, author_id: 5 },
-      { content: 'Comment 5', post_id: 5, author_id: 1 },
-    ];
+    const testComments = Array.from({ length: 5 }).map((_, index) => ({
+      content: faker.lorem.sentence(),
+      post_id: index + 1,
+      author_id: faker.number.int({ min: 1, max: 5 }),
+    }));
 
     for (const comment of testComments) {
       await Comment.findOrCreate({
@@ -145,13 +143,11 @@ const insertTestData = async () => {
       });
     }
 
-    const testLikes = [
-      { post_id: 1, author_id: 2, type: 'like' },
-      { post_id: 2, author_id: 3, type: 'dislike' },
-      { post_id: 3, author_id: 4, type: 'like' },
-      { post_id: 4, author_id: 5, type: 'dislike' },
-      { post_id: 5, author_id: 1, type: 'like' },
-    ];
+    const testLikes = Array.from({ length: 5 }).map((_, index) => ({
+      post_id: index + 1,
+      author_id: faker.number.int({ min: 1, max: 5 }),
+      type: faker.helpers.arrayElement(['like', 'dislike']),
+    }));
 
     for (const like of testLikes) {
       await Like.findOrCreate({
@@ -160,13 +156,10 @@ const insertTestData = async () => {
       });
     }
 
-    const testFavourites = [
-      { user_id: 1, post_id: 2 },
-      { user_id: 2, post_id: 3 },
-      { user_id: 3, post_id: 4 },
-      { user_id: 4, post_id: 5 },
-      { user_id: 5, post_id: 1 },
-    ];
+    const testFavourites = Array.from({ length: 5 }).map((_, index) => ({
+      user_id: faker.number.int({ min: 1, max: 5 }),
+      post_id: index + 1,
+    }));
 
     for (const favourite of testFavourites) {
       await Favourite.findOrCreate({
@@ -174,6 +167,7 @@ const insertTestData = async () => {
         defaults: favourite,
       });
     }
+    
   } catch (error) {
     console.error('Ошибка при добавлении тестовых данных:', error);
   }

@@ -7,7 +7,7 @@ const postRouter = require('./routes/posts');
 const categoryRouter = require('./routes/categories');
 const commentRouter = require('./routes/comments');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./documentation/swagger-output.json');
+const swaggerDocument = require('./services/documentation/swagger-output.json');
 
 const app = express();
 app.use(express.json());

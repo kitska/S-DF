@@ -38,11 +38,15 @@ exports.getLikesForComment = async (req, res) => {
 
 exports.likeComment = async (req, res) => {
     const { type } = req.body;
-    
+
     const commentId = req.params.comment_id;
     const userId = req.user.id;
 
     try {
+        if (!type || (type !== 'like' && type !== 'dislike')) {
+            return res.status(400).json({ message: 'Необходимо указать корректный тип: like или dislike' });
+        }
+
         const comment = await Comment.findByPk(commentId);
         if (!comment) {
             return res.status(404).json({ message: 'Комментарий не найден' });
@@ -56,7 +60,11 @@ exports.likeComment = async (req, res) => {
         });
 
         if (existingLike) {
-            return res.status(400).json({ message: 'Вы уже лайкнули этот комментарий' });
+            if (existingLike.type === type) {
+                return res.status(400).json({ message: `Вы уже поставили ${type === 'like' ? 'лайк' : 'дизлайк'} на этот комментарий` });
+            } else {
+                return res.status(400).json({ message: 'Нельзя одновременно поставить лайк и дизлайк на один комментарий' });
+            }
         }
 
         const like = await Like.create({
@@ -65,10 +73,20 @@ exports.likeComment = async (req, res) => {
             type: type,
         });
 
-        res.status(201).json({ message: `Комментарий с ID ${commentId} был лайкнут`, like });
+        const commentAuthor = await User.findByPk(comment.author_id);
+
+        if (type === 'like') {
+            commentAuthor.rating += 1;
+            await commentAuthor.save();
+            res.status(201).json({ message: `Комментарий с ID ${commentId} был лайкнут`, like });
+        } else if (type === 'dislike') {
+            commentAuthor.rating -= 1;
+            await commentAuthor.save();
+            res.status(201).json({ message: `Комментарий с ID ${commentId} был дизлайкнут`, like });
+        }
     } catch (error) {
-        console.error('Ошибка при добавлении лайка к комментарию:', error);
-        res.status(500).json({ message: 'Ошибка при добавлении лайка к комментарию' });
+        console.error('Ошибка при добавлении лайка или дизлайка к комментарию:', error);
+        res.status(500).json({ message: 'Ошибка сервера при обработке лайка или дизлайка' });
     }
 };
 
