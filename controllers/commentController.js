@@ -9,13 +9,13 @@ exports.getCommentById = async (req, res) => {
 		const comment = await Comment.findByPk(commentId);
 
 		if (!comment) {
-			return res.status(404).json({ message: 'Комментарий не найден' });
+			return res.status(404).json({ message: 'Comment not found' });
 		}
 
 		res.status(200).json(comment);
 	} catch (error) {
-		console.error('Ошибка при получении комментария:', error);
-		res.status(500).json({ message: 'Ошибка при получении комментария' });
+		console.error('Error receiving comment:', error);
+		res.status(500).json({ message: 'Error receiving comment' });
 	}
 };
 
@@ -31,8 +31,8 @@ exports.getLikesForComment = async (req, res) => {
 
 		res.status(200).json({ commentId: commentId, likes: likeCount });
 	} catch (error) {
-		console.error('Ошибка при получении количества лайков:', error);
-		res.status(500).json({ message: 'Ошибка при получении количества лайков' });
+		console.error('Error when getting number of likes:', error);
+		res.status(500).json({ message: 'Error getting number of likes' });
 	}
 };
 
@@ -44,12 +44,12 @@ exports.likeComment = async (req, res) => {
 
 	try {
 		if (!type || (type !== 'like' && type !== 'dislike')) {
-			return res.status(400).json({ message: 'Необходимо указать корректный тип: like или dislike' });
+			return res.status(400).json({ message: 'You must specify the correct type: like or dislike' });
 		}
 
 		const comment = await Comment.findByPk(commentId);
 		if (!comment) {
-			return res.status(404).json({ message: 'Комментарий не найден' });
+			return res.status(404).json({ message: 'Comment not found' });
 		}
 
 		const existingLike = await Like.findOne({
@@ -61,9 +61,9 @@ exports.likeComment = async (req, res) => {
 
 		if (existingLike) {
 			if (existingLike.type === type) {
-				return res.status(400).json({ message: `Вы уже поставили ${type === 'like' ? 'лайк' : 'дизлайк'} на этот комментарий` });
+				return res.status(400).json({ message: `You have already put ${type === 'like' ? 'like' : 'dislike'} on this comment` });
 			} else {
-				return res.status(400).json({ message: 'Нельзя одновременно поставить лайк и дизлайк на один комментарий' });
+				return res.status(400).json({ message: 'You cannot like and dislike one comment at the same time' });
 			}
 		}
 
@@ -78,15 +78,15 @@ exports.likeComment = async (req, res) => {
 		if (type === 'like') {
 			commentAuthor.rating += 1;
 			await commentAuthor.save();
-			res.status(201).json({ message: `Комментарий с ID ${commentId} был лайкнут`, like });
+			res.status(201).json({ message: `Comment with ID ${commentId} was liked`, like });
 		} else if (type === 'dislike') {
 			commentAuthor.rating -= 1;
 			await commentAuthor.save();
-			res.status(201).json({ message: `Комментарий с ID ${commentId} был дизлайкнут`, like });
+			res.status(201).json({ message: `Comment with ID ${commentId} has been disliked`, like });
 		}
 	} catch (error) {
-		console.error('Ошибка при добавлении лайка или дизлайка к комментарию:', error);
-		res.status(500).json({ message: 'Ошибка сервера при обработке лайка или дизлайка' });
+		console.error('Error when adding a like or dislike to a comment:', error);
+		res.status(500).json({ message: 'Server error when processing a like or dislike' });
 	}
 };
 
@@ -98,11 +98,11 @@ exports.updateComment = async (req, res) => {
 		const comment = await Comment.findByPk(commentId);
 
 		if (!comment) {
-			return res.status(404).json({ message: 'Комментарий не найден' });
+			return res.status(404).json({ message: 'Comment not found' });
 		}
 
 		if (comment.author_id !== req.user.id) {
-			return res.status(403).json({ message: 'У вас нет прав для обновления этого комментария' });
+			return res.status(403).json({ message: 'You do not have permission to update this comment' });
 		}
 
 		if (content) {
@@ -115,10 +115,10 @@ exports.updateComment = async (req, res) => {
 
 		await comment.save();
 
-		res.status(200).json({ message: `Комментарий с ID ${commentId} обновлен`, comment });
+		res.status(200).json({ message: `Comment with ID ${commentId} updated`, comment });
 	} catch (error) {
-		console.error('Ошибка при обновлении комментария:', error);
-		res.status(500).json({ message: 'Ошибка при обновлении комментария' });
+		console.error('Error updating comment:', error);
+		res.status(500).json({ message: 'Error updating comment' });
 	}
 };
 
@@ -129,19 +129,19 @@ exports.deleteComment = async (req, res) => {
 		const comment = await Comment.findByPk(commentId);
 
 		if (!comment) {
-			return res.status(404).json({ message: 'Комментарий не найден' });
+			return res.status(404).json({ message: 'Comment not found' });
 		}
 
 		if (comment.author_id !== req.user.id) {
-			return res.status(403).json({ message: 'У вас нет прав для удаления этого комментария' });
+			return res.status(403).json({ message: 'You do not have permission to delete this comment' });
 		}
 
 		await comment.destroy();
 
-		res.status(200).json({ message: `Комментарий с ID ${commentId} удален` });
+		res.status(200).json({ message: `Comment with ID ${commentId} has been deleted` });
 	} catch (error) {
-		console.error('Ошибка при удалении комментария:', error);
-		res.status(500).json({ message: 'Ошибка при удалении комментария' });
+		console.error('Error when deleting comment:', error);
+		res.status(500).json({ message: 'Error when deleting comment' });
 	}
 };
 
@@ -158,14 +158,14 @@ exports.deleteLike = async (req, res) => {
 		});
 
 		if (!like) {
-			return res.status(404).json({ message: 'Лайк не найден' });
+			return res.status(404).json({ message: 'Like not found' });
 		}
 
 		await like.destroy();
 
-		res.status(200).json({ message: `Лайк для комментария с ID ${commentId} удален` });
+		res.status(200).json({ message: `Like for comment with ID ${commentId} removed` });
 	} catch (error) {
-		console.error('Ошибка при удалении лайка для комментария:', error);
-		res.status(500).json({ message: 'Ошибка при удалении лайка' });
+		console.error('Error when deleting a like for a comment:', error);
+		res.status(500).json({ message: 'Error when deleting a like' });
 	}
 };

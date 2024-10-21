@@ -8,10 +8,37 @@
 	"host": "localhost:3000",
 	"basePath": "/",
 	"schemes": ["http"],
+	"tags": [
+		{
+			"name": "Users",
+			"description": "Operations related to users"
+		},
+		{
+			"name": "Posts",
+			"description": "Operations related to posts"
+		},
+		{
+			"name": "Comments",
+			"description": "Operations related to comments"
+		},
+		{
+			"name": "Categories",
+			"description": "Operations related to categories"
+		},
+		{
+			"name": "Auth",
+			"description": "Operations related to authentification"
+		},
+		{
+			"name": "General",
+			"description": "Additional operations"
+		}
+	],
 	"paths": {
 		"/": {
 			"get": {
-				"description": "",
+				"tags": ["General"],
+				"description": "Main page",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -21,7 +48,8 @@
 		},
 		"/api/auth/register": {
 			"post": {
-				"description": "",
+				"tags": ["Auth"],
+				"description": "Registration of a new user",
 				"parameters": [
 					{
 						"name": "body",
@@ -63,7 +91,8 @@
 		},
 		"/api/auth/confirm-email/{token}": {
 			"get": {
-				"description": "",
+				"tags": ["Auth"],
+        		"description": "Confirm new user with a token from email",
 				"parameters": [
 					{
 						"name": "token",
@@ -87,7 +116,8 @@
 		},
 		"/api/auth/login": {
 			"post": {
-				"description": "",
+				"tags": ["Auth"],
+				"description": "Log in user",
 				"parameters": [
 					{
 						"name": "body",
@@ -126,7 +156,8 @@
 		},
 		"/api/auth/logout": {
 			"post": {
-				"description": "",
+				"tags": ["Auth"],
+				"description": "Loug out authorized user",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -149,7 +180,8 @@
 		},
 		"/api/auth/password-reset": {
 			"post": {
-				"description": "",
+				"tags": ["Auth"],
+				"description": "Send a reset link to user email",
 				"parameters": [
 					{
 						"name": "body",
@@ -182,7 +214,8 @@
 		},
 		"/api/auth/password-reset/{token}": {
 			"post": {
-				"description": "",
+				"tags": ["Auth"],
+				"description": "Confirm new password with a token from email",
 				"parameters": [
 					{
 						"name": "token",
@@ -224,7 +257,8 @@
 		},
 		"/api/users/": {
 			"get": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Get all users",
 				"parameters": [
 					{
 						"name": "page",
@@ -247,7 +281,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Create a new user",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -300,7 +335,8 @@
 		},
 		"/api/users/favourites": {
 			"get": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Get user favourites",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -332,7 +368,8 @@
 		},
 		"/api/users/{userId}": {
 			"get": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Get specified user data",
 				"parameters": [
 					{
 						"name": "userId",
@@ -354,7 +391,8 @@
 				}
 			},
 			"patch": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Update user data",
 				"parameters": [
 					{
 						"name": "userId",
@@ -405,7 +443,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Delete user",
 				"parameters": [
 					{
 						"name": "userId",
@@ -440,7 +479,8 @@
 		},
 		"/api/users/avatar": {
 			"patch": {
-				"description": "",
+				"tags": ["Users"],
+				"description": "Upload user avatar",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -472,7 +512,8 @@
 		},
 		"/api/posts/": {
 			"get": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Get all posts",
 				"parameters": [
 					{
 						"name": "page",
@@ -498,7 +539,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Create a new post",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -545,7 +587,8 @@
 		},
 		"/api/posts/{post_id}": {
 			"get": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Get specified post data",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -567,7 +610,8 @@
 				}
 			},
 			"patch": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Update specified post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -621,7 +665,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Delete specified post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -656,7 +701,8 @@
 		},
 		"/api/posts/{post_id}/comments": {
 			"get": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Get all comments for the specified post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -678,7 +724,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Create a new comment",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -728,7 +775,8 @@
 		},
 		"/api/posts/{post_id}/categories": {
 			"get": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Get all categories associated with the specified post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -752,7 +800,8 @@
 		},
 		"/api/posts/{post_id}/like": {
 			"get": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Get all likes under the specified post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -774,7 +823,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Create a new like under a post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -822,7 +872,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Delete a like under a post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -857,7 +908,8 @@
 		},
 		"/api/posts/{post_id}/favourite": {
 			"post": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Create favourite post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -890,7 +942,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Posts"],
+				"description": "Delete favourite post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -925,7 +978,8 @@
 		},
 		"/api/categories/": {
 			"get": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Get all categories",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -939,7 +993,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Create a new category",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -980,7 +1035,8 @@
 		},
 		"/api/categories/{category_id}": {
 			"get": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Get specified category data",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -1002,7 +1058,8 @@
 				}
 			},
 			"patch": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Update specified category data",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -1047,7 +1104,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Delete a category",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -1082,7 +1140,8 @@
 		},
 		"/api/categories/{category_id}/posts": {
 			"get": {
-				"description": "",
+				"tags": ["Categories"],
+				"description": "Get all posts associated with the specified category",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -1106,7 +1165,8 @@
 		},
 		"/api/comments/{comment_id}": {
 			"get": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Get specified comment data",
 				"parameters": [
 					{
 						"name": "comment_id",
@@ -1128,7 +1188,8 @@
 				}
 			},
 			"patch": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Update specified comment data",
 				"parameters": [
 					{
 						"name": "comment_id",
@@ -1176,7 +1237,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Delete a comment",
 				"parameters": [
 					{
 						"name": "comment_id",
@@ -1211,7 +1273,8 @@
 		},
 		"/api/comments/{comment_id}/like": {
 			"get": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Get all likes under the specified comment",
 				"parameters": [
 					{
 						"name": "comment_id",
@@ -1230,7 +1293,8 @@
 				}
 			},
 			"post": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Create a new like under a comment",
 				"parameters": [
 					{
 						"name": "comment_id",
@@ -1278,7 +1342,8 @@
 				}
 			},
 			"delete": {
-				"description": "",
+				"tags": ["Comments"],
+				"description": "Delete a like under a comment",
 				"parameters": [
 					{
 						"name": "comment_id",

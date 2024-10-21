@@ -68,20 +68,17 @@ const startServer = async () => {
 
 		const PORT = process.env.PORT || 3000;
 		app.listen(PORT, () => {
-			console.log(`Сервер запущен на: http://localhost:${PORT}`);
+			console.log(`Server running on: http://localhost:${PORT}`);
 		});
 	} catch (error) {
-		console.error(
-			'Ошибка при запуске сервера или синхронизации базы данных:',
-			error
-		);
+		console.error('Error when starting the server or synchronizing the database:', error);
 	}
 };
 
 startServer();
 
 app.use((req, res, next) => {
-	res.status(404).json({ message: 'Ресурс не найден' });
+	res.status(404).json({ message: 'Resource not found' });
 });
 
 // ?? // TODO: filtering and sorting

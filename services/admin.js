@@ -71,7 +71,7 @@ const makeRelationships = async req => {
 				await post.addFavourites(favourites);
 			}
 		} catch (err) {
-			console.error('Ошибка при установке категорий или избранных:', err);
+			console.error('Error when setting categories or favorites:', err);
 		}
 	}
 
@@ -82,8 +82,7 @@ const locale = {
 	translations: {
 		labels: {},
 		messages: {
-			loginWelcome:
-				'Добро пожаловать на страницу администрирования. Введите данные для входа администратора.',
+			loginWelcome: 'Welcome to the administration page. Enter your administrator login information.',
 		},
 	},
 };

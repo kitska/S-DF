@@ -6,12 +6,12 @@ exports.getAllCategories = async (req, res) => {
 	try {
 		const categories = await Category.findAll();
 		if (categories.length === 0) {
-			return res.status(404).json({ message: 'Категории не найдены' });
+			return res.status(404).json({ message: 'No categories found' });
 		}
 		res.status(200).json({ categories });
 	} catch (error) {
-		console.error('Ошибка при получении категорий:', error);
-		res.status(500).json({ message: 'Ошибка сервера при получении категорий' });
+		console.error('Error getting categories:', error);
+		res.status(500).json({ message: 'Server error when retrieving categories' });
 	}
 };
 
@@ -21,12 +21,12 @@ exports.getCategoryById = async (req, res) => {
 	try {
 		const category = await Category.findByPk(category_id);
 		if (!category) {
-			return res.status(404).json({ message: `Категория с ID ${category_id} не найдена` });
+			return res.status(404).json({ message: `Category with ID ${category_id} not found` });
 		}
 		res.status(200).json({ category });
 	} catch (error) {
-		console.error(`Ошибка при получении категории с ID ${category_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении категории' });
+		console.error(`Error getting category with ID ${category_id}:`, error);
+		res.status(500).json({ message: 'Server error when retrieving categories' });
 	}
 };
 
@@ -45,16 +45,16 @@ exports.getPostsForCategory = async (req, res) => {
 		});
 
 		if (!category || category.Posts.length === 0) {
-			return res.status(404).json({ message: `В категории с ID ${category_id} нет постов` });
+			return res.status(404).json({ message: `There are no posts in the category with ID ${category_id}` });
 		}
 
 		res.status(200).json({
-			message: `Посты для категории с ID ${category_id}`,
+			message: `Posts for category with ID ${category_id}`,
 			posts: category.Posts,
 		});
 	} catch (error) {
-		console.error(`Ошибка при получении постов для категории с ID ${category_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении постов для категории' });
+		console.error(`Error when retrieving posts for category with ID ${category_id}:`, error);
+		res.status(500).json({ message: 'Server error when receiving posts for a category' });
 	}
 };
 
@@ -65,24 +65,24 @@ exports.createCategory = async (req, res) => {
 		const user = req.user;
 
 		if (user.role !== 'admin' && user.rating < 50) {
-			return res.status(403).json({ message: 'Недостаточно рейтинга. Для создания категории необходимо иметь минимум 50 рейтинга.' });
+			return res.status(403).json({ message: 'Not enough rating. To create a category you must have a minimum rating of 50' });
 		}
 
 		if (!title) {
-			return res.status(400).json({ message: 'Поле title обязательно для заполнения' });
+			return res.status(400).json({ message: 'The "title" field is required' });
 		}
 
 		const existingCategory = await Category.findOne({ where: { title } });
 		if (existingCategory) {
-			return res.status(400).json({ message: 'Категория с таким названием уже существует' });
+			return res.status(400).json({ message: 'A category with the same name already exists' });
 		}
 
 		const newCategory = await Category.create({ title });
 
-		res.status(201).json({ message: 'Категория успешно создана', category: newCategory });
+		res.status(201).json({ message: 'Category successfully created', category: newCategory });
 	} catch (error) {
-		console.error('Ошибка при создании категории:', error);
-		res.status(500).json({ message: 'Ошибка сервера при создании категории' });
+		console.error('Error creating category:', error);
+		res.status(500).json({ message: 'Server error when creating a category' });
 	}
 };
 
@@ -91,23 +91,23 @@ exports.updateCategory = async (req, res) => {
 	const { title } = req.body;
 
 	if (req.user.role !== 'admin') {
-		return res.status(403).json({ message: 'Доступ запрещен. Только администраторы могут обновлять категории.' });
+		return res.status(403).json({ message: 'Access denied. Only administrators can update categories' });
 	}
 
 	try {
 		const category = await Category.findByPk(category_id);
 
 		if (!category) {
-			return res.status(404).json({ message: `Категория с ID ${category_id} не найдена` });
+			return res.status(404).json({ message: `Category with ID ${category_id} not found` });
 		}
 
 		category.title = title || category.title;
 		await category.save();
 
-		res.status(200).json({ message: `Категория с ID ${category_id} успешно обновлена`, category });
+		res.status(200).json({ message: `Category with ID ${category_id} was successfully updated`, category });
 	} catch (error) {
-		console.error(`Ошибка при обновлении категории с ID ${category_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при обновлении категории' });
+		console.error(`Error when updating category with ID ${category_id}:`, error);
+		res.status(500).json({ message: 'Server error when updating a category' });
 	}
 };
 
@@ -115,21 +115,21 @@ exports.deleteCategory = async (req, res) => {
 	const { category_id } = req.params;
 
 	if (req.user.role !== 'admin') {
-		return res.status(403).json({ message: 'Доступ запрещен. Только администраторы могут удалять категории.' });
+		return res.status(403).json({ message: 'Access denied. Only administrators can delete categories' });
 	}
 
 	try {
 		const category = await Category.findByPk(category_id);
 
 		if (!category) {
-			return res.status(404).json({ message: `Категория с ID ${category_id} не найдена` });
+			return res.status(404).json({ message: `Category with ID ${category_id} not found` });
 		}
 
 		await category.destroy();
 
-		res.status(200).json({ message: `Категория с ID ${category_id} успешно удалена` });
+		res.status(200).json({ message: `Category with ID ${category_id} successfully deleted` });
 	} catch (error) {
-		console.error(`Ошибка при удалении категории с ID ${category_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при удалении категории' });
+		console.error(`Error when deleting category with ID ${category_id}:`, error);
+		res.status(500).json({ message: 'Server error when deleting a category' });
 	}
 };

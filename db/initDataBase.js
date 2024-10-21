@@ -46,35 +46,35 @@ const createDatabase = async () => {
 		const [rows] = await connection.query(`SHOW DATABASES LIKE '${process.env.DB_NAME}'`);
 		if (rows.length === 0) {
 			await connection.query(`CREATE DATABASE \`${process.env.DB_NAME}\``);
-			console.log(`База данных ${process.env.DB_NAME} успешно создана`);
+			console.log(`Database ${process.env.DB_NAME} created successfully`);
 		} else {
-			console.log(`База данных ${process.env.DB_NAME} уже существует`);
+			console.log(`Database ${process.env.DB_NAME} already exists`);
 		}
 
 		await connection.end();
 
 		const tableExists = await sequelize.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = '${process.env.DB_NAME}'
-      LIMIT 1;
-    `);
+			SELECT table_name 
+			FROM information_schema.tables 
+			WHERE table_schema = '${process.env.DB_NAME}'
+			LIMIT 1;
+		`);
 
 		if (tableExists[0].length === 0) {
 			setAssociations();
 
 			await sequelize.sync({ force: false });
-			console.log('Таблицы успешно созданы на основе моделей');
+			console.log('Tables successfully created based on models');
 
 			await insertTestData();
-			console.log('Тестовые данные успешно добавлены в таблицы');
+			console.log('Test data has been successfully added to the tables');
 		} else {
-			console.log('Таблицы уже созданы');
+			console.log('Tables have already been created');
 		}
 
 		return sequelize;
 	} catch (error) {
-		console.error('Ошибка при создании базы данных или таблиц:', error);
+		console.error('Error when creating database or tables:', error);
 		process.exit(1);
 	}
 };
@@ -184,7 +184,7 @@ const insertTestData = async () => {
 			});
 		}
 	} catch (error) {
-		console.error('Ошибка при добавлении тестовых данных:', error);
+		console.error('Error adding test data:', error);
 	}
 };
 

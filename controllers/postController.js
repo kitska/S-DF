@@ -31,13 +31,13 @@ exports.getAllPosts = async (req, res) => {
 		});
 
 		if (posts.length === 0) {
-			return res.status(404).json({ message: 'Посты не найдены' });
+			return res.status(404).json({ message: 'No posts found' });
 		}
 
 		const totalPages = Math.ceil(count / pageSize);
 
 		res.status(200).json({
-			message: 'Список всех постов',
+			message: 'List of all posts',
 			currentPage: page,
 			totalPages,
 			totalPosts: count,
@@ -45,8 +45,8 @@ exports.getAllPosts = async (req, res) => {
 			posts,
 		});
 	} catch (error) {
-		console.error('Ошибка при получении постов:', error);
-		res.status(500).json({ message: 'Ошибка сервера при получении постов' });
+		console.error('Error when receiving posts:', error);
+		res.status(500).json({ message: 'Server error when receiving posts' });
 	}
 };
 
@@ -69,16 +69,16 @@ exports.getPostById = async (req, res) => {
 		});
 
 		if (!post) {
-			return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
+			return res.status(404).json({ message: `Post with ID ${post_id} not found` });
 		}
 
 		res.status(200).json({
-			message: `Пост с ID ${post_id}`,
+			message: `Post with ID ${post_id}`,
 			post,
 		});
 	} catch (error) {
-		console.error(`Ошибка при получении поста с ID ${post_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении поста' });
+		console.error(`Error when retrieving post with ID ${post_id}:`, error);
+		res.status(500).json({ message: 'Server error when receiving post' });
 	}
 };
 
@@ -88,7 +88,7 @@ exports.getCommentsForPost = async (req, res) => {
 	try {
 		const post = await Post.findByPk(post_id);
 		if (!post) {
-			return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
+			return res.status(404).json({ message: `Post with ID ${post_id} not found` });
 		}
 
 		const comments = await Comment.findAll({
@@ -98,16 +98,16 @@ exports.getCommentsForPost = async (req, res) => {
 		});
 
 		if (comments.length === 0) {
-			return res.status(404).json({ message: `Для поста с ID ${post_id} нет комментариев` });
+			return res.status(404).json({ message: `There are no comments for post with ID ${post_id}` });
 		}
 
 		res.status(200).json({
-			message: `Комментарии для поста с ID ${post_id}`,
+			message: `Comments for post with ID ${post_id}`,
 			comments,
 		});
 	} catch (error) {
-		console.error(`Ошибка при получении комментариев для поста с ID ${post_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении комментариев' });
+		console.error(`Error getting comments for post with ID ${post_id}:`, error);
+		res.status(500).json({ message: 'Server error when receiving comments' });
 	}
 };
 
@@ -117,13 +117,13 @@ exports.createComment = async (req, res) => {
 	const user_id = req.user.id;
 
 	if (!content || content.trim() === '') {
-		return res.status(400).json({ message: 'Поле "content" не может быть пустым' });
+		return res.status(400).json({ message: 'The "content" field cannot be empty' });
 	}
 
 	try {
 		const post = await Post.findByPk(post_id);
 		if (!post) {
-			return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
+			return res.status(404).json({ message: `Post with ID ${post_id} not found` });
 		}
 
 		const newComment = await Comment.create({
@@ -133,12 +133,12 @@ exports.createComment = async (req, res) => {
 		});
 
 		res.status(201).json({
-			message: `Комментарий для поста с ID ${post_id} создан`,
+			message: `A comment has been created for post with ID ${post_id}`,
 			comment: newComment,
 		});
 	} catch (error) {
-		console.error(`Ошибка при создании комментария для поста с ID ${post_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при создании комментария' });
+		console.error(`Error when creating a comment for a post with ID ${post_id}:`, error);
+		res.status(500).json({ message: 'Server error when creating a comment' });
 	}
 };
 
@@ -157,16 +157,16 @@ exports.getCategoriesForPost = async (req, res) => {
 		});
 
 		if (!post) {
-			return res.status(404).json({ message: `Пост с ID ${post_id} не найден` });
+			return res.status(404).json({ message: `Post with ID ${post_id} not found` });
 		}
 
 		res.status(200).json({
-			message: `Категории для поста с ID ${post_id}`,
+			message: `Categories for post with ID ${post_id}`,
 			categories: post.Categories,
 		});
 	} catch (error) {
-		console.error(`Ошибка при получении категорий для поста с ID ${post_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении категорий для поста' });
+		console.error(`Error getting categories for post with ID ${post_id}:`, error);
+		res.status(500).json({ message: 'Server error when getting categories for a post' });
 	}
 };
 
@@ -176,7 +176,7 @@ exports.getLikesForPost = async (req, res) => {
 
 		const post = await Post.findByPk(postId);
 		if (!post) {
-			return res.status(404).json({ message: 'Пост не найден' });
+			return res.status(404).json({ message: 'Post not found' });
 		}
 
 		const likeCount = await Like.count({
@@ -185,8 +185,8 @@ exports.getLikesForPost = async (req, res) => {
 
 		res.json({ postId, likeCount });
 	} catch (error) {
-		console.error(`Ошибка при получении лайков для поста с ID ${postId}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при получении лайков' });
+		console.error(`Error when getting likes for a post with ID ${postId}:`, error);
+		res.status(500).json({ message: 'Server error when receiving likes' });
 	}
 };
 
@@ -195,7 +195,7 @@ exports.createPost = async (req, res) => {
 
 	try {
 		if (!title || !content || !categories || !Array.isArray(categories)) {
-			return res.status(400).json({ message: 'Необходимо указать заголовок, содержимое и категории' });
+			return res.status(400).json({ message: 'Title, content and categories are required' });
 		}
 
 		const newPost = await Post.create({
@@ -208,7 +208,7 @@ exports.createPost = async (req, res) => {
 			const categoryPromises = categories.map(async category_id => {
 				const category = await Category.findByPk(category_id);
 				if (!category) {
-					throw new Error(`Категория с ID ${category_id} не найдена`);
+					throw new Error(`Category with ID ${category_id} not found`);
 				}
 
 				await PostCategory.create({
@@ -220,10 +220,10 @@ exports.createPost = async (req, res) => {
 			await Promise.all(categoryPromises);
 		}
 
-		res.status(201).json({ message: 'Пост успешно создан', post: newPost });
+		res.status(201).json({ message: 'Post successfully created', post: newPost });
 	} catch (error) {
-		console.error('Ошибка при создании поста:', error);
-		res.status(500).json({ message: 'Ошибка сервера при создании поста' });
+		console.error('Error creating post:', error);
+		res.status(500).json({ message: 'Server error when creating a post' });
 	}
 };
 
@@ -235,12 +235,12 @@ exports.likePost = async (req, res) => {
 		const userId = req.user.id;
 
 		if (!type || (type !== 'like' && type !== 'dislike')) {
-			return res.status(400).json({ message: 'Необходимо указать корректный тип: like или dislike' });
+			return res.status(400).json({ message: 'You must specify the correct type: like or dislike' });
 		}
 
 		const post = await Post.findByPk(postId);
 		if (!post) {
-			return res.status(404).json({ message: 'Пост не найден' });
+			return res.status(404).json({ message: 'Post not found' });
 		}
 
 		const existingLike = await Like.findOne({
@@ -249,9 +249,9 @@ exports.likePost = async (req, res) => {
 
 		if (existingLike) {
 			if (existingLike.type === type) {
-				return res.json({ message: `Вы уже поставили ${type === 'like' ? 'лайк' : 'дизлайк'} на этот пост` });
+				return res.json({ message: `Have you already put ${type === 'like' ? 'like' : 'dislike'} on this post` });
 			} else {
-				return res.status(400).json({ message: 'Нельзя поставить одновременно лайк и дизлайк' });
+				return res.status(400).json({ message: 'You can`t like and dislike at the same time' });
 			}
 		}
 
@@ -266,15 +266,15 @@ exports.likePost = async (req, res) => {
 		if (type === 'like') {
 			postAuthor.rating += 1;
 			await postAuthor.save();
-			return res.json({ message: `Пост с ID ${postId} был лайкнут` });
+			return res.json({ message: `Post with ID ${postId} was liked` });
 		} else if (type === 'dislike') {
 			postAuthor.rating -= 1;
 			await postAuthor.save();
-			return res.json({ message: `Пост с ID ${postId} был дизлайкнут` });
+			return res.json({ message: `Post with ID ${postId} was disliked` });
 		}
 	} catch (error) {
-		console.error(`Ошибка при обработке лайка или дизлайка для поста с ID ${req.params.post_id}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при обработке лайка или дизлайка' });
+		console.error(`Error when processing likes or dislikes for a post with ID ${req.params.post_id}:`, error);
+		res.status(500).json({ message: 'Server error when processing a like or dislike' });
 	}
 };
 
@@ -286,11 +286,11 @@ exports.updatePost = async (req, res) => {
 		const post = await Post.findByPk(postId);
 
 		if (!post) {
-			return res.status(404).json({ message: 'Пост не найден' });
+			return res.status(404).json({ message: 'Post not found' });
 		}
 
 		if (post.author_id !== req.user.id) {
-			return res.status(403).json({ message: 'У вас нет прав для обновления этого поста' });
+			return res.status(403).json({ message: 'You do not have permission to update this post' });
 		}
 
 		if (title) post.title = title;
@@ -312,10 +312,10 @@ exports.updatePost = async (req, res) => {
 			await PostCategory.bulkCreate(postCategoryData);
 		}
 
-		res.json({ message: `Пост с ID ${postId} обновлен`, post });
+		res.json({ message: `Post with ID ${postId} updated`, post });
 	} catch (error) {
-		console.error('Ошибка при обновлении поста:', error);
-		res.status(500).json({ message: 'Ошибка при обновлении поста' });
+		console.error('Error updating post:', error);
+		res.status(500).json({ message: 'Error updating post' });
 	}
 };
 
@@ -325,15 +325,15 @@ exports.deletePost = async (req, res) => {
 
 		const post = await Post.findByPk(postId);
 		if (!post) {
-			return res.status(404).json({ message: 'Пост не найден' });
+			return res.status(404).json({ message: 'Post not found' });
 		}
 
 		await post.destroy();
 
-		res.json({ message: `Пост с ID ${postId} удален` });
+		res.json({ message: `Post with ID ${postId} has been deleted` });
 	} catch (error) {
-		console.error(`Ошибка при удалении поста с ID ${postId}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при удалении поста' });
+		console.error(`Error when deleting post with ID ${postId}:`, error);
+		res.status(500).json({ message: 'Server error when deleting a post' });
 	}
 };
 
@@ -344,7 +344,7 @@ exports.deleteLike = async (req, res) => {
 
 		const post = await Post.findByPk(postId);
 		if (!post) {
-			return res.status(404).json({ message: 'Пост не найден' });
+			return res.status(404).json({ message: 'Post not found' });
 		}
 
 		const existingLike = await Like.findOne({
@@ -352,14 +352,14 @@ exports.deleteLike = async (req, res) => {
 		});
 
 		if (!existingLike) {
-			return res.status(404).json({ message: 'Лайк не найден' });
+			return res.status(404).json({ message: 'Like not found' });
 		}
 
 		await existingLike.destroy();
-		return res.json({ message: `Лайк для поста с ID ${postId} был удален` });
+		return res.json({ message: `The like for post with ID ${postId} has been removed` });
 	} catch (error) {
-		console.error(`Ошибка при удалении лайка для поста с ID ${postId}:`, error);
-		res.status(500).json({ message: 'Ошибка сервера при удалении лайка' });
+		console.error(`Error when deleting a like for a post with ID ${postId}:`, error);
+		res.status(500).json({ message: 'Server error when deleting a like' });
 	}
 };
 
@@ -373,12 +373,12 @@ exports.addPostToFavourites = async (req, res) => {
 		});
 
 		if (created) {
-			res.status(201).json({ message: 'Пост добавлен в избранное' });
+			res.status(201).json({ message: 'Post added to favorites' });
 		} else {
-			res.status(200).json({ message: 'Пост уже в избранном' });
+			res.status(200).json({ message: 'Post already favorited' });
 		}
 	} catch (error) {
-		res.status(500).json({ error: 'Ошибка при добавлении поста в избранное' });
+		res.status(500).json({ error: 'Error when adding a post to favorites' });
 	}
 };
 
@@ -392,11 +392,11 @@ exports.removePostFromFavourites = async (req, res) => {
 		});
 
 		if (result) {
-			res.status(200).json({ message: 'Пост удален из избранного' });
+			res.status(200).json({ message: 'Post removed from favorites' });
 		} else {
-			res.status(404).json({ message: 'Пост не найден в избранном' });
+			res.status(404).json({ message: 'Post not found in favorites' });
 		}
 	} catch (error) {
-		res.status(500).json({ error: 'Ошибка при удалении поста из избранного' });
+		res.status(500).json({ error: 'Error when deleting a post from favorites' });
 	}
 };

@@ -26,8 +26,8 @@ exports.getAllUsers = async (req, res) => {
 			users,
 		});
 	} catch (error) {
-		console.error('Ошибка при получении пользователей:', error);
-		res.status(500).json({ message: 'Ошибка сервера при получении пользователей' });
+		console.error('Error getting users:', error);
+		res.status(500).json({ message: 'Server error when getting users' });
 	}
 };
 
@@ -40,13 +40,13 @@ exports.getUserById = async (req, res) => {
 		});
 
 		if (!user) {
-			return res.status(404).json({ message: 'Пользователь не найден' });
+			return res.status(404).json({ message: 'User not found' });
 		}
 
 		res.status(200).json(user);
 	} catch (error) {
-		console.error('Ошибка при получении пользователя:', error);
-		res.status(500).json({ message: 'Ошибка сервера при получении пользователя' });
+		console.error('Error getting user:', error);
+		res.status(500).json({ message: 'Server error when getting user' });
 	}
 };
 
@@ -56,12 +56,12 @@ exports.createUser = async (req, res) => {
 	try {
 		const existingUser = await User.findOne({ where: { login } });
 		if (existingUser) {
-			return res.status(400).json({ message: 'Пользователь с таким логином уже существует' });
+			return res.status(400).json({ message: 'A user with this login already exists' });
 		}
 
 		const existingEmail = await User.findOne({ where: { email } });
 		if (existingEmail) {
-			return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
+			return res.status(400).json({ message: 'A user with this email already exists' });
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -75,10 +75,10 @@ exports.createUser = async (req, res) => {
 			email_confirmed: true,
 		});
 
-		res.status(201).json({ message: 'Пользователь успешно создан', user: newUser });
+		res.status(201).json({ message: 'User successfully created', user: newUser });
 	} catch (error) {
-		console.error('Ошибка при создании пользователя:', error);
-		res.status(500).json({ message: 'Ошибка сервера при создании пользователя' });
+		console.error('Error creating user:', error);
+		res.status(500).json({ message: 'Server error when creating user' });
 	}
 };
 
@@ -96,7 +96,7 @@ const fileFilter = (req, file, cb) => {
 	if (allowedMimeTypes.includes(file.mimetype)) {
 		cb(null, true);
 	} else {
-		cb(new Error('Загрузите изображение.'), false);
+		cb(new Error('Upload an image.'), false);
 	}
 };
 
@@ -109,11 +109,11 @@ const upload = multer({
 exports.uploadAvatar = (req, res) => {
 	upload(req, res, async err => {
 		if (err) {
-			return res.status(400).json({ message: 'Ошибка при загрузке аватара', error: err.message });
+			return res.status(400).json({ message: 'Error loading avatar', error: err.message });
 		}
 
 		if (!req.file) {
-			return res.status(400).json({ message: 'Пожалуйста, загрузите файл изображения.' });
+			return res.status(400).json({ message: 'Please upload an image file' });
 		}
 
 		try {
@@ -121,16 +121,16 @@ exports.uploadAvatar = (req, res) => {
 			const user = await User.findByPk(userId);
 
 			if (!user) {
-				return res.status(404).json({ message: 'Пользователь не найден.' });
+				return res.status(404).json({ message: 'User not found' });
 			}
 
 			user.profile_picture = `/uploads/${req.file.filename}`;
 			await user.save();
 
-			res.status(200).json({ message: 'Аватар успешно загружен.', avatarUrl: user.profile_picture });
+			res.status(200).json({ message: 'The avatar has been successfully uploaded', avatarUrl: user.profile_picture });
 		} catch (error) {
-			console.error('Ошибка при сохранении аватара:', error);
-			res.status(500).json({ message: 'Ошибка сервера при загрузке аватара.' });
+			console.error('Error when saving avatar:', error);
+			res.status(500).json({ message: 'Server error when loading avatar' });
 		}
 	});
 };
@@ -140,19 +140,19 @@ exports.updateUser = async (req, res) => {
 	const { login, full_name } = req.body;
 
 	if (req.user.role !== 'admin' && req.user.id !== parseInt(userId, 10)) {
-		return res.status(403).json({ message: 'Вы не можете обновить чужой профиль' });
+		return res.status(403).json({ message: 'You can`t update someone else`s profile' });
 	}
 
 	try {
 		const user = await User.findByPk(userId);
 		if (!user) {
-			return res.status(404).json({ message: 'Пользователь не найден' });
+			return res.status(404).json({ message: 'User not found' });
 		}
 
 		if (login) {
 			const existingUser = await User.findOne({ where: { login } });
 			if (existingUser && existingUser.id !== user.id) {
-				return res.status(400).json({ message: 'Пользователь с таким логином уже существует' });
+				return res.status(400).json({ message: 'A user with this login already exists' });
 			}
 			user.login = login;
 		}
@@ -161,10 +161,10 @@ exports.updateUser = async (req, res) => {
 
 		await user.save();
 
-		res.status(200).json({ message: 'Логин и имя пользователя успешно обновлены', user });
+		res.status(200).json({ message: 'Login and username successfully updated', user });
 	} catch (error) {
-		console.error('Ошибка при обновлении логина и имени пользователя:', error);
-		res.status(500).json({ message: 'Ошибка сервера при обновлении данных пользователя' });
+		console.error('Error updating login and username:', error);
+		res.status(500).json({ message: 'Server error when updating user data' });
 	}
 };
 
@@ -174,19 +174,19 @@ exports.deleteUser = async (req, res) => {
 	try {
 		const user = await User.findByPk(userId);
 		if (!user) {
-			return res.status(404).json({ message: 'Пользователь не найден' });
+			return res.status(404).json({ message: 'User not found' });
 		}
 
 		if (req.user.role !== 'admin' && req.user.id !== user.id) {
-			return res.status(403).json({ message: 'Вы не можете удалить этого пользователя' });
+			return res.status(403).json({ message: 'You cannot delete this user' });
 		}
 
 		await user.destroy();
 
-		res.status(200).json({ message: `Пользователь с ID ${userId} успешно удален` });
+		res.status(200).json({ message: `User with ID ${userId} was successfully deleted` });
 	} catch (error) {
-		console.error('Ошибка при удалении пользователя:', error);
-		res.status(500).json({ message: 'Ошибка сервера при удалении пользователя' });
+		console.error('Error when deleting user:', error);
+		res.status(500).json({ message: 'Server error when deleting a user' });
 	}
 };
 
@@ -195,7 +195,7 @@ exports.getUserFavourites = async (req, res) => {
 		const userId = req.user.id;
 
 		if (!userId) {
-			return res.status(400).json({ error: 'Пользователь не найден' });
+			return res.status(400).json({ error: 'User not found' });
 		}
 
 		const favourites = await Favourite.findAll({
@@ -211,10 +211,10 @@ exports.getUserFavourites = async (req, res) => {
 		if (favourites && favourites.length > 0) {
 			res.status(200).json(favourites);
 		} else {
-			res.status(404).json({ message: 'У пользователя нет избранных постов' });
+			res.status(404).json({ message: 'User has no favorite posts' });
 		}
 	} catch (error) {
-		console.error('Ошибка при получении избранных постов:', error);
-		res.status(500).json({ error: 'Ошибка при получении избранных постов' });
+		console.error('Error when retrieving featured posts:', error);
+		res.status(500).json({ error: 'Error getting featured posts' });
 	}
 };
