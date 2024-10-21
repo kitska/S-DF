@@ -5,18 +5,31 @@ const bcrypt = require('bcrypt');
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 const Favourite = require('../models/favourite');
 const Post = require('../models/post');
+const { Op } = require('sequelize');
 
 exports.getAllUsers = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.pageSize) || 10;
-
 		const offset = (page - 1) * limit;
 
+		const { login } = req.query;
+		const filter = {};
+
+		if (login) {
+			filter.login = { [Op.like]: `%${login}%` };
+		}
+
+		const sortBy = req.query.sortBy || 'created_at';
+		const sortOrder = req.query.sortOrder === 'asc' ? 'ASC' : 'DESC';
+
 		const { rows: users, count: total } = await User.findAndCountAll({
+			where: filter,
 			attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
 			limit: limit,
 			offset: offset,
+			order: [[sortBy, sortOrder]],
+			distinct: true,
 		});
 
 		res.status(200).json({

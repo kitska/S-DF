@@ -269,6 +269,21 @@
 						"name": "pageSize",
 						"in": "query",
 						"type": "string"
+					},
+					{
+						"name": "sortBy",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "sortOrder",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "login",
+						"in": "query",
+						"type": "string"
 					}
 				],
 				"responses": {
@@ -522,6 +537,26 @@
 					},
 					{
 						"name": "pageSize",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "sortBy",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "sortOrder",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "title",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "author_id",
 						"in": "query",
 						"type": "string"
 					}
@@ -980,6 +1015,33 @@
 			"get": {
 				"tags": ["Categories"],
 				"description": "Get all categories",
+				"parameters": [
+					{
+						"name": "page",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "pageSize",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "sortBy",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "sortOrder",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "title",
+						"in": "query",
+						"type": "string"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "OK"

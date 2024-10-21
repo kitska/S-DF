@@ -79,7 +79,7 @@ exports.confirmEmail = async (req, res) => {
 		user.email_confirmation_token = null;
 		await user.save();
 
-		res.status(201).json({ message: 'Email successfully confirmed' });
+		res.status(200).json({ message: 'Email successfully confirmed' });
 	} catch (error) {
 		console.error('Email confirmation error:', error);
 		res.status(500).json({ message: 'Server error' });

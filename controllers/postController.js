@@ -5,6 +5,7 @@ const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
 const Favourite = require('../models/favourite');
+const { Op } = require('sequelize');
 
 exports.getAllPosts = async (req, res) => {
 	try {
@@ -14,7 +15,21 @@ exports.getAllPosts = async (req, res) => {
 		const offset = (page - 1) * pageSize;
 		const limit = pageSize;
 
+		const { title, author_id } = req.query;
+		const filter = {};
+
+		if (title) {
+			filter.title = { [Op.like]: `%${title}%` };
+		}
+		if (author_id) {
+			filter.author_id = author_id;
+		}
+
+		const sortBy = req.query.sortBy || 'publish_date';
+		const sortOrder = req.query.sortOrder === 'asc' ? 'ASC' : 'DESC';
+
 		const { count, rows: posts } = await Post.findAndCountAll({
+			where: filter,
 			offset,
 			limit,
 			include: [
@@ -28,6 +43,8 @@ exports.getAllPosts = async (req, res) => {
 					through: { attributes: [] },
 				},
 			],
+			order: [[sortBy, sortOrder]],
+			distinct: true,
 		});
 
 		if (posts.length === 0) {

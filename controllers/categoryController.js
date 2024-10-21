@@ -1,19 +1,54 @@
 const Category = require('../models/category');
 const Post = require('../models/post');
 const PostCategory = require('../models/post_category');
+const { Op } = require('sequelize');
 
 exports.getAllCategories = async (req, res) => {
 	try {
-		const categories = await Category.findAll();
+		const page = parseInt(req.query.page) || 1;
+		const pageSize = parseInt(req.query.pageSize) || 10;
+
+		const offset = (page - 1) * pageSize;
+		const limit = pageSize;
+
+		const { title } = req.query;
+		const filter = {};
+
+		if (title) {
+			filter.title = { [Op.like]: `%${title}%` };
+		}
+
+		const sortBy = req.query.sortBy || 'title';
+		const sortOrder = req.query.sortOrder === 'asc' ? 'ASC' : 'DESC';
+
+		const { count, rows: categories } = await Category.findAndCountAll({
+			where: filter,
+			offset,
+			limit,
+			order: [[sortBy, sortOrder]],
+			distinct: true,
+		});
+
 		if (categories.length === 0) {
 			return res.status(404).json({ message: 'No categories found' });
 		}
-		res.status(200).json({ categories });
+
+		const totalPages = Math.ceil(count / pageSize);
+
+		res.status(200).json({
+			message: 'List of all categories',
+			currentPage: page,
+			totalPages,
+			totalCategories: count,
+			categoriesPerPage: pageSize,
+			categories,
+		});
 	} catch (error) {
 		console.error('Error getting categories:', error);
 		res.status(500).json({ message: 'Server error when retrieving categories' });
 	}
 };
+
 
 exports.getCategoryById = async (req, res) => {
 	const { category_id } = req.params;
