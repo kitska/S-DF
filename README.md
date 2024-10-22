@@ -70,14 +70,14 @@ Make sure you have the following installed on your machine:
     > > - JWT_SECRET - secret for token
     > > - EMAIL_USER - email from which confirmations will be sent
     > > - EMAIL_PASS - password for EMAIL_USER (Not password for account, need [App password](https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237))
-    > > - PORT - port for server application.
+    > > - PORT - port for server application(default value is `3000`).
 
     ***
 
     > **These are variables for database init. Add them only if default values does not work for you.**
     >
     > > - DB_USER - role name of postgres (default value is `root`)
-    > > - DB_PASSWORD - password for PG_USER (default value is `null`)
+    > > - DB_PASSWORD - password for DB_USER (default value is `null`)
     > > - DB_HOST - postgres host address (default value is `localhost`)
     > > - DB_NAME - name of database.
     > > - DB_PORT - database port (default value is `3306`)
