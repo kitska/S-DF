@@ -1,33 +1,15 @@
 {
-  "name": "s-df",
-  "version": "1.0.0",
-  "main": "app.js",
-  "keywords": [],
-  "author": "Myth Cat",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "swagger-autogen": "^2.23.7"
-  },
-  "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "@adminjs/express": "^5.1.0",
-    "@adminjs/sequelize": "^3.0.0",
-    "@faker-js/faker": "^9.0.3",
-    "@tiptap/extension-text-style": "^2.8.0",
-    "adminjs": "^6.8.7",
-    "bcrypt": "^5.1.1",
-    "bcryptjs": "^2.4.3",
-    "crypto": "^1.0.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.11.3",
-    "nodemailer": "^6.9.15",
-    "sequelize": "^6.37.3",
-    "swagger-ui-express": "^5.0.1"
-  }
+	"name": "sdf",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"start": "concurrently \"npm run start:client\" \"npm run start:server\"",
+		"start:client": "npm --prefix \"./S-DF Client\" run start:client",
+		"start:server": "npm --prefix \"./S-DF Server\" run start:server",
+		"build:client": "npm --prefix \"./S-DF Client\" run build",
+		"test:client": "npm --prefix \"./S-DF Client\" test"
+	},
+	"devDependencies": {
+		"concurrently": "^7.6.0"
+	}
 }

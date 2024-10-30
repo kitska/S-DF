@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
+const port = process.env.PORT || 3000;
 
 exports.register = async (req, res) => {
 	const { login, password, password_confirmation, email, full_name } = req.body;
@@ -40,7 +41,7 @@ exports.register = async (req, res) => {
 			email_confirmation_token: emailToken,
 		});
 
-		const confirmationLink = `http://localhost:3000/api/auth/confirm-email/${emailToken}`;
+		const confirmationLink = `http://localhost:${port}/api/auth/confirm-email/${emailToken}`;
 
 		const transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -139,7 +140,7 @@ exports.sendResetLink = async (req, res) => {
 
 		const resetToken = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-		const resetLink = `http://localhost:3000/api/auth/password-reset/${resetToken}`;
+		const resetLink = `http://localhost:${port}/api/auth/password-reset/${resetToken}`;
 
 		const transporter = nodemailer.createTransport({
 			service: 'gmail',
