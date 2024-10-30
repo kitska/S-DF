@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img src="assets/img/final.png" alt="Project logo"></a>
+    <img src="./client/public/assets/images/final.png" alt="Project logo"></a>
 </p>
 
 <div align="center">
