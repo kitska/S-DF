@@ -1,5 +1,59 @@
 // src/styles/main.scss
+
 @use 'variables' as *;
 @use 'tailwindcss/base';
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
+
+// Подключение шрифта
+@font-face {
+    font-family: 'Asusrog';
+    src: url('../assets/fonts/asusrog_regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Azonix';
+    src: url('../assets/fonts/Azonix.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBM Plex Serif';
+    src: url('../assets/fonts/IBMPlexSerif-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Alternate Gothic No1';
+    src: url('../assets/fonts/alternategothicno1.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#nav {
+    font-family: 'Azonix', sans-serif;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; 
+    font-family: 'IBM Plex Serif', sans-serif;/* Это может помочь убрать скролл */
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(5px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

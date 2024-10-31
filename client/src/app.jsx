@@ -4,6 +4,8 @@ import Header from './components/header';
 import Footer from './components/footer';
 import Sidebar from './components/sidebar';
 import HomePage from './pages/home';
+import LoginPage from './pages/login';
+import RegisterPage from './pages/register';
 // import UsersPage from './pages/users'; // Импортируйте ваши страницы
 // import CategoriesPage from './pages/categories'; // Импортируйте ваши страницы
 // import PostsPage from './pages/posts'; // Импортируйте ваши страницы
@@ -22,6 +24,8 @@ function App() {
 							<Route path='/users' element={<HomePage />} />
 							<Route path='/categories' element={<HomePage />} />
 							<Route path='/posts' element={<HomePage />} />
+							<Route path='/login' element={<LoginPage />} />
+							<Route path='/register' element={<RegisterPage />} />
 						</Routes>
 					</main>
 				</div>

@@ -1,5 +1,5 @@
-// src/components/Header.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';
 
 const Header = () => {
@@ -20,7 +20,9 @@ const Header = () => {
 
 				{/* Login Button */}
 				<div>
-					<button className='px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600'>Sign In</button>
+					<Link to='/login'>
+						<button className='px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600'>Sign In</button>
+					</Link>
 				</div>
 			</div>
 		</header>
