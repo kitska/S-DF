@@ -16,7 +16,7 @@ const Footer = () => {
 				</div>
 
 				{/* Contact Info */}
-				<div className='mt-2 text-gray-500 md:mt-0'>&copy; 2023 S?DF. All rights reserved.</div>
+				<div className='mt-2 text-gray-500 md:mt-0'>&copy; 2024 S?DF. All rights reserved.</div>
 			</div>
 		</footer>
 	);

@@ -1,36 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/header';
 import Footer from './components/footer';
 import Sidebar from './components/sidebar';
+import TopUsers from './components/topUsers';
 import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
-// import UsersPage from './pages/users'; // Импортируйте ваши страницы
-// import CategoriesPage from './pages/categories'; // Импортируйте ваши страницы
-// import PostsPage from './pages/posts'; // Импортируйте ваши страницы
+import ErrorPage from './pages/error';
 import './styles/main.scss'; // Импорт стилей
 
 function App() {
+	const [error, setError] = useState(null);
+
+	// Функция для обработки ошибок
+	const handleError = (errorCode, errorMessage) => {
+		setError({ code: errorCode, message: errorMessage });
+	};
+
 	return (
 		<Router>
-			<div className='flex flex-col min-h-screen'>
-				<Header />
-				<div className='flex flex-grow'>
-					<main className='flex-grow p-6 bg-gray-100'>
-						<Sidebar />
-						<Routes>
-							<Route path='/' element={<HomePage />} />
-							<Route path='/users' element={<HomePage />} />
-							<Route path='/categories' element={<HomePage />} />
-							<Route path='/posts' element={<HomePage />} />
-							<Route path='/login' element={<LoginPage />} />
-							<Route path='/register' element={<RegisterPage />} />
-						</Routes>
-					</main>
-				</div>
-				<Footer />
-			</div>
+			<Routes>
+				<Route
+					path='/'
+					element={
+						<div className='flex flex-col min-h-screen'>
+							<Header />
+							<div className='flex flex-grow'>
+								<Sidebar />
+								<main className='flex-grow p-6 bg-gray-500'>
+									<HomePage />
+								</main>
+								<TopUsers />
+							</div>
+							<Footer />
+						</div>
+					}
+				/>
+				<Route
+					path='/login'
+					element={
+						<div className='flex flex-col min-h-screen'>
+							<Header />
+							<main className='flex-grow p-6 bg-gray-800'>
+								<LoginPage onEnter={() => {}} onLeave={() => {}} />
+							</main>
+						</div>
+					}
+				/>
+				<Route
+					path='/register'
+					element={
+						<div className='flex flex-col min-h-screen'>
+							<Header />
+							<main className='flex-grow p-6 bg-gray-800'>
+								<RegisterPage onEnter={() => {}} onLeave={() => {}} />
+							</main>
+						</div>
+					}
+				/>
+				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
+			</Routes>
 		</Router>
 	);
 }

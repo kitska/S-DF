@@ -34,7 +34,7 @@
     font-style: normal;
 }
 
-#nav {
+nav {
     font-family: 'Azonix', sans-serif;
 }
 
@@ -43,17 +43,4 @@ html, body {
     margin: 0;
     overflow: hidden; 
     font-family: 'IBM Plex Serif', sans-serif;/* Это может помочь убрать скролл */
-}
-
-.modal-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(5px);
-	display: flex;
-	justify-content: center;
-	align-items: center;
 }
