@@ -1,12 +1,13 @@
+// src/pages/home.jsx
 import React from 'react';
+import Sidebar from '../components/sidebar';
 
-const HomePage = () => {
+const Home = () => {
 	return (
-		<div>
-			<h2 className='text-xl'>Home Page</h2>
-			<p>This is the home page content.</p>
+		<div className='flex h-screen bg-gray-100'>
+			{/* <Sidebar /> */}
 		</div>
 	);
 };
 
-export default HomePage;
+export default Home;
