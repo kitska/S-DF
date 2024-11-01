@@ -189,23 +189,23 @@ exports.getCategoriesForPost = async (req, res) => {
 
 exports.getLikesForPost = async (req, res) => {
 	try {
-		const postId = req.params.post_id;
+		const { post_id } = req.params;
+		const { type } = req.body;
 
-		const post = await Post.findByPk(postId);
-		if (!post) {
-			return res.status(404).json({ message: 'Post not found' });
-		}
+		const post = await Post.findByPk(post_id);
+		if (!post) return res.status(404).json({ message: 'Post not found' });
 
 		const likeCount = await Like.count({
-			where: { post_id: postId },
+			where: { post_id, ...(type && { type }) },
 		});
 
-		res.json({ postId, likeCount });
+		res.json({ post_id, likeCount });
 	} catch (error) {
-		console.error(`Error when getting likes for a post with ID ${postId}:`, error);
+		console.error(`Error fetching likes for post ID ${req.params.post_id}:`, error);
 		res.status(500).json({ message: 'Server error when receiving likes' });
 	}
 };
+
 
 exports.createPost = async (req, res) => {
 	const { title, content, categories } = req.body;

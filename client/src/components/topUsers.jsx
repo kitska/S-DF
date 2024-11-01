@@ -1,13 +1,12 @@
-// src/components/Sidebar.jsx
+// src/components/TopUsers.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const TopUsers = () => {
 	return (
-		<aside className='fixed right-0 z-0 h-screen p-6 mt-16 bg-gray-600 shadow-lg w-1/7 top-8'>
-			<div className='flex flex-col px-20 space-y-4'>
-
-			</div>
+		<aside className='p-6 bg-gray-600 shadow-lg min-h-max w-1/7'>
+			{' '}
+			{/* Изменено на h-full */}
+			<div className='flex flex-col px-20 space-y-4'>{/* Содержимое TopUsers */}</div>
 		</aside>
 	);
 };

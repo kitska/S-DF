@@ -20,21 +20,21 @@ exports.getCommentById = async (req, res) => {
 };
 
 exports.getLikesForComment = async (req, res) => {
-	const commentId = req.params.comment_id;
-
 	try {
+		const { comment_id } = req.params;
+		const { type } = req.body;
+
 		const likeCount = await Like.count({
-			where: {
-				comment_id: commentId,
-			},
+			where: { comment_id, ...(type && { type }) },
 		});
 
-		res.status(200).json({ commentId: commentId, likes: likeCount });
+		res.status(200).json({ comment_id, likes: likeCount });
 	} catch (error) {
 		console.error('Error when getting number of likes:', error);
 		res.status(500).json({ message: 'Error getting number of likes' });
 	}
 };
+
 
 exports.likeComment = async (req, res) => {
 	const { type } = req.body;
