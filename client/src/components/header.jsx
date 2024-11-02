@@ -21,7 +21,7 @@ const Header = () => {
 				{/* Login Button */}
 				<div>
 					<Link to='/login'>
-						<button className='px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600'>Sign In</button>
+						<button className='px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600'>Log In</button>
 					</Link>
 				</div>
 			</div>

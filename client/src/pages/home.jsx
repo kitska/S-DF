@@ -11,21 +11,19 @@ const Home = () => {
 		{ title: 'Post 1', content: 'This is the content of post 1', author: 'Author 1' },
 		{ title: 'Post 2', content: 'This is the content of post 2', author: 'Author 2' },
 		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
-		{ title: 'Post 3', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 4', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 5', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 6', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 7', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 8', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 9', content: 'This is the content of post 3', author: 'Author 3' },
+		{ title: 'Post 10', content: 'This is the content of post 3', author: 'Author 3' },
 	];
 
 	return (
 		<div className='flex flex-col min-h-screen'>
 			<Header />
 			<div className='flex flex-grow mt-20'>
-				{' '}
-				{/* Убедитесь, что здесь нет h-full */}
 				<Sidebar />
 				<div className='flex-grow p-6 bg-gray-500'>
 					{posts.map((post, index) => (

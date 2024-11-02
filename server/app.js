@@ -8,13 +8,18 @@ const categoryRouter = require('./routes/categories');
 const commentRouter = require('./routes/comments');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./services/documentation/swagger-output.json');
+const cors = require('cors');
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
-
+app.use(
+	cors({
+		origin: `http://localhost:3000`,
+	})
+);
 const adminRouter = require('./services/admin');
 app.get('/', (req, res) => {
-	const port = process.env.PORT || 3000;
 	res.send(`
       <html lang="en">
       <head>
@@ -47,8 +52,8 @@ app.get('/', (req, res) => {
       <body>
           <div class="links">
               <a href="https://documenter.getpostman.com/view/38849662/2sAXxWbA7H"> Documentation 1 </a>
-              <a href="http://localhost:${port}/api-docs"> Documentation 2 </a>
-              <a href="http://localhost:${port}/admin"> Admin </a>
+              <a href="http://localhost:${PORT}/api-docs"> Documentation 2 </a>
+              <a href="http://localhost:${PORT}/admin"> Admin </a>
           </div>
       </body>
       </html>
@@ -65,8 +70,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 const startServer = async () => {
 	try {
 		await createDatabase();
-
-		const PORT = process.env.PORT || 3000;
 		app.listen(PORT, () => {
 			console.log(`Server running on: http://localhost:${PORT}`);
 		});
