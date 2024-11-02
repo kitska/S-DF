@@ -12,10 +12,13 @@ const CategoryHandler = {
 			const response = await apiClient.get('/', {
 				params: { page, title, sortby: sortBy, sortOrder },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при получении списка категорий:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching categories',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -23,10 +26,13 @@ const CategoryHandler = {
 	getCategoryById: async categoryId => {
 		try {
 			const response = await apiClient.get(`/${categoryId}`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении категории с ID ${categoryId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching category',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -34,10 +40,13 @@ const CategoryHandler = {
 	getPostsByCategory: async categoryId => {
 		try {
 			const response = await apiClient.get(`/${categoryId}/posts`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении постов для категории с ID ${categoryId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching posts for category',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -47,10 +56,13 @@ const CategoryHandler = {
 			const response = await apiClient.post('/', categoryData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при создании категории:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error creating category',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -60,10 +72,13 @@ const CategoryHandler = {
 			const response = await apiClient.patch(`/${categoryId}`, categoryData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при обновлении категории с ID ${categoryId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error updating category',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -73,10 +88,13 @@ const CategoryHandler = {
 			const response = await apiClient.delete(`/${categoryId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении категории с ID ${categoryId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error deleting category',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 };

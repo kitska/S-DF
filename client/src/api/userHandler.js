@@ -12,10 +12,13 @@ const UserHandler = {
 			const response = await apiClient.get('/', {
 				params: { page, login, sortby: sortBy, sortOrder },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при получении списка пользователей:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Ошибка получения списка пользователей',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -23,10 +26,13 @@ const UserHandler = {
 	getUserById: async userId => {
 		try {
 			const response = await apiClient.get(`/${userId}`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении пользователя с ID ${userId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || `Ошибка получения пользователя с ID ${userId}`,
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -36,10 +42,13 @@ const UserHandler = {
 			const response = await apiClient.get('/favourites', {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при получении избранного пользователя:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Ошибка получения избранного пользователя',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -49,10 +58,13 @@ const UserHandler = {
 			const response = await apiClient.post('/', userData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при создании пользователя:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Ошибка создания пользователя',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -68,10 +80,13 @@ const UserHandler = {
 					'Content-Type': 'multipart/form-data',
 				},
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при обновлении аватара пользователя:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Ошибка обновления аватара',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -81,10 +96,13 @@ const UserHandler = {
 			const response = await apiClient.patch(`/${userId}`, userData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при обновлении пользователя с ID ${userId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || `Ошибка обновления пользователя с ID ${userId}`,
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -94,10 +112,13 @@ const UserHandler = {
 			const response = await apiClient.delete(`/${userId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении пользователя с ID ${userId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || `Ошибка удаления пользователя с ID ${userId}`,
+				status: error.response?.status || 500,
+			};
 		}
 	},
 };

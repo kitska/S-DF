@@ -1,17 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
 import Header from '../components/header';
 import AuthHandler from '../api/authHandler';
-import ErrorMessage from '../components/UI/errorMessage'; // Импортируем компонент для ошибок
+import ErrorMessage from '../components/UI/errorMessage';
 
 const LoginPage = () => {
+	const navigate = useNavigate();
 	const [showPassword, setShowPassword] = useState(false);
 	const [emailValue, setEmailValue] = useState('');
 	const [passwordValue, setPasswordValue] = useState('');
 	const [emailFocused, setEmailFocused] = useState(false);
 	const [passwordFocused, setPasswordFocused] = useState(false);
-	const [error, setError] = useState(null); // Для обработки ошибок
+	const [error, setError] = useState(null);
 	const emailRef = useRef(null);
 	const passwordRef = useRef(null);
 
@@ -19,7 +20,6 @@ const LoginPage = () => {
 		setShowPassword(prev => !prev);
 	};
 
-	// Проверка на автозаполнение после загрузки
 	useEffect(() => {
 		if (emailRef.current.value) setEmailValue(emailRef.current.value);
 		if (passwordRef.current.value) setPasswordValue(passwordRef.current.value);
@@ -27,21 +27,30 @@ const LoginPage = () => {
 
 	const handleLogin = async e => {
 		e.preventDefault();
-		setError(null); // Сбрасываем ошибку перед отправкой
+		setError(null);
 
-		// Формируем тело запроса
 		const requestBody = {
 			login: emailValue,
-			email: emailValue.includes('@') ? emailValue : undefined, // Учитываем ввод email
+			email: emailValue.includes('@') ? emailValue : "",
 			password: passwordValue,
 		};
 
 		try {
-			const response = await AuthHandler.loginUser(requestBody); // Вызываем функцию для логина
-			// Обработайте успешный ответ (например, сохранить токен, перенаправить пользователя и т.д.)
-			console.log(response); // Временно выводим ответ
+			const response = await AuthHandler.loginUser(requestBody);
+
+			// Если логин успешен, можно добавить логику для дальнейших действий
+			if (response.status === 200) {
+				console.log(response.data.message); // Сообщение об успешном входе
+				navigate('/');
+			}
 		} catch (err) {
-			setError(err.response ? err.response.data : { message: 'Ошибка входа' });
+			if (err.response) {
+				// Получаем сообщение из ответа, если оно есть
+				const errorMessage = err.response.data.message || 'An unknown error occurred. Please try again.';
+				setError({ message: errorMessage });
+			} else {
+				setError({ message: 'Network error. Please check your internet connection.' });
+			}
 		}
 	};
 
@@ -101,7 +110,7 @@ const LoginPage = () => {
 
 						<button className='px-4 py-2 text-white rounded bg-violet-500 hover:bg-violet-700 focus:ring-2 ring-violet-300'>Log In</button>
 					</form>
-					{error && <ErrorMessage errorCode={error.code} errorMessage={error.message} />} {/* Отображаем ошибку */}
+					{error && <ErrorMessage errorCode={error.code} errorMessage={error.message} />}
 					<p className='mt-4 text-center text-white'>
 						Don't have an account?{' '}
 						<Link to='/register' className='text-violet-300 hover:underline'>

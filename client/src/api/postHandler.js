@@ -12,10 +12,13 @@ const PostHandler = {
 			const response = await apiClient.get('/', {
 				params: { page, title, author_id, sortby: sortBy, sortOrder },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при получении списка постов:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching posts',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -23,10 +26,13 @@ const PostHandler = {
 	getPostById: async postId => {
 		try {
 			const response = await apiClient.get(`/${postId}`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -34,10 +40,13 @@ const PostHandler = {
 	getCategoriesForPost: async postId => {
 		try {
 			const response = await apiClient.get(`/${postId}/categories`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении категорий для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching post categories',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -45,10 +54,13 @@ const PostHandler = {
 	getCommentsForPost: async postId => {
 		try {
 			const response = await apiClient.get(`/${postId}/comments`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении комментариев для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching post comments',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -56,10 +68,13 @@ const PostHandler = {
 	getLikesForPost: async postId => {
 		try {
 			const response = await apiClient.get(`/${postId}/like`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении лайков для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching post likes',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -69,10 +84,13 @@ const PostHandler = {
 			const response = await apiClient.post('/', postData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка при создании поста:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error creating post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -82,10 +100,13 @@ const PostHandler = {
 			const response = await apiClient.post(`/${postId}/comments`, commentData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при создании комментария для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error creating comment for post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -95,10 +116,13 @@ const PostHandler = {
 			const response = await apiClient.post(`/${postId}/like`, likeData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при создании лайка для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error creating like for post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -112,10 +136,13 @@ const PostHandler = {
 					headers: { Authorization: `Bearer ${token}` },
 				}
 			);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при добавлении поста с ID ${postId} в избранное:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error adding post to favourites',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -125,10 +152,13 @@ const PostHandler = {
 			const response = await apiClient.patch(`/${postId}`, postData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при обновлении поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error updating post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -138,10 +168,13 @@ const PostHandler = {
 			const response = await apiClient.delete(`/${postId}/like`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении лайка для поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error deleting like for post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -151,10 +184,13 @@ const PostHandler = {
 			const response = await apiClient.delete(`/${postId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении поста с ID ${postId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error deleting post',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -164,10 +200,13 @@ const PostHandler = {
 			const response = await apiClient.delete(`/${postId}/favourite`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении поста с ID ${postId} из избранного:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error removing post from favourites',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 };

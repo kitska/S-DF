@@ -10,10 +10,13 @@ const AuthHandler = {
 	registerUser: async userData => {
 		try {
 			const response = await apiClient.post('/register', userData);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка регистрации:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Registration error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -21,10 +24,13 @@ const AuthHandler = {
 	loginUser: async loginData => {
 		try {
 			const response = await apiClient.post('/login', loginData);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка входа:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Login error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -40,10 +46,13 @@ const AuthHandler = {
 					},
 				}
 			);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка выхода:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Logout error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -51,10 +60,13 @@ const AuthHandler = {
 	sendPasswordResetLink: async email => {
 		try {
 			const response = await apiClient.post('/password-reset', { email });
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка отправки ссылки для сброса пароля:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Password reset link error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -62,10 +74,13 @@ const AuthHandler = {
 	resetPassword: async (token, passwordData) => {
 		try {
 			const response = await apiClient.post(`/password-reset/${token}`, passwordData);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка сброса пароля:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Password reset error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -73,10 +88,13 @@ const AuthHandler = {
 	confirmEmail: async token => {
 		try {
 			const response = await apiClient.get(`/confirm-email/${token}`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error('Ошибка подтверждения email:', error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Email confirmation error',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 };

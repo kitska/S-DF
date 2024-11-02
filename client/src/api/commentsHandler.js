@@ -10,10 +10,13 @@ const CommentHandler = {
 	getCommentById: async commentId => {
 		try {
 			const response = await apiClient.get(`/${commentId}`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -21,10 +24,13 @@ const CommentHandler = {
 	getLikesForComment: async commentId => {
 		try {
 			const response = await apiClient.get(`/${commentId}/like`);
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении лайков для комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error fetching likes for comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -34,10 +40,13 @@ const CommentHandler = {
 			const response = await apiClient.post(`/${commentId}/like`, likeData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при создании лайка для комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error creating like for comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -47,10 +56,13 @@ const CommentHandler = {
 			const response = await apiClient.patch(`/${commentId}`, commentData, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при обновлении комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error updating comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -60,10 +72,13 @@ const CommentHandler = {
 			const response = await apiClient.delete(`/${commentId}/like`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении лайка для комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error deleting like for comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 
@@ -73,10 +88,13 @@ const CommentHandler = {
 			const response = await apiClient.delete(`/${commentId}`, {
 				headers: { Authorization: `Bearer ${token}` },
 			});
-			return response.data;
+			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при удалении комментария с ID ${commentId}:`, error);
-			throw error;
+			throw {
+				message: error.response?.data?.message || 'Error deleting comment',
+				status: error.response?.status || 500,
+			};
 		}
 	},
 };

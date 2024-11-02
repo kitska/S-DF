@@ -1,24 +1,27 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import Header from '../components/header';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
+import AuthHandler from '../api/authHandler';
 
 const RegisterPage = () => {
-	const [fullName, setFullName] = useState('');
+	const navigate = useNavigate();
+	const [full_name, setFullName] = useState('');
 	const [email, setEmail] = useState('');
 	const [login, setLogin] = useState('');
 	const [password, setPassword] = useState('');
-	const [passwordConfirmation, setPasswordConfirmation] = useState('');
+	const [password_confirmation, setPasswordConfirmation] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [focused, setFocused] = useState({
-		fullName: false,
+		full_name: false,
 		email: false,
 		login: false,
 		password: false,
-		passwordConfirmation: false,
+		password_confirmation: false,
 	});
 	const [emailError, setEmailError] = useState('');
 	const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
+	const [registrationError, setRegistrationError] = useState('');
 
 	const handleFocus = field => {
 		setFocused(prev => ({ ...prev, [field]: true }));
@@ -29,8 +32,8 @@ const RegisterPage = () => {
 		if (field === 'email') {
 			validateEmail(email);
 		}
-		if (field === 'passwordConfirmation') {
-			validatePasswordConfirmation(password, passwordConfirmation);
+		if (field === 'password_confirmation') {
+			validatePasswordConfirmation(password, password_confirmation);
 		}
 	};
 
@@ -55,14 +58,30 @@ const RegisterPage = () => {
 		}
 	};
 
-	const handleRegister = e => {
+	const handleRegister = async e => {
 		e.preventDefault();
 		validateEmail(email);
-		validatePasswordConfirmation(password, passwordConfirmation);
+		validatePasswordConfirmation(password, password_confirmation);
 
-		// Здесь можно добавить код для отправки данных регистрации на сервер, если нет ошибок
 		if (!emailError && !passwordConfirmationError) {
-			// Обработка регистрации
+			try {
+				const response = await AuthHandler.registerUser({
+					full_name,
+					email,
+					login,
+					password,
+					password_confirmation,
+				});
+				const statusCode = response.status;
+
+				if (statusCode === 201) {
+					navigate('/login');
+				} else {
+					setRegistrationError(response.data.message || 'Registration failed');
+				}
+			} catch (error) {
+				setRegistrationError('An error occurred during registration');
+			}
 		}
 	};
 
@@ -73,27 +92,25 @@ const RegisterPage = () => {
 				<div className='p-6 bg-blue-600 rounded-lg shadow-lg w-96'>
 					<h2 className='mb-4 text-2xl font-semibold text-center text-white'>Register</h2>
 					<form className='flex flex-col' onSubmit={handleRegister}>
-						{/* Full Name */}
 						<div className='relative mb-6'>
 							<input
 								type='text'
-								value={fullName}
+								value={full_name}
 								onChange={e => setFullName(e.target.value)}
-								onFocus={() => handleFocus('fullName')}
-								onBlur={() => handleBlur('fullName')}
+								onFocus={() => handleFocus('full_name')}
+								onBlur={() => handleBlur('full_name')}
 								className='w-full p-3 pt-5 text-white placeholder-transparent bg-blue-700 border border-gray-300 rounded focus:outline-none'
 								placeholder='Full Name'
 							/>
 							<label
 								className={`absolute left-3 px-1 transition-all duration-200 pointer-events-none bg-blue-600 rounded ${
-									fullName || focused.fullName ? 'top-[-8px] text-xs text-white' : 'top-4 text-base text-gray-400'
+									full_name || focused.full_name ? 'top-[-8px] text-xs text-white' : 'top-4 text-base text-gray-400'
 								}`}
 							>
 								Full Name
 							</label>
 						</div>
 
-						{/* Login */}
 						<div className='relative mb-6'>
 							<input
 								type='text'
@@ -113,7 +130,6 @@ const RegisterPage = () => {
 							</label>
 						</div>
 
-						{/* Email */}
 						<div className='relative mb-6'>
 							<input
 								type='text'
@@ -136,7 +152,6 @@ const RegisterPage = () => {
 							{emailError && <p className='mt-1 text-sm text-red-500'>{emailError}</p>}
 						</div>
 
-						{/* Password */}
 						<div className='relative mb-6'>
 							<input
 								type={showPassword ? 'text' : 'password'}
@@ -163,14 +178,13 @@ const RegisterPage = () => {
 							</button>
 						</div>
 
-						{/* Password Confirmation */}
 						<div className='relative mb-6'>
 							<input
 								type={showPassword ? 'text' : 'password'}
-								value={passwordConfirmation}
+								value={password_confirmation}
 								onChange={e => setPasswordConfirmation(e.target.value)}
-								onFocus={() => handleFocus('passwordConfirmation')}
-								onBlur={() => handleBlur('passwordConfirmation')}
+								onFocus={() => handleFocus('password_confirmation')}
+								onBlur={() => handleBlur('password_confirmation')}
 								className={`w-full p-3 pt-5 text-white placeholder-transparent bg-blue-700 border border-gray-300 rounded focus:outline-none ${
 									passwordConfirmationError ? 'border-red-500' : ''
 								}`}
@@ -178,7 +192,7 @@ const RegisterPage = () => {
 							/>
 							<label
 								className={`absolute left-3 px-1 transition-all duration-200 pointer-events-none bg-blue-600 rounded ${
-									passwordConfirmation || focused.passwordConfirmation ? 'top-[-8px] text-xs text-white' : 'top-4 text-base text-gray-400'
+									password_confirmation || focused.password_confirmation ? 'top-[-8px] text-xs text-white' : 'top-4 text-base text-gray-400'
 								}`}
 							>
 								Confirm Password
