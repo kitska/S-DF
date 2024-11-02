@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
+		"install:sdf": "npm install && npm --prefix ./client install && npm --prefix ./server install",
 		"start": "concurrently \"npm run start:client\" \"npm run start:server\"",
 		"start:client": "npm --prefix ./client run start:client",
 		"start:server": "npm --prefix ./server run start:server",
