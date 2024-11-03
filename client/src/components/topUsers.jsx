@@ -37,7 +37,7 @@ const TopUsers = () => {
 			case 0:
 				return 'text-yellow-500'; // Золото
 			case 1:
-				return 'text-gray-300'; // Серебро
+				return 'text-gray-400'; // Серебро
 			case 2:
 				return 'text-orange-500'; // Бронза
 			default:
