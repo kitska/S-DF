@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/header';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
 import AuthHandler from '../api/authHandler';
@@ -57,6 +57,14 @@ const RegisterPage = () => {
 			setPasswordConfirmationError('');
 		}
 	};
+
+	useEffect(() => {
+		// Проверяем наличие токена при загрузке компонента
+		const token = localStorage.getItem('token');
+		if (token) {
+			navigate('/'); // Если токен есть, перенаправляем на главную страницу
+		}
+	}, [navigate]);
 
 	const handleRegister = async e => {
 		e.preventDefault();

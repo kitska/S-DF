@@ -25,7 +25,7 @@ exports.getAllUsers = async (req, res) => {
 
 		const { rows: users, count: total } = await User.findAndCountAll({
 			where: filter,
-			attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
+			attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at', 'profile_picture'],
 			limit: limit,
 			offset: offset,
 			order: [[sortBy, sortOrder]],
@@ -49,7 +49,7 @@ exports.getUserById = async (req, res) => {
 
 	try {
 		const user = await User.findByPk(userId, {
-			attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at'],
+			attributes: ['id', 'login', 'email', 'full_name', 'rating', 'role', 'created_at', 'profile_picture'],
 		});
 
 		if (!user) {

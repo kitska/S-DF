@@ -21,9 +21,15 @@ const LoginPage = () => {
 	};
 
 	useEffect(() => {
+		// Проверяем наличие токена при загрузке компонента
+		const token = localStorage.getItem('token');
+		if (token) {
+			navigate('/'); // Если токен есть, перенаправляем на главную страницу
+		}
+
 		if (emailRef.current.value) setEmailValue(emailRef.current.value);
 		if (passwordRef.current.value) setPasswordValue(passwordRef.current.value);
-	}, []);
+	}, [navigate]);	
 
 	const handleLogin = async e => {
 		e.preventDefault();
@@ -31,21 +37,20 @@ const LoginPage = () => {
 
 		const requestBody = {
 			login: emailValue,
-			email: emailValue.includes('@') ? emailValue : "",
+			email: emailValue.includes('@') ? emailValue : '',
 			password: passwordValue,
 		};
 
 		try {
 			const response = await AuthHandler.loginUser(requestBody);
 
-			// Если логин успешен, можно добавить логику для дальнейших действий
 			if (response.status === 200) {
-				console.log(response.data.message); // Сообщение об успешном входе
-				navigate('/');
+				console.log(response.data.message);
+				localStorage.setItem('token', response.data.token); // Сохраняем токен в локальное хранилище
+				navigate('/'); // Переход на главную страницу
 			}
 		} catch (err) {
 			if (err.response) {
-				// Получаем сообщение из ответа, если оно есть
 				const errorMessage = err.response.data.message || 'An unknown error occurred. Please try again.';
 				setError({ message: errorMessage });
 			} else {

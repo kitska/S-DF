@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const createDatabase = require('./db/initDataBase');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/users');
@@ -18,7 +19,36 @@ app.use(
 		origin: `http://localhost:3000`,
 	})
 );
+
+const assetsPath = path.join(__dirname, 'assets', 'img');
+const uploadsPath = path.join(__dirname, 'uploads');
+
+app.get('/api/assets/img/:imageName', (req, res) => {
+    const imageName = req.params.imageName;
+    const imagePath = path.join(assetsPath, imageName);
+
+    res.sendFile(imagePath, (err) => {
+        if (err) {
+            console.error('Ошибка при отправке файла:', err);
+            res.status(err.status).end();
+        }
+    });
+});
+
+app.get('/api/uploads/:fileName', (req, res) => {
+	const fileName = req.params.fileName;
+	const filePath = path.join(uploadsPath, fileName);
+
+	res.sendFile(filePath, err => {
+		if (err) {
+			console.error('Ошибка при отправке файла:', err);
+			res.status(err.status).end();
+		}
+	});
+});
+
 const adminRouter = require('./services/admin');
+
 app.get('/', (req, res) => {
 	res.send(`
       <html lang="en">
