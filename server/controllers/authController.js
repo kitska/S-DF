@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
+const randomPP = require('../services/randomPP');
 const port = process.env.PORT || 3000;
 
 exports.register = async (req, res) => {
@@ -37,6 +38,7 @@ exports.register = async (req, res) => {
 			password: hashedPassword,
 			full_name,
 			email,
+			profile_picture: randomPP.getRandomProfilePicture(),
 			email_confirmed: false,
 			email_confirmation_token: emailToken,
 		});

@@ -6,6 +6,7 @@ const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 const Favourite = require('../models/favourite');
 const Post = require('../models/post');
 const { Op } = require('sequelize');
+const randomPP = require('../services/randomPP');
 
 exports.getAllUsers = async (req, res) => {
 	try {
@@ -85,6 +86,7 @@ exports.createUser = async (req, res) => {
 			email,
 			role,
 			full_name,
+			profile_picture: randomPP.getRandomProfilePicture(),
 			email_confirmed: true,
 		});
 
