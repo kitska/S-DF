@@ -51,7 +51,7 @@ const Header = () => {
 				<div className='flex items-center space-x-3'>
 					{userAvatar ? (
 						<Link to={`/user/${userId}`} className='flex items-center p-1 space-x-2 transition duration-200 rounded-lg hover:bg-gray-700'>
-							<img src={userAvatar} alt='User Avatar' className='w-8 h-8 border-2 border-gray-500 rounded-full' />
+							<img src={userAvatar} alt='User Avatar' className='object-cover border-2 border-gray-500 rounded-full w-11 h-11' />
 							<span className='font-semibold text-white'>{login}</span>
 						</Link>
 					) : (

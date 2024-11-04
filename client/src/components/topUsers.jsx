@@ -1,36 +1,25 @@
-// src/components/TopUsers.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import User from './UI/user';
+import UserHandler from '../api/userHandler';
 
 const TopUsers = () => {
-	// Массив с данными пользователей
-	const users = [
-		{
-			fullName: 'Иван Иванов',
-			profilePicture: 'path/to/ivan.jpg',
-			rating: 10,
-		},
-		{
-			fullName: 'Мария Петрова',
-			profilePicture: 'path/to/maria.jpg',
-			rating: -3,
-		},
-		{
-			fullName: 'Сергей Сидоров',
-			profilePicture: 'path/to/sergey.jpg',
-			rating: 0,
-		},
-		{
-			fullName: 'Анна Смирнова',
-			profilePicture: 'path/to/anna.jpg',
-			rating: 5,
-		},
-		{
-			fullName: 'Дмитрий Ковалев',
-			profilePicture: 'path/to/dmitry.jpg',
-			rating: -1,
-		},
-	];
+	const [users, setUsers] = useState([]);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		const fetchUsers = async () => {
+			try {
+				const response = await UserHandler.getAllUsers(1, '', 'rating', 'desc');
+				if (response.status === 200) {
+					setUsers(response.data.users); // Предполагается, что массив пользователей находится в `response.data.users`
+				}
+			} catch (error) {
+				setError(error.message || 'Ошибка при загрузке пользователей');
+			}
+		};
+
+		fetchUsers();
+	}, []);
 
 	const getMedalStyle = index => {
 		switch (index) {
@@ -47,21 +36,25 @@ const TopUsers = () => {
 
 	return (
 		<aside className='w-1/6 p-6 bg-gray-600 shadow-lg min-h-max'>
-			<div className='flex flex-col space-y-4'>
-				{users.map((user, index) => (
-					<div key={index} className='flex items-center overflow-hidden'>
-						<span className={`place w-6 mr-2 text-center ${getMedalStyle(index)}`}>{index + 1}</span>
-						<div className='flex items-center overflow-hidden'>
-							<User
-								fullName={user.fullName.length > 15 ? `${user.fullName.slice(0, 15)}...` : user.fullName}
-								profilePicture={user.profilePicture}
-								rating={user.rating}
-								className='w-64' // Добавляем фиксированный размер для всех компонентов User
-							/>
+			{error ? (
+				<p className='text-red-500'>{error}</p>
+			) : (
+				<div className='flex flex-col space-y-4'>
+					{users.map((user, index) => (
+						<div key={user.id} className='flex items-center overflow-hidden'>
+							<span className={`place w-6 mr-2 text-center ${getMedalStyle(index)}`}>{index + 1}</span>
+							<div className='flex items-center overflow-hidden'>
+								<User
+									fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
+									profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
+									rating={user.rating}
+									className='w-64' // Фиксированный размер для всех компонентов User
+								/>
+							</div>
 						</div>
-					</div>
-				))}
-			</div>
+					))}
+				</div>
+			)}
 		</aside>
 	);
 };

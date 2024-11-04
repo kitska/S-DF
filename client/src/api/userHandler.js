@@ -10,7 +10,7 @@ const UserHandler = {
 	getAllUsers: async (page = 1, login = '', sortBy = 'id', sortOrder = 'asc') => {
 		try {
 			const response = await apiClient.get('/', {
-				params: { page, login, sortby: sortBy, sortOrder },
+				params: { page, login, sortBy, sortOrder },
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
