@@ -65,14 +65,18 @@ const PostHandler = {
 	},
 
 	// Получение лайков для поста
-	getLikesForPost: async postId => {
+	getLikesAndDislikesForPost: async (postId, type) => {
 		try {
-			const response = await apiClient.get(`/${postId}/like`);
+			// Добавляем type как параметр запроса
+			const response = await apiClient.get(`/${postId}/like`, {
+				params: { type }, // Здесь мы передаем тип как query параметр
+			});
+
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении лайков для поста с ID ${postId}:`, error);
+			console.error(`Ошибка при получении лайков и дизлайков для поста с ID ${postId}:`, error);
 			throw {
-				message: error.response?.data?.message || 'Error fetching post likes',
+				message: error.response?.data?.message || 'Error fetching post likes and dislikes',
 				status: error.response?.status || 500,
 			};
 		}

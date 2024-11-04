@@ -1,11 +1,11 @@
-// src/components/UI/Post.jsx
 import React, { useState, useRef } from 'react';
-import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
 
 const Post = ({ title, content, author, likes, dislikes, date, status, categories = [] }) => {
 	const [showAllCategories, setShowAllCategories] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
+	const [isFavorite, setIsFavorite] = useState(false); // Состояние для избранного
 	const timeoutRef = useRef(null);
 
 	const maxVisibleCategories = 3;
@@ -14,25 +14,27 @@ const Post = ({ title, content, author, likes, dislikes, date, status, categorie
 
 	const handleMouseEnter = () => {
 		setIsHovered(true);
-		clearTimeout(timeoutRef.current); // Очищаем таймер при наведении
+		clearTimeout(timeoutRef.current);
 	};
 
 	const handleMouseLeave = () => {
 		timeoutRef.current = setTimeout(() => {
 			setIsHovered(false);
-			setShowAllCategories(false); // Закрываем окно после задержки
-		}, 200); // Задержка в 200 мс
+			setShowAllCategories(false);
+		}, 200);
 	};
 
 	const handleToggleCategories = () => {
 		setShowAllCategories(!showAllCategories);
 	};
 
+	const toggleFavorite = () => {
+		setIsFavorite(!isFavorite); // Переключаем состояние избранного
+		// Здесь можно добавить логику для сохранения в избранное на сервере
+	};
+
 	return (
-		<div
-			className='relative p-3 mb-3 bg-gray-900 rounded-lg shadow-sm'
-			onMouseLeave={handleMouseLeave} // Убираем общий mouse leave с поста
-		>
+		<div className='relative p-3 mb-3 bg-gray-900 rounded-lg shadow-sm' onMouseLeave={handleMouseLeave}>
 			<div className='flex justify-between'>
 				<div className='w-3/4'>
 					<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
@@ -50,6 +52,9 @@ const Post = ({ title, content, author, likes, dislikes, date, status, categorie
 						<button className='flex items-center hover:text-gray-200'>
 							<FaThumbsDown className='mr-1' /> {dislikes}
 						</button>
+						<button className={`flex items-center hover:text-yellow-400 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'}`} onClick={toggleFavorite}>
+							<FaStar className='mr-1' />
+						</button>
 					</div>
 					<div className='flex items-center space-x-1 text-xs text-gray-500'>
 						{visibleCategories.map((category, index) => (
@@ -61,7 +66,7 @@ const Post = ({ title, content, author, likes, dislikes, date, status, categorie
 								onMouseEnter={() => {
 									setShowAllCategories(true);
 								}}
-								onMouseLeave={handleMouseLeave} // Добавляем mouse leave для "..."
+								onMouseLeave={handleMouseLeave}
 								onClick={handleToggleCategories}
 							>
 								...
@@ -71,15 +76,14 @@ const Post = ({ title, content, author, likes, dislikes, date, status, categorie
 				</div>
 			</div>
 
-			{/* Выпадающее окно для показа всех категорий */}
 			{(showAllCategories || isHovered) && (
 				<div
 					className='absolute right-0 z-50 w-48 p-2 mt-2 bg-gray-800 rounded-md shadow-lg'
 					onMouseEnter={() => {
 						setShowAllCategories(true);
-						clearTimeout(timeoutRef.current); // Очищаем таймер при наведении на окно
+						clearTimeout(timeoutRef.current);
 					}}
-					onMouseLeave={handleMouseLeave} // Закрываем окно, если курсор уходит
+					onMouseLeave={handleMouseLeave}
 				>
 					<h3 className='mb-2 text-xs font-semibold text-center text-gray-200'>All Categories</h3>
 					<div className='flex flex-wrap mt-2 space-x-1 text-xs text-gray-100'>

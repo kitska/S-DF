@@ -1,115 +1,50 @@
-// src/pages/home.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import TopUsers from '../components/topUsers';
 import Post from '../components/UI/post';
+import PostHandler from '../api/postHandler';
+import { formatDate } from '../utils/formatDate';
 
 const Home = () => {
-	const posts = [
-		{
-			title: 'Post 1',
-			content: 'This is a short preview of post 1',
-			author: 'Author 1',
-			likes: 10,
-			dislikes: 2,
-			date: '2024-11-03',
-			status: true,
-			categories: ['Tech', 'News', 'Health', 'Lifestyle'],
-		},
-		{
-			title: 'Post 2',
-			content: 'This is a short preview of post 2',
-			author: 'Author 2',
-			likes: 5,
-			dislikes: 1,
-			date: '2024-11-02',
-			status: false,
-			categories: ['Health', 'Lifestyle', 'Tech'],
-		},
-		{
-			title: 'Post 3',
-			content: 'This is a short preview of post 1',
-			author: 'Author 1',
-			likes: 10,
-			dislikes: 2,
-			date: '2024-11-03',
-			status: true,
-			categories: ['Tech', 'News'],
-		},
-		{
-			title: 'Post 4',
-			content: 'This is a short preview of post 2',
-			author: 'Author 2',
-			likes: 5,
-			dislikes: 1,
-			date: '2024-11-02',
-			status: false,
-			categories: ['Health', 'Lifestyle'],
-		},
-		{
-			title: 'Post 5',
-			content: 'This is a short preview of post 1',
-			author: 'Author 1',
-			likes: 10,
-			dislikes: 2,
-			date: '2024-11-03',
-			status: true,
-			categories: ['Tech', 'News'],
-		},
-		{
-			title: 'Post 6',
-			content: 'This is a short preview of post 2',
-			author: 'Author 2',
-			likes: 5,
-			dislikes: 1,
-			date: '2024-11-02',
-			status: false,
-			categories: ['Health', 'Lifestyle'],
-		},
-		{
-			title: 'Post 7',
-			content: 'This is a short preview of post 1',
-			author: 'Author 1',
-			likes: 10,
-			dislikes: 2,
-			date: '2024-11-03',
-			status: true,
-			categories: ['Tech', 'News'],
-		},
-		{
-			title: 'Post 8',
-			content: 'This is a short preview of post 2',
-			author: 'Author 2',
-			likes: 5,
-			dislikes: 1,
-			date: '2024-11-02',
-			status: false,
-			categories: ['Health', 'Lifestyle'],
-		},
-		{
-			title: 'Post 9',
-			content: 'This is a short preview of post 1',
-			author: 'Author 1',
-			likes: 10,
-			dislikes: 2,
-			date: '2024-11-03',
-			status: true,
-			categories: ['Tech', 'News'],
-		},
-		{
-			title: 'Post 10',
-			content: 'This is a short preview of post 2',
-			author: 'Author 2',
-			likes: 5,
-			dislikes: 1,
-			date: '2024-11-02',
-			status: false,
-			categories: ['Health', 'Lifestyle'],
-		},
-		// Добавьте другие посты аналогично...
-	];
+	const [posts, setPosts] = useState([]);
+	const [error, setError] = useState(null);
+
+	const fetchPosts = async () => {
+		try {
+			const response = await PostHandler.getAllPosts(1, '', '', 'created_at', 'desc');
+			if (response.status === 200) {
+				// Маппинг постов с извлечением данных о пользователе и категориях
+				const formattedPosts = await Promise.all(
+					response.data.posts.map(async post => {
+						// Получаем лайки и дизлайки для каждого поста
+						const likeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'like');
+						const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'dislike');
+
+						return {
+							id: post.id,
+							title: post.title,
+							content: `${post.content.slice(0, 100)}...`, // Пример короткого превью
+							author: post.User.login, // Имя автора
+							date: formatDate(post.publish_date),
+							status: post.status === 'active', // Перекодирование статуса
+							categories: post.Categories.map(category => category.title), // Извлечение заголовков категорий
+							likes: likeResponse.data.likeCount || 0, // Число лайков
+							dislikes: dislikeResponse.data.likeCount || 0, // Число дизлайков
+						};
+					})
+				);
+				setPosts(formattedPosts);
+			}
+		} catch (error) {
+			setError(error.message || 'Ошибка при загрузке постов');
+		}
+	};
+
+	useEffect(() => {
+		fetchPosts();
+	}, []);
 
 	return (
 		<div className='flex flex-col min-h-screen'>
@@ -117,9 +52,8 @@ const Home = () => {
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-6 bg-gray-500'>
-					{posts.map((post, index) => (
-						<Post key={index} {...post} />
-					))}
+					{error && <p className='text-red-500'>{error}</p>}
+					{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
 				</div>
 				<TopUsers />
 			</div>

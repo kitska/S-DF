@@ -190,7 +190,7 @@ exports.getCategoriesForPost = async (req, res) => {
 exports.getLikesForPost = async (req, res) => {
 	try {
 		const { post_id } = req.params;
-		const { type } = req.body;
+		const { type } = req.query;
 
 		const post = await Post.findByPk(post_id);
 		if (!post) return res.status(404).json({ message: 'Post not found' });
