@@ -48,7 +48,8 @@ const TopUsers = () => {
 									fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
 									profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
 									rating={user.rating}
-									className='w-64' // Фиксированный размер для всех компонентов User
+									className='w-64'
+									userId={user.id} // Фиксированный размер для всех компонентов User
 								/>
 							</div>
 						</div>
