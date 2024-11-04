@@ -23,28 +23,25 @@ app.use(
 const assetsPath = path.join(__dirname, 'assets', 'img');
 const uploadsPath = path.join(__dirname, 'uploads');
 
-app.get('/api/assets/img/:imageName', (req, res) => {
-    const imageName = req.params.imageName;
-    const imagePath = path.join(assetsPath, imageName);
-
-    res.sendFile(imagePath, (err) => {
-        if (err) {
-            console.error('Ошибка при отправке файла:', err);
-            res.status(err.status).end();
-        }
-    });
-});
-
-app.get('/api/uploads/:fileName', (req, res) => {
-	const fileName = req.params.fileName;
-	const filePath = path.join(uploadsPath, fileName);
-
+const sendFile = (filePath, res) => {
 	res.sendFile(filePath, err => {
 		if (err) {
 			console.error('Ошибка при отправке файла:', err);
 			res.status(err.status).end();
 		}
 	});
+};
+
+app.get('/api/assets/img/:imageName', (req, res) => {
+	const imageName = req.params.imageName;
+	const imagePath = path.join(assetsPath, imageName);
+	sendFile(imagePath, res);
+});
+
+app.get('/api/uploads/:fileName', (req, res) => {
+	const fileName = req.params.fileName;
+	const filePath = path.join(uploadsPath, fileName);
+	sendFile(filePath, res);
 });
 
 const adminRouter = require('./services/admin');
