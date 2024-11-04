@@ -1,9 +1,9 @@
 // src/components/User.jsx
 import React from 'react';
 
-const User = ({ fullName, profilePicture, rating }) => {
+const User = ({ fullName, profilePicture, rating, className = '' }) => {
 	return (
-		<div className='flex items-center p-2 overflow-hidden bg-gray-800 rounded-lg shadow-md'>
+		<div className={`flex items-center p-2 overflow-hidden bg-gray-800 rounded-lg shadow-md ${className}`}>
 			<img src={profilePicture} alt={fullName} className='w-10 h-10 mr-3 rounded-full' />
 			<div className='flex flex-col'>
 				<span className='overflow-hidden text-lg font-semibold text-gray-100 whitespace-nowrap text-ellipsis'>{fullName}</span>

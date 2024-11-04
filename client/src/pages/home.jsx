@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
 import Header from '../components/header';
 import Footer from '../components/footer';
@@ -15,23 +16,21 @@ const Home = () => {
 		try {
 			const response = await PostHandler.getAllPosts(1, '', '', 'created_at', 'desc');
 			if (response.status === 200) {
-				// Маппинг постов с извлечением данных о пользователе и категориях
 				const formattedPosts = await Promise.all(
 					response.data.posts.map(async post => {
-						// Получаем лайки и дизлайки для каждого поста
 						const likeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'like');
 						const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'dislike');
 
 						return {
 							id: post.id,
 							title: post.title,
-							content: `${post.content.slice(0, 100)}...`, // Пример короткого превью
-							author: post.User.login, // Имя автора
+							content: `${post.content.slice(0, 100)}...`,
+							author: post.User.login,
 							date: formatDate(post.publish_date),
-							status: post.status === 'active', // Перекодирование статуса
-							categories: post.Categories.map(category => category.title), // Извлечение заголовков категорий
-							likes: likeResponse.data.likeCount || 0, // Число лайков
-							dislikes: dislikeResponse.data.likeCount || 0, // Число дизлайков
+							status: post.status === 'active',
+							categories: post.Categories.map(category => category.title),
+							likes: likeResponse.data.likeCount || 0,
+							dislikes: dislikeResponse.data.likeCount || 0,
 						};
 					})
 				);

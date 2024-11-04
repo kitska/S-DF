@@ -5,23 +5,23 @@ import UserHandler from '../api/userHandler';
 import { decodeToken } from '../utils/decodeJWT';
 
 const Header = () => {
-	const token = localStorage.getItem('token'); // Получаем токен из локального хранилища
-	const [userAvatar, setUserAvatar] = useState(null); // Состояние для хранения URL аватара пользователя
+	const token = localStorage.getItem('token');
+	const [userAvatar, setUserAvatar] = useState(null);
+	const [login, setLogin] = useState(null);
+	const [userId, setUserId] = useState(null);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (token) {
-				console.log('Токен:', token); // Проверка наличия токена
-				const decodedTokenID = decodeToken(token); // Декодируем токен
+				const decodedTokenID = decodeToken(token);
 
 				if (decodedTokenID) {
 					try {
 						const response = await UserHandler.getUserById(decodedTokenID);
-						console.log('Ответ от сервера:', response.data); // Проверка ответа от сервера
-						// Формируем полный URL для аватара пользователя
 						const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${response.data.profile_picture}`;
-						console.log('URL аватара:', avatarUrl); // Проверка URL аватара
-						setUserAvatar(avatarUrl); // Устанавливаем полный URL аватара
+						setUserAvatar(avatarUrl);
+						setLogin(response.data.login);
+						setUserId(response.data.id);
 					} catch (error) {
 						console.error('Ошибка при получении данных пользователя:', error);
 					}
@@ -30,30 +30,33 @@ const Header = () => {
 		};
 
 		fetchUserData();
-	}, [token]); // Запускаем эффект при изменении токена
+	}, [token]);
 
 	return (
-		<header className='fixed top-0 left-0 z-50 w-full py-3 bg-gray-900'>
-			<div className='container flex items-center justify-between max-w-5xl p-4 mx-auto bg-gray-800 rounded-lg shadow-lg'>
+		<header className='fixed top-0 left-0 z-50 w-full py-4 bg-gray-900'>
+			<div className='container flex items-center justify-between max-w-5xl p-2 mx-auto bg-gray-800 rounded-lg shadow-lg'>
 				{/* Logo */}
 				<div className='flex-shrink-0'>
 					<a href='/'>
-						<img src={logoImage} alt='Logo' className='w-auto h-10' />
+						<img src={logoImage} alt='Logo' className='w-auto h-8' />
 					</a>
 				</div>
 
 				{/* Search Bar */}
-				<div className='flex-grow mx-4'>
-					<input type='text' placeholder='Search...' className='w-full p-2 text-white bg-gray-700 border border-gray-600 rounded-full' />
+				<div className='flex-grow mx-3'>
+					<input type='text' placeholder='Search...' className='w-full p-1 text-white bg-gray-700 border border-gray-600 rounded-full' />
 				</div>
 
-				{/* Login Button or User Avatar */}
-				<div>
+				{/* User Avatar and Login Block */}
+				<div className='flex items-center space-x-3'>
 					{userAvatar ? (
-						<img src={userAvatar} alt='User Avatar' className='w-10 h-10 rounded-full' />
+						<Link to={`/user/${userId}`} className='flex items-center p-1 space-x-2 transition duration-200 rounded-lg hover:bg-gray-700'>
+							<img src={userAvatar} alt='User Avatar' className='w-8 h-8 border-2 border-gray-500 rounded-full' />
+							<span className='font-semibold text-white'>{login}</span>
+						</Link>
 					) : (
 						<Link to='/login'>
-							<button className='px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600'>Log In</button>
+							<button className='px-3 py-1 text-white bg-blue-500 rounded-full hover:bg-blue-600'>Log In</button>
 						</Link>
 					)}
 				</div>
