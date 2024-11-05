@@ -7,10 +7,10 @@ const apiClient = axios.create({
 
 const UserHandler = {
 	// Получение всех пользователей с параметрами фильтрации и сортировки
-	getAllUsers: async (page = 1, login = '', sortBy = 'id', sortOrder = 'asc') => {
+	getAllUsers: async (page = 1, pageSize = 10, login = '', sortBy = 'id', sortOrder = 'asc') => {
 		try {
 			const response = await apiClient.get('/', {
-				params: { page, login, sortBy, sortOrder },
+				params: { page, pageSize, login, sortBy, sortOrder },
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {

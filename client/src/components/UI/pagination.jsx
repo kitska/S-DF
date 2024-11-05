@@ -1,12 +1,12 @@
-// src/components/Pagination.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Pagination = ({ currentPage, totalPages }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange, pageType }) => {
 	const navigate = useNavigate();
 
 	const handlePageChange = page => {
-		navigate(`/posts?page=${page}`);
+		onPageChange(page); // Передаем номер страницы в родительский компонент
+		navigate(`/${pageType}?page=${page}`); // Изменяем маршрут для соответствующей страницы
 	};
 
 	const handlePrevious = () => {

@@ -9,7 +9,7 @@ const TopUsers = () => {
 	useEffect(() => {
 		const fetchUsers = async () => {
 			try {
-				const response = await UserHandler.getAllUsers(1, '', 'rating', 'desc');
+				const response = await UserHandler.getAllUsers(1, 10,'', 'rating', 'desc');
 				if (response.status === 200) {
 					setUsers(response.data.users); // Предполагается, что массив пользователей находится в `response.data.users`
 				}
@@ -49,7 +49,7 @@ const TopUsers = () => {
 									profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
 									rating={user.rating}
 									className='w-64'
-									userId={user.id} // Фиксированный размер для всех компонентов User
+									userId={user.id}
 								/>
 							</div>
 						</div>

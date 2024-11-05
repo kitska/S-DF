@@ -1,4 +1,3 @@
-// src/pages/PostsPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '../components/header';
@@ -13,11 +12,14 @@ const PostsPage = () => {
 	const [posts, setPosts] = useState([]);
 	const [totalPages, setTotalPages] = useState(1);
 	const [error, setError] = useState(null);
+	const [loading, setLoading] = useState(true); // Добавляем состояние для отслеживания загрузки
 
-	const [searchParams] = useSearchParams();
-	const currentPage = parseInt(searchParams.get('page')) || 1;
+	// Получаем `page` из URL
+	const [searchParams, setSearchParams] = useSearchParams();
+	const currentPage = Number(searchParams.get('page')) || 1;
 
 	const fetchPosts = async page => {
+		setLoading(true); // Устанавливаем загрузку в true при начале запроса
 		try {
 			const response = await PostHandler.getAllPosts(page);
 			if (response.status === 200) {
@@ -41,15 +43,24 @@ const PostsPage = () => {
 				);
 				setPosts(formattedPosts);
 				setTotalPages(response.data.totalPages);
+			} else {
+				setError('Не удалось загрузить посты. Попробуйте позже.');
 			}
 		} catch (error) {
 			setError(error.message || 'Ошибка при загрузке постов');
+		} finally {
+			setLoading(false); // Отключаем состояние загрузки после завершения запроса
 		}
 	};
 
+	// Обновляем данные при изменении страницы
 	useEffect(() => {
 		fetchPosts(currentPage);
 	}, [currentPage]);
+
+	const handlePageChange = page => {
+		setSearchParams({ page }); // Обновляем URL при смене страницы
+	};
 
 	return (
 		<div className='flex flex-col min-h-screen'>
@@ -57,9 +68,10 @@ const PostsPage = () => {
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-6 bg-gray-500'>
+					{loading && <p className='text-gray-300'>Загрузка постов...</p>} {/* Индикатор загрузки */}
 					{error && <p className='text-red-500'>{error}</p>}
-					{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
-					<Pagination currentPage={currentPage} totalPages={totalPages} />
+					{!loading && posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : !loading && <p className='text-gray-200'>Посты не найдены.</p>}
+					<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} pageType='posts' />
 				</div>
 			</div>
 			<Footer />

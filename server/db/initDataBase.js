@@ -10,6 +10,7 @@ const User = require('../models/user');
 const Like = require('../models/like');
 const Favourite = require('../models/favourite');
 const { faker } = require('@faker-js/faker');
+const randomPP = require('../services/randomPP');
 
 const setAssociations = () => {
 	Post.belongsToMany(Category, {
@@ -81,7 +82,6 @@ const createDatabase = async () => {
 
 const insertTestData = async () => {
 	try {
-		// Создание тестовых пользователей
 		const testUsers = [
 			{
 				login: 'admin',
@@ -96,12 +96,12 @@ const insertTestData = async () => {
 				password: faker.internet.password(),
 				full_name: faker.person.fullName(),
 				email: faker.internet.email(),
+				profile_picture: randomPP.getRandomProfilePicture(),
 				rating: Math.floor(Math.random() * 400) - 200,
 				email_confirmed: true,
 			})),
 		];
 
-		// Хеширование паролей и вставка пользователей
 		const hashedUsers = await Promise.all(
 			testUsers.map(async user => {
 				const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -111,7 +111,6 @@ const insertTestData = async () => {
 
 		await User.bulkCreate(hashedUsers, { ignoreDuplicates: true });
 
-		// Создание тестовых категорий
 		const testCategories = Array.from({ length: 200 }).map(() => ({
 			title: faker.commerce.department(),
 			description: faker.lorem.sentence(),
@@ -119,35 +118,31 @@ const insertTestData = async () => {
 
 		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
 
-		// Создание тестовых постов
 		const testPosts = Array.from({ length: 5000 }).map(() => ({
 			title: faker.lorem.sentence(),
 			content: faker.lorem.paragraphs(3),
-			author_id: faker.number.int({ min: 1, max: 1000 }), // Увеличиваем диапазон авторов
+			status: faker.helpers.arrayElement(['active', 'inactive']),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
 		}));
 
 		await Post.bulkCreate(testPosts, { ignoreDuplicates: true });
 
-		// Получение всех категорий и постов
 		const testCategoriesAll = await Category.findAll();
 		const testPostsAll = await Post.findAll();
 
-		// Добавление категорий к постам
 		for (const post of testPostsAll) {
-			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 3); // Увеличиваем количество категорий
+			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 3);
 			await post.addCategories(categories);
 		}
 
-		// Создание тестовых комментариев
 		const testComments = Array.from({ length: 12000 }).map((_, index) => ({
 			content: faker.lorem.sentence(),
-			post_id: faker.number.int({ min: 1, max: testPostsAll.length }), // Увеличиваем диапазон постов
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 		}));
 
 		await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
 
-		// Создание тестовых лайков
 		const testLikes = Array.from({ length: 8000 }).map(() => ({
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
@@ -156,7 +151,6 @@ const insertTestData = async () => {
 
 		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
 
-		// Создание тестовых избранных записей
 		const testFavourites = Array.from({ length: 5000 }).map(() => ({
 			user_id: faker.number.int({ min: 1, max: 1000 }),
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),

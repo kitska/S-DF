@@ -7,10 +7,10 @@ const apiClient = axios.create({
 
 const CategoryHandler = {
 	// Получение всех категорий с параметрами фильтрации и сортировки
-	getAllCategories: async (page = 1, title = '', sortBy = 'id', sortOrder = 'asc') => {
+	getAllCategories: async (page = 1, pageSize = 10, title = '', sortBy = 'id', sortOrder = 'asc') => {
 		try {
 			const response = await apiClient.get('/', {
-				params: { page, title, sortby: sortBy, sortOrder },
+				params: { page, pageSize, title, sortby: sortBy, sortOrder },
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
