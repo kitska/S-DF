@@ -81,6 +81,7 @@ const createDatabase = async () => {
 
 const insertTestData = async () => {
 	try {
+		// Создание тестовых пользователей
 		const testUsers = [
 			{
 				login: 'admin',
@@ -90,99 +91,80 @@ const insertTestData = async () => {
 				email_confirmed: true,
 				role: 'admin',
 			},
-			...Array.from({ length: 5 }).map(() => ({
-				login: faker.internet.userName(),
+			...Array.from({ length: 1000 }).map(() => ({
+				login: faker.internet.username(),
 				password: faker.internet.password(),
 				full_name: faker.person.fullName(),
 				email: faker.internet.email(),
-				rating: Math.floor(Math.random() * 100),
+				rating: Math.floor(Math.random() * 400) - 200,
 				email_confirmed: true,
 			})),
 		];
 
-		for (const user of testUsers) {
-			const hashedPassword = await bcrypt.hash(user.password, 10);
-			user.password = hashedPassword;
+		// Хеширование паролей и вставка пользователей
+		const hashedUsers = await Promise.all(
+			testUsers.map(async user => {
+				const hashedPassword = await bcrypt.hash(user.password, 10);
+				return { ...user, password: hashedPassword };
+			})
+		);
 
-			await User.findOrCreate({
-				where: { email: user.email },
-				defaults: user,
-			});
-		}
+		await User.bulkCreate(hashedUsers, { ignoreDuplicates: true });
 
-		const testCategories = Array.from({ length: 5 }).map(() => ({
+		// Создание тестовых категорий
+		const testCategories = Array.from({ length: 200 }).map(() => ({
 			title: faker.commerce.department(),
 			description: faker.lorem.sentence(),
 		}));
 
-		for (const category of testCategories) {
-			await Category.findOrCreate({
-				where: { title: category.title },
-				defaults: category,
-			});
-		}
+		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
 
-		const testPosts = Array.from({ length: 5 }).map(() => ({
+		// Создание тестовых постов
+		const testPosts = Array.from({ length: 5000 }).map(() => ({
 			title: faker.lorem.sentence(),
 			content: faker.lorem.paragraphs(3),
-			author_id: faker.number.int({ min: 1, max: 5 }),
+			author_id: faker.number.int({ min: 1, max: 1000 }), // Увеличиваем диапазон авторов
 		}));
 
-		for (const post of testPosts) {
-			await Post.findOrCreate({
-				where: { title: post.title },
-				defaults: post,
-			});
-		}
+		await Post.bulkCreate(testPosts, { ignoreDuplicates: true });
 
+		// Получение всех категорий и постов
 		const testCategoriesAll = await Category.findAll();
 		const testPostsAll = await Post.findAll();
 
+		// Добавление категорий к постам
 		for (const post of testPostsAll) {
-			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 2);
+			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 3); // Увеличиваем количество категорий
 			await post.addCategories(categories);
 		}
 
-		const testComments = Array.from({ length: 5 }).map((_, index) => ({
+		// Создание тестовых комментариев
+		const testComments = Array.from({ length: 12000 }).map((_, index) => ({
 			content: faker.lorem.sentence(),
-			post_id: index + 1,
-			author_id: faker.number.int({ min: 1, max: 5 }),
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }), // Увеличиваем диапазон постов
+			author_id: faker.number.int({ min: 1, max: 1000 }),
 		}));
 
-		for (const comment of testComments) {
-			await Comment.findOrCreate({
-				where: { content: comment.content, post_id: comment.post_id },
-				defaults: comment,
-			});
-		}
+		await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
 
-		const testLikes = Array.from({ length: 5 }).map((_, index) => ({
-			post_id: index + 1,
-			author_id: faker.number.int({ min: 1, max: 5 }),
+		// Создание тестовых лайков
+		const testLikes = Array.from({ length: 8000 }).map(() => ({
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
 			type: faker.helpers.arrayElement(['like', 'dislike']),
 		}));
 
-		for (const like of testLikes) {
-			await Like.findOrCreate({
-				where: { post_id: like.post_id, author_id: like.author_id },
-				defaults: like,
-			});
-		}
+		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
 
-		const testFavourites = Array.from({ length: 5 }).map((_, index) => ({
-			user_id: faker.number.int({ min: 1, max: 5 }),
-			post_id: index + 1,
+		// Создание тестовых избранных записей
+		const testFavourites = Array.from({ length: 5000 }).map(() => ({
+			user_id: faker.number.int({ min: 1, max: 1000 }),
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 		}));
 
-		for (const favourite of testFavourites) {
-			await Favourite.findOrCreate({
-				where: {
-					user_id: favourite.user_id,
-					post_id: favourite.post_id,
-				},
-				defaults: favourite,
-			});
-		}
+		await Favourite.bulkCreate(testFavourites, { ignoreDuplicates: true });
+
+		console.log('Test data inserted successfully!');
 	} catch (error) {
 		console.error('Error adding test data:', error);
 	}
