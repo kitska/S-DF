@@ -1,6 +1,6 @@
 const Category = require('../models/category');
 const Post = require('../models/post');
-const PostCategory = require('../models/post_category');
+const User = require('../models/user');
 const { Op } = require('sequelize');
 
 exports.getAllCategories = async (req, res) => {
@@ -49,7 +49,6 @@ exports.getAllCategories = async (req, res) => {
 	}
 };
 
-
 exports.getCategoryById = async (req, res) => {
 	const { category_id } = req.params;
 
@@ -73,8 +72,18 @@ exports.getPostsForCategory = async (req, res) => {
 			include: [
 				{
 					model: Post,
-					attributes: ['id', 'title', 'content', 'publish_date'],
 					through: { attributes: [] },
+					include: [
+						{
+							model: User,
+							attributes: ['id', 'full_name', 'login'],
+						},
+						{
+							model: Category,
+							attributes: ['id', 'title'],
+							through: { attributes: [] },
+						},
+					],
 				},
 			],
 		});

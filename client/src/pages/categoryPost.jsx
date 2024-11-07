@@ -1,21 +1,21 @@
-// src/pages/Home.jsx
+// src/pages/CategoryPage.jsx
 import React, { useEffect, useState } from 'react';
-import Header from '../components/header';
-import Footer from '../components/footer';
-import Sidebar from '../components/sidebar';
-import TopUsers from '../components/topUsers';
-import Post from '../components/UI/post';
+import { useParams } from 'react-router-dom';
 import PostHandler from '../api/postHandler';
+import CategoryHandler from '../api/categoryHandler';
+import Post from '../components/UI/post';
 import { formatDate } from '../utils/formatDate';
 
-const Home = () => {
+const CategoryPage = () => {
+	const { categoryId } = useParams();
 	const [posts, setPosts] = useState([]);
 	const [error, setError] = useState(null);
 
-	const fetchPosts = async () => {
+	const fetchPostsByCategory = async () => {
 		try {
-			const response = await PostHandler.getAllPosts(1, '', '', 'created_at', 'desc');
+			const response = await CategoryHandler.getPostsByCategory(categoryId);
 			if (response.status === 200) {
+				console.log(response.data);
 				const formattedPosts = await Promise.all(
 					response.data.posts.map(async post => {
 						const likeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'like');
@@ -45,23 +45,16 @@ const Home = () => {
 	};
 
 	useEffect(() => {
-		fetchPosts();
-	}, []);
+		fetchPostsByCategory();
+	}, [categoryId]);
 
 	return (
-		<div className='flex flex-col min-h-screen'>
-			<Header />
-			<div className='flex flex-grow mt-20'>
-				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-500'>
-					{error && <p className='text-red-500'>{error}</p>}
-					{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
-				</div>
-				<TopUsers />
-			</div>
-			<Footer />
+		<div className='p-6'>
+			<h1 className='text-2xl font-semibold'>Posts in Category</h1>
+			{error && <p className='text-red-500'>{error}</p>}
+			{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
 		</div>
 	);
 };
 
-export default Home;
+export default CategoryPage;

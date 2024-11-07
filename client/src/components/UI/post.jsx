@@ -1,3 +1,4 @@
+// src/components/UI/Post.jsx
 import React, { useState, useRef } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
@@ -75,7 +76,7 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 						</div>
 						<div className='flex items-center space-x-1 text-xs text-gray-500'>
 							{visibleCategories.map((category, index) => (
-								<Category key={index} name={category} className='mr-2' />
+								<Category name={category.title} categoryId={category.id} className='mr-2' />
 							))}
 							{hasMoreCategories && (
 								<span
@@ -100,7 +101,7 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 						<h3 className='mb-2 text-xs font-semibold text-center text-gray-200'>All Categories</h3>
 						<div className='flex flex-wrap mt-2 space-x-1 text-xs text-gray-100'>
 							{categories.map((category, index) => (
-								<Category key={index} name={category} className='mr-2' />
+								<Category name={category.title} categoryId={category.id} />
 							))}
 						</div>
 					</div>
