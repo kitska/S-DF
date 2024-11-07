@@ -110,7 +110,7 @@ exports.getCommentsForPost = async (req, res) => {
 
 		const comments = await Comment.findAll({
 			where: { post_id },
-			attributes: ['id', 'author_id', 'content', 'publish_date'],
+			attributes: ['id', 'author_id', 'comment_id', 'content', 'publish_date'],
 			order: [['publish_date', 'DESC']],
 		});
 

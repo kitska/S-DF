@@ -90,6 +90,31 @@ exports.likeComment = async (req, res) => {
 	}
 };
 
+exports.replyToComment = async (req, res) => {
+	try {
+		const { comment_id } = req.params;
+		const { content } = req.body;
+		const author_id = req.user.id;
+
+		const parentComment = await Comment.findByPk(comment_id);
+		if (!parentComment) {
+			return res.status(404).json({ message: 'Parent comment not found' });
+		}
+
+		const reply = await Comment.create({
+			content,
+			post_id: parentComment.post_id,
+			author_id,
+			comment_id,
+		});
+
+		res.status(201).json(reply);
+	} catch (error) {
+		console.error('Error creating reply:', error);
+		res.status(500).json({ message: 'Server error', error });
+	}
+};
+
 exports.updateComment = async (req, res) => {
 	const commentId = req.params.comment_id;
 	const { content, status } = req.body;

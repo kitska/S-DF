@@ -34,6 +34,8 @@ const setAssociations = () => {
 	User.hasMany(Post, { foreignKey: 'author_id' });
 	User.hasMany(Comment, { foreignKey: 'author_id' });
 	User.hasMany(Like, { foreignKey: 'author_id' });
+	Comment.belongsTo(Comment, { as: 'ParentComment', foreignKey: 'comment_id' });
+	Comment.hasMany(Comment, { as: 'Replies', foreignKey: 'comment_id' });
 };
 
 const createDatabase = async () => {
@@ -62,7 +64,6 @@ const createDatabase = async () => {
 		`);
 
 		if (tableExists[0].length === 0) {
-			setAssociations();
 
 			await sequelize.sync({ force: false });
 			console.log('Tables successfully created based on models');
@@ -135,13 +136,25 @@ const insertTestData = async () => {
 			await post.addCategories(categories);
 		}
 
-		const testComments = Array.from({ length: 12000 }).map((_, index) => ({
+		const testComments = Array.from({ length: 8000 }).map(() => ({
 			content: faker.lorem.sentence(),
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 		}));
 
-		await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
+		const insertedComments = await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
+
+		const nestedComments = Array.from({ length: 4000 }).map(() => {
+			const parentComment = insertedComments[Math.floor(Math.random() * insertedComments.length)];
+			return {
+				content: faker.lorem.sentence(),
+				post_id: parentComment.post_id,
+				author_id: faker.number.int({ min: 1, max: 1000 }),
+				comment_id: parentComment.id,
+			};
+		});
+
+		await Comment.bulkCreate(nestedComments, { ignoreDuplicates: true });
 
 		const testLikes = Array.from({ length: 8000 }).map(() => ({
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
@@ -163,5 +176,6 @@ const insertTestData = async () => {
 		console.error('Error adding test data:', error);
 	}
 };
+
 
 module.exports = createDatabase;

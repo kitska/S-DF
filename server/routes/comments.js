@@ -6,6 +6,7 @@ const { authenticateToken, isAdmin } = require('../middleware/authMW');
 router.get('/:comment_id', commentController.getCommentById);
 router.get('/:comment_id/like', commentController.getLikesForComment);
 router.post('/:comment_id/like', authenticateToken, commentController.likeComment);
+router.post('/:comment_id/reply', authenticateToken, commentController.replyToComment);
 router.patch('/:comment_id', authenticateToken, commentController.updateComment);
 router.delete('/:comment_id', authenticateToken, commentController.deleteComment);
 router.delete('/:comment_id/like', authenticateToken, commentController.deleteLike);

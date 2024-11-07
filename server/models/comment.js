@@ -27,6 +27,15 @@ const Comment = sequelize.define(
 			},
 			onDelete: 'CASCADE',
 		},
+		comment_id: {
+			type: DataTypes.INTEGER,
+			allowNull: true,
+			references: {
+				model: 'comments',
+				key: 'id',
+			},
+			onDelete: 'CASCADE',
+		},
 		publish_date: {
 			type: DataTypes.DATE,
 			defaultValue: DataTypes.NOW,
@@ -46,7 +55,10 @@ const Comment = sequelize.define(
 	}
 );
 
+
 Comment.belongsTo(Post, { foreignKey: 'post_id' });
 Comment.belongsTo(User, { foreignKey: 'author_id' });
+Comment.belongsTo(Comment, { as: 'ParentComment', foreignKey: 'comment_id' });
+Comment.hasMany(Comment, { as: 'Replies', foreignKey: 'comment_id' });
 
 module.exports = Comment;
