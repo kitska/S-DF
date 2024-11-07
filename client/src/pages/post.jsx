@@ -32,7 +32,10 @@ const PostPage = () => {
 					author: post.User.login,
 					date: formatDate(post.publish_date),
 					status: post.status === 'active',
-					categories: post.Categories.map(category => category.title),
+					categories: post.Categories.map(category => ({
+						id: category.id,
+						title: category.title,
+					})),
 				};
 
 				setPost(formattedPost);

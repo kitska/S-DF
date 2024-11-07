@@ -35,7 +35,10 @@ const PostsPage = () => {
 							author: post.User.login,
 							date: formatDate(post.publish_date),
 							status: post.status === 'active',
-							categories: post.Categories.map(category => category.title),
+							categories: post.Categories.map(category => ({
+								id: category.id,
+								title: category.title,
+							})),
 							likes: likeResponse.data.likeCount || 0,
 							dislikes: dislikeResponse.data.dislikeCount || 0,
 						};
