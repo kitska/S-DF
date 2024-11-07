@@ -21,9 +21,11 @@ const CommentHandler = {
 	},
 
 	// Получение лайков для комментария
-	getLikesForComment: async commentId => {
+	getLikesForComment: async (commentId, likeType) => {
 		try {
-			const response = await apiClient.get(`/${commentId}/like`);
+			const response = await apiClient.get(`/${commentId}/like`, {
+				params: { type: likeType },
+			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
 			console.error(`Ошибка при получении лайков для комментария с ID ${commentId}:`, error);
@@ -45,6 +47,21 @@ const CommentHandler = {
 			console.error(`Ошибка при создании лайка для комментария с ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error creating like for comment',
+				status: error.response?.status || 500,
+			};
+		}
+	},
+
+	replyToComment: async (commentId, replyData, token) => {
+		try {
+			const response = await apiClient.post(`/${commentId}/reply`, replyData, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+			return { data: response.data, status: response.status };
+		} catch (error) {
+			console.error(`Ошибка при ответе на комментарий с ID ${commentId}:`, error);
+			throw {
+				message: error.response?.data?.message || 'Error replying to comment',
 				status: error.response?.status || 500,
 			};
 		}

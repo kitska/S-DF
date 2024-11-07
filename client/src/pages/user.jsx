@@ -51,7 +51,7 @@ const UserProfilePage = () => {
 							<h2 className='text-2xl font-semibold text-gray-100'>{isOwnProfile ? 'Мой профиль' : `Профиль пользователя ${user.full_name}`}</h2>
 							<p className='text-gray-300'>Логин: {user.login}</p>
 							<p className='text-gray-300'>Рейтинг: {user.rating}</p>
-							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='w-32 h-32 mt-4 rounded-full' />
+							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='object-cover w-32 h-32 mt-4 rounded-full' />
 						</div>
 					)}
 				</div>

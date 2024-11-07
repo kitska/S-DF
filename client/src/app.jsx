@@ -8,6 +8,7 @@ import PostsPage from './pages/posts';
 import UsersPage from './pages/users';
 import CategoriesPage from './pages/categories';
 import UserProfilePage from './pages/user'; // Импортируем страницу профиля пользователя
+import PostPage from './pages/post';
 import './styles/main.scss';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
 				<Route path='/posts' element={<PostsPage />} />
 				<Route path='/categories' element={<CategoriesPage />} />
 				<Route path='/user/:id' element={<UserProfilePage />} />
+				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
 				<Route path='*' element={<ErrorPage errorCode={404} errorMessage={'Page Not Found'} />} />
 			</Routes>

@@ -1,6 +1,6 @@
 const Like = require('../models/like');
 const Comment = require('../models/comment');
-const Post = require('../models/post');
+const User = require('../models/user');
 
 exports.getCommentById = async (req, res) => {
 	const commentId = req.params.comment_id;
@@ -22,7 +22,7 @@ exports.getCommentById = async (req, res) => {
 exports.getLikesForComment = async (req, res) => {
 	try {
 		const { comment_id } = req.params;
-		const { type } = req.body;
+		const { type } = req.query;
 
 		const likeCount = await Like.count({
 			where: { comment_id, ...(type && { type }) },
