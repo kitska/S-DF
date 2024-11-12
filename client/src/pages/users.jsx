@@ -56,8 +56,8 @@ const UsersPage = () => {
 						{/* Добавили grid */}
 						{users.length > 0 ? (
 							users.map(user => (
-								<Link to={`/user/${user.id}`}>
-									<div key={user.id} className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
+								<Link key={user.id} to={`/user/${user.id}`}>
+									<div className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
 										<User
 											fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
 											profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}

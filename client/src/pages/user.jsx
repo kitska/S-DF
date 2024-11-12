@@ -9,7 +9,7 @@ import { decodeToken } from '../utils/decodeJWT';
 import Post from '../components/UI/post';
 import PostHandler from '../api/postHandler';
 import { formatDate } from '../utils/formatDate';
-import ErrorMessage from '../components/UI/errorMessage';
+import AuthHandler from '../api/authHandler';
 
 const UserProfilePage = () => {
 	const { id } = useParams();
@@ -26,12 +26,13 @@ const UserProfilePage = () => {
 	const isOwnProfile = Number(id) === currentUserId;
 
 	const handleLogout = () => {
+		AuthHandler.logoutUser(token);
 		localStorage.removeItem('token');
 		navigate('/');
 	};
 
 	const handleEditProfile = () => {
-		navigate('/edit-profile'); // Assuming there's a route for editing the profile
+		navigate(`/edit-profile/${id}`); // Assuming there's a route for editing the profile
 	};
 
 	const fetchUserData = async userId => {
