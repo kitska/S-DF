@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const randomPP = require('../services/randomPP');
-const port = process.env.PORT || 3000;
+const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL || 3000;
 
 exports.register = async (req, res) => {
 	const { login, password, password_confirmation, email, full_name } = req.body;
@@ -43,7 +43,7 @@ exports.register = async (req, res) => {
 			email_confirmation_token: emailToken,
 		});
 
-		const confirmationLink = `http://localhost:${port}/api/auth/confirm-email/${emailToken}`;
+		const confirmationLink = `${REACT_APP_BASE_URL}/confirm-email/${emailToken}`;
 
 		const transporter = nodemailer.createTransport({
 			service: 'gmail',
@@ -142,7 +142,7 @@ exports.sendResetLink = async (req, res) => {
 
 		const resetToken = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-		const resetLink = `http://localhost:${port}/api/auth/password-reset/${resetToken}`;
+		const resetLink = `${REACT_APP_BASE_URL}/reset-password/${resetToken}`;
 
 		const transporter = nodemailer.createTransport({
 			service: 'gmail',

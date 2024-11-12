@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/header';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
 import AuthHandler from '../api/authHandler';
+import ErrorMessage from '../components/UI/errorMessage'; // Подключаем ErrorMessage
 
 const RegisterPage = () => {
 	const navigate = useNavigate();
@@ -21,7 +22,7 @@ const RegisterPage = () => {
 	});
 	const [emailError, setEmailError] = useState('');
 	const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
-	const [registrationError, setRegistrationError] = useState('');
+	const [registrationError, setRegistrationError] = useState(null); // Ошибка регистрации
 
 	const handleFocus = field => {
 		setFocused(prev => ({ ...prev, [field]: true }));
@@ -59,7 +60,6 @@ const RegisterPage = () => {
 	};
 
 	useEffect(() => {
-		// Проверяем наличие токена при загрузке компонента
 		const token = localStorage.getItem('token');
 		if (token) {
 			navigate('/'); // Если токен есть, перенаправляем на главную страницу
@@ -85,10 +85,10 @@ const RegisterPage = () => {
 				if (statusCode === 201) {
 					navigate('/login');
 				} else {
-					setRegistrationError(response.data.message || 'Registration failed');
+					setRegistrationError({ message: response.data.message || 'Registration failed' });
 				}
 			} catch (error) {
-				setRegistrationError('An error occurred during registration');
+				setRegistrationError({ message: error.message });
 			}
 		}
 	};
@@ -207,7 +207,7 @@ const RegisterPage = () => {
 							</label>
 							{passwordConfirmationError && <p className='mt-1 text-sm text-red-500'>{passwordConfirmationError}</p>}
 						</div>
-
+						{registrationError && <ErrorMessage errorCode={registrationError.code} errorMessage={registrationError.message} />}
 						<button className='px-4 py-2 text-white rounded bg-violet-500 hover:bg-violet-700 focus:ring-2 ring-violet-300'>Register</button>
 					</form>
 					<p className='mt-4 text-center text-white'>

@@ -11,6 +11,7 @@ import UserProfilePage from './pages/user'; // Импортируем стран
 import PostPage from './pages/post';
 import CategoryPostsPage from './pages/categoryPost';
 import ScrollToTopButton from './components/UI/scrollToTopButton';
+import EmailConfirmPage from './pages/emailConfirm';
 import './styles/main.scss';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
 				<Route path='/user/:id' element={<UserProfilePage />} />
 				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
+				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
 				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
 				<Route path='*' element={<ErrorPage errorCode={404} errorMessage={'Page Not Found'} />} />
 			</Routes>

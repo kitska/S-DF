@@ -54,7 +54,7 @@ const LoginPage = () => {
 				const errorMessage = err.response.data.message || 'An unknown error occurred. Please try again.';
 				setError({ message: errorMessage });
 			} else {
-				setError({ message: 'Network error. Please check your internet connection.' });
+				setError({ message: err.message });
 			}
 		}
 	};

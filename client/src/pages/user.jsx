@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaSignOutAlt, FaEdit } from 'react-icons/fa';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
@@ -8,9 +9,11 @@ import { decodeToken } from '../utils/decodeJWT';
 import Post from '../components/UI/post';
 import PostHandler from '../api/postHandler';
 import { formatDate } from '../utils/formatDate';
+import ErrorMessage from '../components/UI/errorMessage';
 
 const UserProfilePage = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
 	const [user, setUser] = useState(null);
 	const [writtenPosts, setWrittenPosts] = useState([]);
 	const [likedPosts, setLikedPosts] = useState([]);
@@ -21,6 +24,15 @@ const UserProfilePage = () => {
 	const token = localStorage.getItem('token');
 	const currentUserId = decodeToken(token);
 	const isOwnProfile = Number(id) === currentUserId;
+
+	const handleLogout = () => {
+		localStorage.removeItem('token');
+		navigate('/');
+	};
+
+	const handleEditProfile = () => {
+		navigate('/edit-profile'); // Assuming there's a route for editing the profile
+	};
 
 	const fetchUserData = async userId => {
 		try {
@@ -114,7 +126,23 @@ const UserProfilePage = () => {
 					{error && <p className='text-red-500'>{error}</p>}
 
 					{user && (
-						<div className='flex flex-col items-center p-8 bg-gray-700 rounded-lg shadow-lg'>
+						<div className='relative flex flex-col items-center p-8 bg-gray-700 rounded-lg shadow-lg'>
+							{/* Контейнер с кнопками */}
+							<div className='absolute flex space-x-4 top-4 right-4'>
+								<button onClick={handleLogout} className='p-2 text-red-500 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-red-700 focus:outline-none'>
+									<FaSignOutAlt size={24} />
+								</button>
+								{isOwnProfile && (
+									<button
+										onClick={handleEditProfile}
+										className='p-2 text-blue-500 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-blue-700 focus:outline-none'
+									>
+										<FaEdit size={24} />
+									</button>
+								)}
+							</div>
+
+							{/* Контент профиля */}
 							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='object-cover w-32 h-32 mb-4 rounded-full shadow-md' />
 							<h2 className='text-3xl font-semibold text-white'>{user.full_name}</h2>
 							<p className='text-xl text-blue-400'>{user.role}</p>
