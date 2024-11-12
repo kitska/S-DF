@@ -10,6 +10,7 @@ import CategoriesPage from './pages/categories';
 import UserProfilePage from './pages/user'; // Импортируем страницу профиля пользователя
 import PostPage from './pages/post';
 import CategoryPostsPage from './pages/categoryPost';
+import ScrollToTopButton from './components/UI/scrollToTopButton';
 import './styles/main.scss';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
 				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
 				<Route path='*' element={<ErrorPage errorCode={404} errorMessage={'Page Not Found'} />} />
 			</Routes>
+			<ScrollToTopButton />
 		</Router>
 	);
 }

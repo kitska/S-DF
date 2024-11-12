@@ -1,29 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Comment from './UI/comment';
 import PostHandler from '../api/postHandler';
+import { buildCommentTree } from '../utils/commentBuilder';
 
 const CommentsList = ({ postId }) => {
 	const [comments, setComments] = useState([]);
 	const [newCommentContent, setNewCommentContent] = useState('');
-
-	const buildCommentTree = comments => {
-		const commentMap = {};
-
-		comments.forEach(comment => {
-			commentMap[comment.id] = { ...comment, replies: [] };
-		});
-
-		const rootComments = [];
-		comments.forEach(comment => {
-			if (comment.comment_id === null) {
-				rootComments.push(commentMap[comment.id]);
-			} else {
-				commentMap[comment.comment_id].replies.push(commentMap[comment.id]);
-			}
-		});
-
-		return rootComments;
-	};
 
 	useEffect(() => {
 		const fetchComments = async () => {
@@ -47,29 +29,32 @@ const CommentsList = ({ postId }) => {
 		try {
 			const newCommentData = { content: newCommentContent, comment_id: null };
 			const response = await PostHandler.createCommentForPost(postId, newCommentData, token);
+			// Извлекаем новый комментарий из ответа сервера
+			const newComment = response.data.comment;
 
-			// Логируем ответ от сервера для отладки
-			console.log('Ответ от сервера:', response.data);
-
-			// Извлекаем новый комментарий
-			const newComment = response.data.comment; // Используем response.data.comment
-
-			// Проверяем, что новый комментарий содержит id
-			if (newComment && newComment.id) {
-				// Обновляем состояние комментариев, добавляя новый комментарий
-				setComments(prevComments => [
-					...prevComments,
-					{ ...newComment, replies: [] }, // Убедитесь, что newComment содержит поле id
-				]);
-			} else {
-				console.error('Новый комментарий не содержит id:', newComment);
-			}
+			setComments(prevComments => [
+				...prevComments,
+				{
+					...newComment,
+					User: {
+						login: newComment.User.login,
+						profile_picture: newComment.User.profile_picture,
+					},
+					publish_date: newComment.publish_date,
+					replies: [],
+				},
+			]);
 
 			setNewCommentContent('');
+			window.scrollTo({
+				top: document.body.scrollHeight,
+				behavior: 'smooth',
+			});
 		} catch (error) {
 			console.error('Ошибка при создании комментария:', error.message);
 		}
 	};
+
 	return (
 		<div>
 			<div className='mb-4'>

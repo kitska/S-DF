@@ -35,7 +35,6 @@ exports.getLikesForComment = async (req, res) => {
 	}
 };
 
-
 exports.likeComment = async (req, res) => {
 	const { type } = req.body;
 
@@ -108,7 +107,17 @@ exports.replyToComment = async (req, res) => {
 			comment_id,
 		});
 
-		res.status(201).json(reply);
+		// Загрузка пользователя, связанного с комментарием
+		const replyWithUser = await Comment.findByPk(reply.id, {
+			include: [
+				{
+					model: User,
+					attributes: ['id', 'login', 'profile_picture'],
+				},
+			],
+		});
+
+		res.status(201).json(replyWithUser);
 	} catch (error) {
 		console.error('Error creating reply:', error);
 		res.status(500).json({ message: 'Server error', error });

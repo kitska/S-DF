@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import CommentHandler from '../../api/commentsHandler';
 
 const Comment = ({ comment, postId, setComments, isReply = false }) => {
@@ -11,11 +12,9 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 	useEffect(() => {
 		const fetchLikesAndDislikes = async () => {
 			try {
-				const response = await CommentHandler.getLikesForComment(comment.id, "like");
-                console.log(response.data);
+				const response = await CommentHandler.getLikesForComment(comment.id, 'like');
 				setLikes(response.data.likes);
-				const dislikeResponse = await CommentHandler.getLikesForComment(comment.id, "dislike"); 
-                console.log(dislikeResponse.data);
+				const dislikeResponse = await CommentHandler.getLikesForComment(comment.id, 'dislike');
 				setDislikes(dislikeResponse.data.likes);
 			} catch (error) {
 				console.error('Ошибка при получении лайков и дизлайков для комментария:', error);
@@ -34,7 +33,6 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			const response = await CommentHandler.replyToComment(comment.id, replyData, token);
 			const newReply = response.data;
 
-			// Обновляем состояние комментариев, добавляя новый ответ к текущему комментарию
 			setComments(prevComments => {
 				const updateReplies = comments => {
 					return comments.map(c => {
@@ -58,14 +56,28 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 
 	return (
 		<div className={`p-4 mb-4 rounded-lg shadow-md ${isReply ? 'bg-gray-700 ml-8' : 'bg-gray-800'}`}>
-			<p className='text-lg text-gray-200'>
-				<strong className='text-yellow-400'>{comment.author}</strong>: {comment.content}
-			</p>
+			<div className='flex items-center mb-2'>
+				{/* Ссылка на профиль пользователя */}
+				<Link to={`/user/${comment.author_id}`} className='flex items-center space-x-3'>
+					<img
+						src={`${process.env.REACT_APP_BASE_URL}/${comment.User.profile_picture}`} // Путь к аватарке пользователя
+						alt='Avatar'
+						className='object-cover w-8 h-8 rounded-full'
+					/>
+					<div>
+						<p className='text-sm font-bold text-white'>{comment.User.login}</p>
+						<p className='text-xs text-gray-400'>{new Date(comment.publish_date).toLocaleDateString()}</p>
+					</div>
+				</Link>
+			</div>
+
+			<p className='text-lg text-gray-200'>{comment.content}</p>
+
 			<div className='flex items-center mt-2'>
 				<FaThumbsUp className='mr-2 text-blue-600' />
-				<span className='text-gray-300'>{likes}</span> {/* Количество лайков */}
+				<span className='text-gray-300'>{likes}</span>
 				<FaThumbsDown className='ml-4 mr-2 text-red-600' />
-				<span className='text-gray-300'>{dislikes}</span> {/* Количество дизлайков */}
+				<span className='text-gray-300'>{dislikes}</span>
 				{!isReply && (
 					<button className='ml-4 text-blue-400 hover:text-blue-200' onClick={() => setShowReplyForm(!showReplyForm)}>
 						{showReplyForm ? 'Отменить' : 'Ответить'}
@@ -87,7 +99,6 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 				</div>
 			)}
 
-			{/* Отображаем вложенные комментарии */}
 			{comment.replies && comment.replies.length > 0 && (
 				<div className='mt-4 ml-6'>
 					{comment.replies.map(reply => (

@@ -3,7 +3,8 @@ import { jwtDecode } from 'jwt-decode';
 
 export const decodeToken = token => {
 	if (!token) {
-		throw new Error('No token provided');
+		console.error('No token provided');
+		return null;
 	}
 
 	try {

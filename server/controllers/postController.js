@@ -111,6 +111,12 @@ exports.getCommentsForPost = async (req, res) => {
 		const comments = await Comment.findAll({
 			where: { post_id },
 			attributes: ['id', 'author_id', 'comment_id', 'content', 'publish_date'],
+			include: [
+				{
+					model: User,
+					attributes: ['id', 'login', 'full_name', 'profile_picture'],
+				},
+			],
 			order: [['publish_date', 'DESC']],
 		});
 
@@ -149,15 +155,25 @@ exports.createComment = async (req, res) => {
 			content,
 		});
 
+		// Fetch the comment along with user details
+		const commentWithUser = await Comment.findOne({
+			where: { id: newComment.id },
+			include: {
+				model: User,
+				attributes: ['id', 'login', 'profile_picture'], // Include only relevant fields
+			},
+		});
+
 		res.status(201).json({
 			message: `A comment has been created for post with ID ${post_id}`,
-			comment: newComment,
+			comment: commentWithUser,
 		});
 	} catch (error) {
 		console.error(`Error when creating a comment for a post with ID ${post_id}:`, error);
 		res.status(500).json({ message: 'Server error when creating a comment' });
 	}
 };
+
 
 exports.getCategoriesForPost = async (req, res) => {
 	const { post_id } = req.params;

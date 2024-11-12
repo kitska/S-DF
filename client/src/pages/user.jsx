@@ -10,7 +10,7 @@ import PostHandler from '../api/postHandler';
 import { formatDate } from '../utils/formatDate';
 
 const UserProfilePage = () => {
-	const { id } = useParams(); // ID пользователя из URL
+	const { id } = useParams();
 	const [user, setUser] = useState(null);
 	const [writtenPosts, setWrittenPosts] = useState([]);
 	const [likedPosts, setLikedPosts] = useState([]);
@@ -62,15 +62,17 @@ const UserProfilePage = () => {
 		try {
 			const writtenResponse = await UserHandler.getUserPosts(id);
 			const likedResponse = await UserHandler.getUserLikedPosts(id);
-			const favouritesResponse = await UserHandler.getUserFavourites(token);
+			if (isOwnProfile) {
+				const favouritesResponse = await UserHandler.getUserFavourites(token);
+				const formattedFavouritePosts = await Promise.all(favouritesResponse.data.map(item => formatPost(item.Post)));
+				setFavouritePosts(formattedFavouritePosts);
+			}
 
 			const formattedWrittenPosts = await Promise.all(writtenResponse.data.map(formatPost));
 			const formattedLikedPosts = await Promise.all(likedResponse.data.map(item => formatPost(item.Post)));
-			const formattedFavouritePosts = await Promise.all(favouritesResponse.data.map(item => formatPost(item.Post)));
 
 			setWrittenPosts(formattedWrittenPosts);
 			setLikedPosts(formattedLikedPosts);
-			setFavouritePosts(formattedFavouritePosts);
 		} catch (error) {
 			setError('Ошибка при загрузке постов');
 		} finally {
@@ -86,11 +88,8 @@ const UserProfilePage = () => {
 	}, [id]);
 
 	const renderActiveTab = () => {
-		if (!isOwnProfile) {
-			// Если это не личный аккаунт, скрыть вкладки "Лайкнутые" и "Избранные"
-			if (activeTab === 'liked' || activeTab === 'favourite') {
-				return <p className='text-gray-300'>У вас нет доступа к этой информации.</p>;
-			}
+		if (!isOwnProfile && (activeTab === 'liked' || activeTab === 'favourite')) {
+			return <p className='text-gray-300'>У вас нет доступа к этой информации.</p>;
 		}
 
 		switch (activeTab) {
@@ -106,48 +105,63 @@ const UserProfilePage = () => {
 	};
 
 	return (
-		<div className='flex flex-col min-h-screen'>
+		<div className='flex flex-col min-h-screen text-gray-100 bg-gray-800'>
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-500'>
-					{loading && <p className='text-gray-300'>Загрузка профиля...</p>}
+				<div className='flex-grow p-6'>
+					{loading && <p>Загрузка профиля...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 
 					{user && (
-						<div className='p-4 mb-6 bg-gray-800 rounded-lg shadow-md'>
-							<h2 className='text-2xl font-semibold text-gray-100'>{isOwnProfile ? 'Мой профиль' : `Профиль пользователя ${user.full_name}`}</h2>
-							<p className='text-gray-300'>Логин: {user.login}</p>
-							<p className='text-gray-300'>Рейтинг: {user.rating}</p>
-							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='object-cover w-32 h-32 mt-4 rounded-full' />
+						<div className='flex flex-col items-center p-8 bg-gray-700 rounded-lg shadow-lg'>
+							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='object-cover w-32 h-32 mb-4 rounded-full shadow-md' />
+							<h2 className='text-3xl font-semibold text-white'>{user.full_name}</h2>
+							<p className='text-xl text-blue-400'>{user.role}</p>
+							<p className='mt-2 text-gray-300'>
+								<span className='text-gray-200'>{user.login}</span>
+							</p>
+							<p className='text-gray-400'>
+								Рейтинг: <span className={`text-sm ${user.rating > 0 ? 'text-green-500' : user.rating < 0 ? 'text-red-500' : 'text-gray-400'}`}>{user.rating}</span>
+							</p>
+							<p className='text-sm text-gray-400'>
+								Аккаунт создан: <span className='text-gray-300'>{formatDate(user.created_at)}</span>
+							</p>
 						</div>
 					)}
 
-					{/* Вкладки для переключения */}
-					<div className='mb-4'>
-						<button onClick={() => setActiveTab('written')} className={`px-4 py-2 mr-2 ${activeTab === 'written' ? 'bg-blue-500' : 'bg-gray-700'} text-white rounded`}>
-							Написанные посты
-						</button>
-						{isOwnProfile && (
-							<>
-								<button
-									onClick={() => setActiveTab('liked')}
-									className={`px-4 py-2 mr-2 ${activeTab === 'liked' ? 'bg-blue-500' : 'bg-gray-700'} text-white rounded`}
-								>
-									Лайкнутые посты
-								</button>
-								<button
-									onClick={() => setActiveTab('favourite')}
-									className={`px-4 py-2 ${activeTab === 'favourite' ? 'bg-blue-500' : 'bg-gray-700'} text-white rounded`}
-								>
-									Избранные посты
-								</button>
-							</>
-						)}
-					</div>
+					<div className='mt-6'>
+						<div className='flex justify-center space-x-4'>
+							<button
+								onClick={() => setActiveTab('written')}
+								className={`px-6 py-2 rounded-lg font-medium ${activeTab === 'written' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'}`}
+							>
+								Написанные посты
+							</button>
+							{isOwnProfile && (
+								<>
+									<button
+										onClick={() => setActiveTab('liked')}
+										className={`px-6 py-2 rounded-lg font-medium ${
+											activeTab === 'liked' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'
+										}`}
+									>
+										Лайкнутые посты
+									</button>
+									<button
+										onClick={() => setActiveTab('favourite')}
+										className={`px-6 py-2 rounded-lg font-medium ${
+											activeTab === 'favourite' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'
+										}`}
+									>
+										Избранные посты
+									</button>
+								</>
+							)}
+						</div>
 
-					{/* Рендер активной вкладки */}
-					<div className='space-y-4'>{renderActiveTab()}</div>
+						<div className='mt-8 space-y-6'>{renderActiveTab()}</div>
+					</div>
 				</div>
 			</div>
 			<Footer />
