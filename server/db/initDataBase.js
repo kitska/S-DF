@@ -119,7 +119,7 @@ const insertTestData = async () => {
 
 		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
 
-		const testPosts = Array.from({ length: 5000 }).map(() => ({
+		const testPosts = Array.from({ length: 10000 }).map(() => ({
 			title: faker.lorem.sentence(),
 			content: faker.lorem.paragraphs(3),
 			status: faker.helpers.arrayElement(['active', 'inactive']),
@@ -132,7 +132,7 @@ const insertTestData = async () => {
 		const testPostsAll = await Post.findAll();
 
 		for (const post of testPostsAll) {
-			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 3);
+			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 8);
 			await post.addCategories(categories);
 		}
 

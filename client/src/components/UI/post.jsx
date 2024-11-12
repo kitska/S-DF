@@ -76,7 +76,7 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 						</div>
 						<div className='flex items-center space-x-1 text-xs text-gray-500'>
 							{visibleCategories.map((category, index) => (
-								<Category name={category.title} categoryId={category.id} className='mr-2' />
+								<Category key={category.id} name={category.title} categoryId={category.id} className='mr-2' />
 							))}
 							{hasMoreCategories && (
 								<span
@@ -101,7 +101,7 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 						<h3 className='mb-2 text-xs font-semibold text-center text-gray-200'>All Categories</h3>
 						<div className='flex flex-wrap mt-2 space-x-1 text-xs text-gray-100'>
 							{categories.map((category, index) => (
-								<Category name={category.title} categoryId={category.id} />
+								<Category key={category.id} name={category.title} categoryId={category.id} />
 							))}
 						</div>
 					</div>

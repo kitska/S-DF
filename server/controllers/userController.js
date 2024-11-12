@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 const Favourite = require('../models/favourite');
 const Post = require('../models/post');
+const Category = require('../models/category');
+const Like = require('../models/like');
 const { Op } = require('sequelize');
 const randomPP = require('../services/randomPP');
 
@@ -218,7 +220,17 @@ exports.getUserFavourites = async (req, res) => {
 			include: [
 				{
 					model: Post,
-					attributes: ['id', 'title', 'content', 'author_id'],
+					include: [
+						{
+							model: User,
+							attributes: ['id', 'full_name', 'login'],
+						},
+						{
+							model: Category,
+							attributes: ['id', 'title'],
+							through: { attributes: [] },
+						},
+					],
 				},
 			],
 		});
@@ -231,5 +243,82 @@ exports.getUserFavourites = async (req, res) => {
 	} catch (error) {
 		console.error('Error when retrieving featured posts:', error);
 		res.status(500).json({ error: 'Error getting featured posts' });
+	}
+};
+
+exports.getUserPosts = async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+
+		const posts = await Post.findAll({
+			where: { author_id: userId },
+			through: { attributes: [] },
+			include: [
+				{
+					model: User,
+					attributes: ['id', 'full_name', 'login'],
+				},
+				{
+					model: Category,
+					attributes: ['id', 'title'],
+					through: { attributes: [] },
+				},
+			],
+		});
+
+		if (posts && posts.length > 0) {
+			res.status(200).json(posts);
+		} else {
+			res.status(404).json({ message: 'User has no posts' });
+		}
+	} catch (error) {
+		console.error('Error retrieving user posts:', error);
+		res.status(500).json({ error: 'Error getting user posts' });
+	}
+};
+
+exports.getUserLikedPosts = async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		if (!userId) {
+			return res.status(400).json({ error: 'User ID is required' });
+		}
+
+		const likedPosts = await Like.findAll({
+			where: {
+				author_id: userId,
+				type: 'like',
+			},
+			include: [
+				{
+					model: Post,
+					include: [
+						{
+							model: User,
+							attributes: ['id', 'full_name', 'login'],
+						},
+						{
+							model: Category,
+							attributes: ['id', 'title'],
+							through: { attributes: [] },
+						},
+					],
+				},
+			],
+		});
+
+		if (likedPosts && likedPosts.length > 0) {
+			res.status(200).json(likedPosts);
+		} else {
+			res.status(404).json({ message: 'User has no liked posts' });
+		}
+	} catch (error) {
+		console.error('Error retrieving liked posts:', error);
+		res.status(500).json({ error: 'Error getting liked posts' });
 	}
 };

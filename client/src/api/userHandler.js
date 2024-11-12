@@ -52,6 +52,33 @@ const UserHandler = {
 		}
 	},
 
+	getUserPosts: async userId => {
+		try {
+			const response = await apiClient.get(`/${userId}/posts`);
+			return { data: response.data, status: response.status };
+		} catch (error) {
+			console.error(`Ошибка при получении постов пользователя с ID ${userId}:`, error);
+			throw {
+				message: error.response?.data?.message || `Ошибка получения постов пользователя с ID ${userId}`,
+				status: error.response?.status || 500,
+			};
+		}
+	},
+
+	// Получение лайкнутых постов пользователя
+	getUserLikedPosts: async userId => {
+		try {
+			const response = await apiClient.get(`/${userId}/liked-posts`);
+			return { data: response.data, status: response.status };
+		} catch (error) {
+			console.error(`Ошибка при получении лайкнутых постов пользователя с ID ${userId}:`, error);
+			throw {
+				message: error.response?.data?.message || `Ошибка получения лайкнутых постов пользователя с ID ${userId}`,
+				status: error.response?.status || 500,
+			};
+		}
+	},
+
 	// Создание пользователя (админ)
 	createUser: async (userData, token) => {
 		try {
