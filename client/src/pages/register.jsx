@@ -4,6 +4,7 @@ import Header from '../components/header';
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
 import AuthHandler from '../api/authHandler';
 import ErrorMessage from '../components/UI/errorMessage'; // Подключаем ErrorMessage
+import Notification from '../components/UI/notification';
 
 const RegisterPage = () => {
 	const navigate = useNavigate();
@@ -23,6 +24,7 @@ const RegisterPage = () => {
 	const [emailError, setEmailError] = useState('');
 	const [passwordConfirmationError, setPasswordConfirmationError] = useState('');
 	const [registrationError, setRegistrationError] = useState(null); // Ошибка регистрации
+	const [notification, setNotification] = useState(null);
 
 	const handleFocus = field => {
 		setFocused(prev => ({ ...prev, [field]: true }));
@@ -70,7 +72,8 @@ const RegisterPage = () => {
 		e.preventDefault();
 		validateEmail(email);
 		validatePasswordConfirmation(password, password_confirmation);
-
+		 // Показываем уведомление
+		
 		if (!emailError && !passwordConfirmationError) {
 			try {
 				const response = await AuthHandler.registerUser({
@@ -83,7 +86,10 @@ const RegisterPage = () => {
 				const statusCode = response.status;
 
 				if (statusCode === 201) {
-					navigate('/login');
+					setNotification({ message: response.data.message });
+					setTimeout(() => {
+						navigate('/login');
+					}, 2000); // Переход после 2 секунд
 				} else {
 					setRegistrationError({ message: response.data.message || 'Registration failed' });
 				}
@@ -218,6 +224,8 @@ const RegisterPage = () => {
 					</p>
 				</div>
 			</main>
+			{/* Уведомление об успешной регистрации */}
+			{notification && <Notification message={notification.message} onClose={() => setNotification(null)} />}
 		</div>
 	);
 };
