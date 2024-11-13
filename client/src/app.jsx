@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
@@ -7,7 +7,8 @@ import ErrorPage from './pages/error';
 import PostsPage from './pages/posts';
 import UsersPage from './pages/users';
 import CategoriesPage from './pages/categories';
-import UserProfilePage from './pages/user'; // Импортируем страницу профиля пользователя
+import UserProfilePage from './pages/user';
+import EditProfilePage from './pages/editProfile';
 import PostPage from './pages/post';
 import CategoryPostsPage from './pages/categoryPost';
 import ScrollToTopButton from './components/UI/scrollToTopButton';
@@ -16,9 +17,23 @@ import ResetPasswordPage from './pages/passwordReset';
 import PasswordResetRequestPage from './pages/passwordResetRequest';
 import './styles/main.scss';
 
-function App() {
-	const [error, setError] = useState(null);
+// NavigateToErrorPage will handle the redirection for 404 error
+const NavigateToErrorPage = () => {
+	const navigate = useNavigate();
 
+	React.useEffect(() => {
+		navigate('/error', {
+			state: {
+				errorCode: 404,
+				errorMessage: 'Page Not Found',
+			},
+		});
+	}, [navigate]);
+
+	return null;
+};
+
+function App() {
 	return (
 		<Router>
 			<Routes>
@@ -29,13 +44,14 @@ function App() {
 				<Route path='/posts' element={<PostsPage />} />
 				<Route path='/categories' element={<CategoriesPage />} />
 				<Route path='/user/:id' element={<UserProfilePage />} />
+				<Route path='/user/:id/edit-profile' element={<EditProfilePage />} />
 				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
 				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
 				<Route path='/reset-password' element={<PasswordResetRequestPage />} />
 				<Route path='/reset-password/:token' element={<ResetPasswordPage />} />
-				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
-				<Route path='*' element={<ErrorPage errorCode={404} errorMessage={'Page Not Found'} />} />
+				<Route path='/error' element={<ErrorPage />} />
+				{/* <Route path='*' element={<NavigateToErrorPage />} /> */}
 			</Routes>
 			<ScrollToTopButton />
 		</Router>
@@ -44,13 +60,12 @@ function App() {
 
 export default App;
 
-
 /* 
-	/! todo: reset password button in login + in profile edit
-	todo: edit profile
+	/todo: reset password button in login 
+	/todo: edit profile + reset password in profile edit
 	todo: empty comments + posts errors handl
 	todo: markdown in posts and comments
-	todo: new post/edit post/delete post | post creator/nearby
+	todo: new post/edit post/delete post | post creator/nearby | category edit/delete/create
 	todo: edit/delete comment
 	todo: admin premisions
 	todo: filter post/sort post
@@ -58,4 +73,5 @@ export default App;
 	todo: filter users/sort users
 	todo: like/dislike posts/comments
 	todo: favourites add delete
+	todo: search
 */

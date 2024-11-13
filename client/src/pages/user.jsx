@@ -32,7 +32,7 @@ const UserProfilePage = () => {
 	};
 
 	const handleEditProfile = () => {
-		navigate(`/edit-profile/${id}`); // Assuming there's a route for editing the profile
+		navigate(`/user/${id}/edit-profile`); // Absolute path with leading '/'
 	};
 
 	const fetchUserData = async userId => {
@@ -129,16 +129,18 @@ const UserProfilePage = () => {
 					{user && (
 						<div className='relative flex flex-col items-center p-8 bg-gray-700 rounded-lg shadow-lg'>
 							{/* Контейнер с кнопками */}
-							<div className='absolute flex space-x-4 top-4 right-4'>
-								<button onClick={handleLogout} className='p-2 text-red-500 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-red-700 focus:outline-none'>
-									<FaSignOutAlt size={24} />
-								</button>
+							<div className='absolute flex flex-col space-y-4 top-4 right-4'>
 								{isOwnProfile && (
 									<button
 										onClick={handleEditProfile}
 										className='p-2 text-blue-500 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-blue-700 focus:outline-none'
 									>
 										<FaEdit size={24} />
+									</button>
+								)}
+								{isOwnProfile && (
+									<button onClick={handleLogout} className='p-2 text-red-500 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-red-700 focus:outline-none'>
+										<FaSignOutAlt size={24} />
 									</button>
 								)}
 							</div>

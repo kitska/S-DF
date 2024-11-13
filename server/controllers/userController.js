@@ -141,7 +141,7 @@ exports.uploadAvatar = (req, res) => {
 				return res.status(404).json({ message: 'User not found' });
 			}
 
-			user.profile_picture = `/uploads/${req.file.filename}`;
+			user.profile_picture = `uploads/${req.file.filename}`;
 			await user.save();
 
 			res.status(200).json({ message: 'The avatar has been successfully uploaded', avatarUrl: user.profile_picture });

@@ -1,9 +1,11 @@
-// pages/ErrorPage.jsx
-
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-const ErrorPage = ({ errorCode, errorMessage }) => {
+const ErrorPage = () => {
+	// Access state passed via navigate
+	const location = useLocation();
+	const { errorCode, errorMessage } = location.state || {}; // Default to an empty object if no state
+
 	return (
 		<div className='flex flex-col items-center justify-center h-screen bg-gray-500'>
 			<h1 className='text-6xl font-bold text-red-500'>{errorCode}</h1>
