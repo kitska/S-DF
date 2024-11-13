@@ -12,6 +12,8 @@ import PostPage from './pages/post';
 import CategoryPostsPage from './pages/categoryPost';
 import ScrollToTopButton from './components/UI/scrollToTopButton';
 import EmailConfirmPage from './pages/emailConfirm';
+import ResetPasswordPage from './pages/passwordReset';
+import PasswordResetRequestPage from './pages/passwordResetRequest';
 import './styles/main.scss';
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
 				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
 				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
+				<Route path='/reset-password' element={<PasswordResetRequestPage />} />
+				<Route path='/reset-password/:token' element={<ResetPasswordPage />} />
 				<Route path='/error' element={<ErrorPage errorCode={error?.code} errorMessage={error?.message} />} />
 				<Route path='*' element={<ErrorPage errorCode={404} errorMessage={'Page Not Found'} />} />
 			</Routes>
@@ -39,3 +43,19 @@ function App() {
 }
 
 export default App;
+
+
+/* 
+	/! todo: reset password button in login + in profile edit
+	todo: edit profile
+	todo: empty comments + posts errors handl
+	todo: markdown in posts and comments
+	todo: new post/edit post/delete post | post creator/nearby
+	todo: edit/delete comment
+	todo: admin premisions
+	todo: filter post/sort post
+	todo: sort/comments
+	todo: filter users/sort users
+	todo: like/dislike posts/comments
+	todo: favourites add delete
+*/

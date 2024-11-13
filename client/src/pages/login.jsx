@@ -21,15 +21,14 @@ const LoginPage = () => {
 	};
 
 	useEffect(() => {
-		// Проверяем наличие токена при загрузке компонента
 		const token = localStorage.getItem('token');
 		if (token) {
-			navigate('/'); // Если токен есть, перенаправляем на главную страницу
+			navigate('/');
 		}
 
 		if (emailRef.current.value) setEmailValue(emailRef.current.value);
 		if (passwordRef.current.value) setPasswordValue(passwordRef.current.value);
-	}, [navigate]);	
+	}, [navigate]);
 
 	const handleLogin = async e => {
 		e.preventDefault();
@@ -45,9 +44,8 @@ const LoginPage = () => {
 			const response = await AuthHandler.loginUser(requestBody);
 
 			if (response.status === 200) {
-				console.log(response.data.message);
-				localStorage.setItem('token', response.data.token); // Сохраняем токен в локальное хранилище
-				navigate('/'); // Переход на главную страницу
+				localStorage.setItem('token', response.data.token);
+				navigate('/');
 			}
 		} catch (err) {
 			if (err.response) {
@@ -86,7 +84,7 @@ const LoginPage = () => {
 							</label>
 						</div>
 
-						<div className='relative mb-6'>
+						<div className='relative mb-2'>
 							<input
 								ref={passwordRef}
 								type={showPassword ? 'text' : 'password'}
@@ -111,6 +109,13 @@ const LoginPage = () => {
 							>
 								{showPassword ? <EyeOffIcon className='w-5 h-5' /> : <EyeIcon className='w-5 h-5' />}
 							</button>
+						</div>
+
+						{/* Forgot Password Link */}
+						<div className='mb-6 text-right'>
+							<Link to='/reset-password' className='text-sm text-violet-300 hover:underline'>
+								Forgot Password?
+							</Link>
 						</div>
 
 						<button className='px-4 py-2 text-white rounded bg-violet-500 hover:bg-violet-700 focus:ring-2 ring-violet-300'>Log In</button>
