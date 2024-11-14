@@ -66,7 +66,7 @@ const PostPage = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-500'>
+				<div className='flex-grow p-6 bg-gray-700'>
 					<div className='p-8 mx-auto mb-8 transition-transform duration-300 bg-gray-900 rounded-lg shadow-md max-w-screen-2xl'>
 						<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
 						<p className='mt-4 text-lg text-gray-400'>{post.content}</p>

@@ -26,7 +26,7 @@ const CategoriesPage = () => {
 				setTotalPages(response.data.totalPages);
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке категорий');
+			setError(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -50,15 +50,11 @@ const CategoriesPage = () => {
 					{loading && <p className='text-gray-300'>Загрузка категорий...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 					<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-						{categories.length > 0 ? (
-							categories.map(category => (
-								<div key={category.id} className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
-									<Category name={category.title} />
-								</div>
-							))
-						) : (
-							<p className='text-gray-200'>Категории не найдены.</p>
-						)}
+						{categories.map(category => (
+							<div key={category.id} className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
+								<Category name={category.title} />
+							</div>
+						))}
 					</div>
 					<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} pageType='categories' />
 				</div>

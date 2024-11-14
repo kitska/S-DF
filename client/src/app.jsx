@@ -63,7 +63,7 @@ export default App;
 /* 
 	/todo: reset password button in login 
 	/todo: edit profile + reset password in profile edit
-	todo: empty comments + posts errors handl
+	/todo: empty comments + posts errors handl
 	todo: markdown in posts and comments
 	todo: new post/edit post/delete post | post creator/nearby | category edit/delete/create
 	todo: edit/delete comment

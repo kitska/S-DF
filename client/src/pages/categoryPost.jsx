@@ -40,7 +40,7 @@ const CategoryPage = () => {
 				setPosts(formattedPosts);
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке постов');
+			setError(error.message);
 		}
 	};
 

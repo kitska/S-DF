@@ -28,7 +28,7 @@ const UsersPage = () => {
 				setTotalPages(response.data.totalPages);
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке пользователей');
+			setError(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -54,22 +54,18 @@ const UsersPage = () => {
 					<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{' '}
 						{/* Добавили grid */}
-						{users.length > 0 ? (
-							users.map(user => (
-								<Link key={user.id} to={`/user/${user.id}`}>
-									<div className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
-										<User
-											fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
-											profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
-											rating={user.rating}
-											userId={user.id}
-										/>
-									</div>
-								</Link>
-							))
-						) : (
-							<p className='text-gray-200'>Пользователи не найдены.</p>
-						)}
+						{users.map(user => (
+							<Link key={user.id} to={`/user/${user.id}`}>
+								<div className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
+									<User
+										fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
+										profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
+										rating={user.rating}
+										userId={user.id}
+									/>
+								</div>
+							</Link>
+						))}
 					</div>
 					<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} pageType='users' />
 				</div>

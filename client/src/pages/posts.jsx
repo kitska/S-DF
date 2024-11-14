@@ -50,7 +50,7 @@ const PostsPage = () => {
 				setError('Не удалось загрузить посты. Попробуйте позже.');
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке постов');
+			setError(error.message);
 		} finally {
 			setLoading(false); // Отключаем состояние загрузки после завершения запроса
 		}
@@ -70,10 +70,12 @@ const PostsPage = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-500'>
+				<div className='flex-grow p-6 bg-gray-700'>
 					{loading && <p className='text-gray-300'>Загрузка постов...</p>} {/* Индикатор загрузки */}
 					{error && <p className='text-red-500'>{error}</p>}
-					{!loading && posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : !loading && <p className='text-gray-200'>Посты не найдены.</p>}
+					{posts.map(post => (
+						<Post key={post.id} {...post} />
+					))}
 					<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} pageType='posts' />
 				</div>
 			</div>

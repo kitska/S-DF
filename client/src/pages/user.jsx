@@ -87,7 +87,7 @@ const UserProfilePage = () => {
 			setWrittenPosts(formattedWrittenPosts);
 			setLikedPosts(formattedLikedPosts);
 		} catch (error) {
-			setError('Ошибка при загрузке постов');
+			setError();
 		} finally {
 			setLoading(false);
 		}

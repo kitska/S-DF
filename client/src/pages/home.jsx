@@ -40,7 +40,7 @@ const Home = () => {
 				setPosts(formattedPosts);
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке постов');
+			setError(error.message);
 		}
 	};
 
@@ -53,9 +53,11 @@ const Home = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-500'>
+				<div className='flex-grow p-6 bg-gray-700'>
 					{error && <p className='text-red-500'>{error}</p>}
-					{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
+					{posts.map(post => (
+						<Post key={post.id} {...post} />
+					))}
 				</div>
 				<TopUsers />
 			</div>
