@@ -10,6 +10,7 @@ import CategoriesPage from './pages/categories';
 import UserProfilePage from './pages/user';
 import EditProfilePage from './pages/editProfile';
 import PostPage from './pages/post';
+import CreatePostPage from './pages/createPost';
 import CategoryPostsPage from './pages/categoryPost';
 import ScrollToTopButton from './components/UI/scrollToTopButton';
 import EmailConfirmPage from './pages/emailConfirm';
@@ -46,6 +47,7 @@ function App() {
 				<Route path='/user/:id' element={<UserProfilePage />} />
 				<Route path='/user/:id/edit-profile' element={<EditProfilePage />} />
 				<Route path='/post/:postId' element={<PostPage />} />
+				<Route path='/create-post' element={<CreatePostPage />} />
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
 				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
 				<Route path='/reset-password' element={<PasswordResetRequestPage />} />

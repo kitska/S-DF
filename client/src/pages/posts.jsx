@@ -33,6 +33,7 @@ const PostsPage = () => {
 							title: post.title,
 							content: `${post.content.slice(0, 100)}...`,
 							author: post.User.login,
+							authorAvatar: post.User.profile_picture,
 							date: formatDate(post.publish_date),
 							status: post.status === 'active',
 							categories: post.Categories.map(category => ({

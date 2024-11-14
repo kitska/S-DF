@@ -4,7 +4,7 @@ import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
 import { Link } from 'react-router-dom';
 
-const Post = ({ id, title, content, author, likes, dislikes, date, status, categories = [] }) => {
+const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date, status, categories = [] }) => {
 	const [showAllCategories, setShowAllCategories] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -46,6 +46,9 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 		}, 200);
 	};
 
+	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${authorAvatar}`;
+	console.log(avatarUrl);
+
 	return (
 		<Link to={`/post/${id}`} className='block'>
 			<div
@@ -57,7 +60,9 @@ const Post = ({ id, title, content, author, likes, dislikes, date, status, categ
 					<div className='w-3/4'>
 						<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
 						<p className='mt-1 text-sm text-gray-400'>{content}</p>
-						<p className='mt-1 text-xs text-gray-500'>
+						<p className='flex items-center mt-1 text-xs text-gray-500'>
+							{/* Display avatar */}
+							<img src={avatarUrl} alt={`${author}'s avatar`} className='w-6 h-6 mr-2 rounded-full' />
 							{author} | {date}
 							<span className={`ml-2 inline-block w-2 h-2 rounded-full ${status ? 'bg-green-500' : 'bg-red-500'}`} title={status ? 'Активен' : 'Неактивен'}></span>
 						</p>

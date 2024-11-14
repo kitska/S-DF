@@ -35,7 +35,7 @@ exports.getAllPosts = async (req, res) => {
 			include: [
 				{
 					model: User,
-					attributes: ['id', 'full_name', 'login'],
+					attributes: ['id', 'full_name', 'login', 'profile_picture'],
 				},
 				{
 					model: Category,
@@ -75,7 +75,7 @@ exports.getPostById = async (req, res) => {
 			include: [
 				{
 					model: User,
-					attributes: ['id', 'full_name', 'login'],
+					attributes: ['id', 'full_name', 'login', 'profile_picture'],
 				},
 				{
 					model: Category,

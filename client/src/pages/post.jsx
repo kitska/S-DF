@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom';
 const PostPage = () => {
 	const { postId } = useParams();
 	const [post, setPost] = useState(null);
-	const [comments, setComments] = useState([]);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
 	const [isFavorite, setIsFavorite] = useState(false); // Для состояния избранного
@@ -30,6 +29,7 @@ const PostPage = () => {
 					title: post.title,
 					content: post.content,
 					author: post.User.login,
+					authorAvatar: post.User.profile_picture, // Добавляем аватар автора
 					date: formatDate(post.publish_date),
 					status: post.status === 'active',
 					categories: post.Categories.map(category => ({
@@ -61,6 +61,9 @@ const PostPage = () => {
 	if (error) return <div className='text-red-500'>{error}</div>;
 	if (!post) return <div className='text-gray-500'>Загрузка...</div>;
 
+	// Создаем URL для аватарки
+	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${post.authorAvatar}`;
+
 	return (
 		<div className='flex flex-col min-h-screen'>
 			<Header />
@@ -71,6 +74,8 @@ const PostPage = () => {
 						<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
 						<p className='mt-4 text-lg text-gray-400'>{post.content}</p>
 						<div className='flex items-center mt-4'>
+							{/* Аватарка автора */}
+							<img src={avatarUrl} alt={`${post.author}'s avatar`} className='w-10 h-10 mr-2 rounded-full' />
 							<span className='text-sm text-gray-500'>{post.author}</span>
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>
 							<span

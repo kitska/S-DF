@@ -15,9 +15,9 @@ const Header = () => {
 			if (token) {
 				const decodedTokenID = decodeToken(token);
 
-				if (decodedTokenID) {
+				if (decodedTokenID?.id) {
 					try {
-						const response = await UserHandler.getUserById(decodedTokenID);
+						const response = await UserHandler.getUserById(decodedTokenID?.id);
 						const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${response.data.profile_picture}`;
 						setUserAvatar(avatarUrl);
 						setLogin(response.data.login);

@@ -27,7 +27,7 @@ const EditProfilePage = () => {
 		const fetchProfileData = async () => {
 			try {
 				const response = await UserHandler.getUserById(id);
-				if (userTokenId !== response.data.id) {
+				if (userTokenId?.id !== response.data.id) {
 					navigate('/error', {
 						state: {
 							errorCode: 404,

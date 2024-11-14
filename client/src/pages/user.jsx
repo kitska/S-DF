@@ -23,7 +23,7 @@ const UserProfilePage = () => {
 	const [loading, setLoading] = useState(true);
 	const token = localStorage.getItem('token');
 	const currentUserId = decodeToken(token);
-	const isOwnProfile = Number(id) === currentUserId;
+	const isOwnProfile = Number(id) === currentUserId?.id;
 
 	const handleLogout = () => {
 		AuthHandler.logoutUser(token);
