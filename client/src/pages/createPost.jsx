@@ -1,10 +1,12 @@
 // src/pages/CreatePostPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/sidebar';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import { marked } from 'marked'; // Corrected import statement
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa'; // Add icons for likes, dislikes, and favorite
+import Category from '../components/UI/category';
+import CategoryHandler from '../api/categoryHandler';
 
 marked.setOptions({
 	gfm: true,
@@ -12,21 +14,57 @@ marked.setOptions({
 	sanitize: false,
 });
 
-const categoriesList = ['News', 'Tutorial', 'Review', 'Interview', 'Opinion', 'Announcement'];
-
 const CreatePostPage = () => {
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
 	const [categorySearch, setCategorySearch] = useState('');
-	const [filteredCategories, setFilteredCategories] = useState(categoriesList);
+	const [filteredCategories, setFilteredCategories] = useState([]);
+	const [allCategories, setAllCategories] = useState([]);
+	const [selectedCategories, setSelectedCategories] = useState([]);
 	const [isFavorite, setIsFavorite] = useState(false); // Track favorite state
 	const [likes, setLikes] = useState(0); // Track likes
 	const [dislikes, setDislikes] = useState(0); // Track dislikes
+	const [showDropdown, setShowDropdown] = useState(false);
 
-	const handleCategorySearch = e => {
-		const searchValue = e.target.value.toLowerCase();
+	// Загружаем категории из API
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await CategoryHandler.getAllCategories(1, 1000); // Загружаем до 1000 категорий
+				setAllCategories(response.data.categories || []); // Предполагается, что API возвращает массив `categories`
+			} catch (error) {
+				console.error('Ошибка при загрузке категорий:', error.message);
+			}
+		};
+		fetchCategories();
+	}, []);
+
+	const handleCategorySearch = event => {
+		const searchValue = event.target.value;
 		setCategorySearch(searchValue);
-		setFilteredCategories(categoriesList.filter(cat => cat.toLowerCase().includes(searchValue)));
+
+		if (searchValue) {
+			// Filter based on the title of the category objects
+			const filtered = allCategories.filter(cat => cat.title.toLowerCase().includes(searchValue.toLowerCase()));
+			setFilteredCategories(filtered.map(cat => cat.title)); // Set only titles as strings
+			setShowDropdown(true);
+		} else {
+			setFilteredCategories([]);
+			setShowDropdown(false);
+		}
+	};
+
+	const handleCategorySelect = category => {
+		// Check if the category is already selected
+		if (!selectedCategories.some(cat => cat.id === category.id)) {
+			setSelectedCategories([...selectedCategories, category]); // Add selected category
+		}
+		setCategorySearch('');
+		setShowDropdown(false);
+	};
+
+	const handleRemoveCategory = categoryId => {
+		setSelectedCategories(selectedCategories.filter(cat => cat.id !== categoryId)); // Remove category by ID
 	};
 
 	const handleSubmit = e => {
@@ -77,34 +115,41 @@ const CreatePostPage = () => {
 								></textarea>
 							</div>
 
-							<div>
-								<label className='block text-gray-300'>Category Search</label>
+							<div className='relative w-full'>
+								{/* Поле поиска */}
+								<label className='block mb-2 text-gray-300'>Category Search</label>
 								<input
 									type='text'
 									value={categorySearch}
 									onChange={handleCategorySearch}
 									className='w-full px-6 py-4 text-gray-900 bg-gray-300 rounded focus:outline-none'
 									placeholder='Search categories...'
+									onFocus={() => categorySearch && setShowDropdown(true)} // Показываем список при фокусе, если есть поиск
 								/>
-							</div>
 
-							{/* Conditionally display category list if there is something in the search input */}
-							{categorySearch && (
-								<div>
-									<label className='block text-gray-300'>Select Category</label>
-									<ul className='p-2 overflow-y-auto bg-gray-300 rounded max-h-40'>
+								{/* Выпадающий список */}
+								{showDropdown && (
+									<span className='z-10 flex w-full p-2 mt-1 overflow-y-auto bg-gray-300 rounded shadow max-h-40'>
 										{filteredCategories.length === 0 ? (
-											<li className='text-gray-600'>No categories found</li>
+											<span className='text-gray-600'>No categories found</span>
 										) : (
-											filteredCategories.map((cat, index) => (
-												<li key={index} className='px-4 py-2 cursor-pointer hover:bg-gray-400' onClick={() => setCategorySearch(cat)}>
-													{cat}
-												</li>
-											))
+											filteredCategories.map((catTitle, index) => {
+												// Find the category object by title if needed
+												const category = allCategories.find(cat => cat.title === catTitle);
+												return (
+													<Category
+														key={index}
+														name={catTitle}
+														categoryId={category ? category.id : null}
+														isLinkEnabled={false}
+														onClick={() => handleCategorySelect(category)} // Pass the full category object
+													/>
+												);
+											})
 										)}
-									</ul>
-								</div>
-							)}
+									</span>
+								)}
+							</div>
 
 							<button type='submit' className='w-full py-3 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600'>
 								Publish Post
@@ -121,23 +166,31 @@ const CreatePostPage = () => {
 							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' dangerouslySetInnerHTML={{ __html: convertToHTML(content) }} />
 
 							{/* Author Info */}
-							<div className='flex items-center pt-4 mt-6 border-t border-gray-600'>
+							<div className='flex items-center pt-4 mt-6'>
 								<img src={`https://placehold.it/40x40`} alt='Author Avatar' className='w-10 h-10 mr-2 rounded-full' />
-								<div className='flex flex-col'>
+								<div className='flex flex-row space-x-2'>
 									<span className='text-sm text-gray-300'>Author</span>
 									<span className='text-xs text-gray-500'>Date</span>
 								</div>
 							</div>
 
 							{/* Categories */}
-							<div className='mt-4'>
-								<span className='text-sm font-semibold text-gray-300'>Categories: </span>
-								{filteredCategories.length > 0 &&
-									filteredCategories.map((cat, idx) => (
-										<span key={idx} className='mr-2 text-gray-400'>
-											{cat}
-										</span>
-									))}
+							<div className='flex flex-wrap mt-4'>
+								{' '}
+								{/* Add flex and flex-wrap classes */}
+								{selectedCategories.length > 0 ? (
+									selectedCategories.map(cat => (
+										<Category
+											key={cat.id}
+											name={cat.title}
+											categoryId={cat.id}
+											isLinkEnabled={false}
+											onClick={() => handleRemoveCategory(cat.id)} // Optional: If you want to add click functionality
+										/>
+									))
+								) : (
+									<span className='text-gray-500'>No categories selected</span>
+								)}
 							</div>
 
 							{/* Likes and Dislikes */}
