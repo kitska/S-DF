@@ -2,19 +2,32 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/sidebar';
 import Header from '../components/header';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../components/footer';
 import { marked } from 'marked'; // Corrected import statement
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa'; // Add icons for likes, dislikes, and favorite
 import Category from '../components/UI/category';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github.css';
 import CategoryHandler from '../api/categoryHandler';
+import PostHandler from '../api/postHandler';
 
 marked.setOptions({
 	gfm: true,
 	breaks: true,
-	sanitize: false,
+	smartLists: true,
+	smartypants: true,
+	highlight: (code, lang) => {
+		if (hljs.getLanguage(lang)) {
+			return hljs.highlight(lang, code).value;
+		} else {
+			return hljs.highlightAuto(code).value;
+		}
+	},
 });
 
 const CreatePostPage = () => {
+	const navigate = useNavigate();
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
 	const [categorySearch, setCategorySearch] = useState('');
@@ -25,12 +38,14 @@ const CreatePostPage = () => {
 	const [likes, setLikes] = useState(0); // Track likes
 	const [dislikes, setDislikes] = useState(0); // Track dislikes
 	const [showDropdown, setShowDropdown] = useState(false);
-
+	const token = localStorage.getItem('token');
+	
 	// Загружаем категории из API
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
-				const response = await CategoryHandler.getAllCategories(1, 1000); // Загружаем до 1000 категорий
+				const total = await CategoryHandler.getAllCategories(1, 1); // Загружаем до 1000 категорий
+				const response = await CategoryHandler.getAllCategories(1, total.data.totalPages);
 				setAllCategories(response.data.categories || []); // Предполагается, что API возвращает массив `categories`
 			} catch (error) {
 				console.error('Ошибка при загрузке категорий:', error.message);
@@ -67,9 +82,20 @@ const CreatePostPage = () => {
 		setSelectedCategories(selectedCategories.filter(cat => cat.id !== categoryId)); // Remove category by ID
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		// Add functionality to save the post here
+		const postData = {
+			title,
+			content,
+			categories: selectedCategories.map(category => category.id), // Преобразуем строку в массив чисел
+		};
+
+		try {
+			const response = await PostHandler.createPost(postData, token);
+			navigate(`/post/${response.data.post.id}`)
+		} catch (error) {
+			console.error('Ошибка при создании поста:', error);
+		}
 	};
 
 	// Convert the markdown content to HTML using 'marked'

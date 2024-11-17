@@ -47,8 +47,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 	};
 
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${authorAvatar}`;
-	console.log(avatarUrl);
-
+	
 	return (
 		<Link to={`/post/${id}`} className='block'>
 			<div
