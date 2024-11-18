@@ -1,5 +1,5 @@
 // src/pages/CreatePostPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/sidebar';
 import Header from '../components/header';
 import { useNavigate } from 'react-router-dom';
@@ -8,23 +8,8 @@ import { marked } from 'marked'; // Corrected import statement
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa'; // Add icons for likes, dislikes, and favorite
 import Category from '../components/UI/category';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github.css';
 import CategoryHandler from '../api/categoryHandler';
 import PostHandler from '../api/postHandler';
-
-marked.setOptions({
-	gfm: true,
-	breaks: true,
-	smartLists: true,
-	smartypants: true,
-	highlight: (code, lang) => {
-		if (hljs.getLanguage(lang)) {
-			return hljs.highlight(lang, code).value;
-		} else {
-			return hljs.highlightAuto(code).value;
-		}
-	},
-});
 
 const CreatePostPage = () => {
 	const navigate = useNavigate();
@@ -39,7 +24,8 @@ const CreatePostPage = () => {
 	const [dislikes, setDislikes] = useState(0); // Track dislikes
 	const [showDropdown, setShowDropdown] = useState(false);
 	const token = localStorage.getItem('token');
-	
+	const previewRef = useRef(null);
+
 	// Загружаем категории из API
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -92,9 +78,22 @@ const CreatePostPage = () => {
 
 		try {
 			const response = await PostHandler.createPost(postData, token);
-			navigate(`/post/${response.data.post.id}`)
+			navigate(`/post/${response.data.post.id}`);
 		} catch (error) {
 			console.error('Ошибка при создании поста:', error);
+		}
+	};
+
+	const handleKeyDown = e => {
+		if (e.key === 'Tab') {
+			e.preventDefault(); // Prevent the default behavior (moving to the next input)
+			const { selectionStart, selectionEnd } = e.target;
+			const newValue = content.substring(0, selectionStart) + '\t' + content.substring(selectionEnd);
+			setContent(newValue);
+			// Move the cursor to the right after the inserted tab
+			setTimeout(() => {
+				e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+			}, 0);
 		}
 	};
 
@@ -107,6 +106,12 @@ const CreatePostPage = () => {
 	const toggleFavorite = () => {
 		setIsFavorite(!isFavorite);
 	};
+
+	useEffect(() => {
+		if (previewRef.current) {
+			hljs.highlightAll();
+		}
+	}, [content]);
 
 	return (
 		<div className='flex flex-col min-h-screen bg-gray-800'>
@@ -134,6 +139,7 @@ const CreatePostPage = () => {
 								<textarea
 									value={content}
 									onChange={e => setContent(e.target.value)}
+									onKeyDown={handleKeyDown}
 									className='w-full px-6 py-4 text-gray-900 bg-gray-300 rounded focus:outline-none'
 									placeholder='Write your post content here (Markdown supported)'
 									rows='8'
@@ -189,9 +195,9 @@ const CreatePostPage = () => {
 						{/* Post Preview Structure */}
 						<div className='mt-4 text-white'>
 							<h1 className='text-4xl font-bold text-gray-100'>{title}</h1>
-							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' dangerouslySetInnerHTML={{ __html: convertToHTML(content) }} />
+							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' ref={previewRef} dangerouslySetInnerHTML={{ __html: convertToHTML(content) }} />
 
-							{/* Author Info */}
+							{/* Author Info */}	
 							<div className='flex items-center pt-4 mt-6'>
 								<img src={`https://placehold.it/40x40`} alt='Author Avatar' className='w-10 h-10 mr-2 rounded-full' />
 								<div className='flex flex-row space-x-2'>

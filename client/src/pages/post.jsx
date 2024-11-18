@@ -1,35 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa'; // Импорт иконок
+import React, { useEffect, useState, useRef } from 'react';
+import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import CommentList from '../components/commentsList';
 import PostHandler from '../api/postHandler';
-import Header from '../components/header'; // Подключаем компонент Header
-import Footer from '../components/footer'; // Подключаем компонент Footer
+import Header from '../components/header';
+import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import { formatDate } from '../utils/formatDate';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { marked } from 'marked';
+import hljs from 'highlight.js';
 
 const PostPage = () => {
+	const navigate = useNavigate()
 	const { postId } = useParams();
 	const [post, setPost] = useState(null);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
-	const [isFavorite, setIsFavorite] = useState(false); // Для состояния избранного
+	const [isFavorite, setIsFavorite] = useState(false);
 	const [error, setError] = useState(null);
+	const postRef = useRef(null);
 
 	useEffect(() => {
 		const fetchPostData = async () => {
 			try {
-				// Получаем данные о посте
 				const postResponse = await PostHandler.getPostById(postId);
 				const post = postResponse.data.post;
 
-				// Форматируем пост
 				const formattedPost = {
 					id: post.id,
 					title: post.title,
 					content: post.content,
 					author: post.User.login,
-					authorAvatar: post.User.profile_picture, // Добавляем аватар автора
+					authorAvatar: post.User.profile_picture,
 					date: formatDate(post.publish_date),
 					status: post.status === 'active',
 					categories: post.Categories.map(category => ({
@@ -40,7 +42,6 @@ const PostPage = () => {
 
 				setPost(formattedPost);
 
-				// Получаем лайки и дизлайки
 				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like');
 				setLikes(likeResponse.data.likeCount);
 
@@ -58,10 +59,19 @@ const PostPage = () => {
 		setIsFavorite(!isFavorite);
 	};
 
+	const convertToHTML = markdown => {
+		return marked(markdown);
+	};
+	
+	useEffect(() => {
+		if (postRef.current) {
+			hljs.highlightAll();
+		}
+	}, [post]);
+
 	if (error) return <div className='text-red-500'>{error}</div>;
 	if (!post) return <div className='text-gray-500'>Загрузка...</div>;
 
-	// Создаем URL для аватарки
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${post.authorAvatar}`;
 
 	return (
@@ -72,9 +82,12 @@ const PostPage = () => {
 				<div className='flex-grow p-6 bg-gray-700'>
 					<div className='p-8 mx-auto mb-8 transition-transform duration-300 bg-gray-900 rounded-lg shadow-md max-w-screen-2xl'>
 						<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
-						<p className='mt-4 text-lg text-gray-400'>{post.content}</p>
+						<a href='https://github.com/DMYTRO-DOLHII'>
+							<hr className='h-1 my-4 border-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' />
+						</a>
+						{/* Отображаем содержимое поста с поддержкой Markdown */}
+						<div className='mt-4 prose prose-lg text-gray-200 prose-invert' ref={postRef} dangerouslySetInnerHTML={{ __html: convertToHTML(post.content) }}></div>
 						<div className='flex items-center mt-4'>
-							{/* Аватарка автора */}
 							<img src={avatarUrl} alt={`${post.author}'s avatar`} className='w-10 h-10 mr-2 rounded-full' />
 							<span className='text-sm text-gray-500'>{post.author}</span>
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>

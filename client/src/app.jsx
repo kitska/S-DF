@@ -16,7 +16,23 @@ import ScrollToTopButton from './components/UI/scrollToTopButton';
 import EmailConfirmPage from './pages/emailConfirm';
 import ResetPasswordPage from './pages/passwordReset';
 import PasswordResetRequestPage from './pages/passwordResetRequest';
+import { marked } from 'marked';
 import './styles/main.scss';
+import 'highlight.js/styles/github.css';
+
+marked.setOptions({
+	gfm: true,
+	breaks: true,
+	smartLists: true,
+	smartypants: true,
+	highlight: (code, lang) => {
+		if (hljs.getLanguage(lang)) {
+			return hljs.highlight(lang, code).value;
+		} else {
+			return hljs.highlightAuto(code).value;
+		}
+	},
+});
 
 // NavigateToErrorPage will handle the redirection for 404 error
 const NavigateToErrorPage = () => {
@@ -66,8 +82,9 @@ export default App;
 	/todo: reset password button in login 
 	/todo: edit profile + reset password in profile edit
 	/todo: empty comments + posts errors handl
-	todo: markdown in posts and comments
-	todo: new post/edit post/delete post | post creator/nearby | category edit/delete/create
+	/todo: markdown in posts
+	todo: new post/edit post/delete post |  post creator | 
+	todo: category edit/delete/create
 	todo: edit/delete comment
 	todo: admin premisions
 	todo: filter post/sort post
