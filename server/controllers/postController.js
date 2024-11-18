@@ -322,7 +322,7 @@ exports.updatePost = async (req, res) => {
 			return res.status(404).json({ message: 'Post not found' });
 		}
 
-		if (post.author_id !== req.user.id) {
+		if (post.author_id !== req.user.id && req.user.role !== 'admin') {
 			return res.status(403).json({ message: 'You do not have permission to update this post' });
 		}
 

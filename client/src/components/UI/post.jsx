@@ -58,7 +58,6 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 				<div className='flex justify-between'>
 					<div className='w-3/4'>
 						<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
-						<p className='mt-1 text-sm text-gray-400'>{content}</p>
 						<p className='flex items-center mt-1 text-xs text-gray-500'>
 							{/* Display avatar */}
 							<img src={avatarUrl} alt={`${author}'s avatar`} className='w-6 h-6 mr-2 rounded-full' />
