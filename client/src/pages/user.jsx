@@ -57,6 +57,7 @@ const UserProfilePage = () => {
 				title: post.title,
 				content: `${post.content.slice(0, 100)}...`,
 				author: post.User.login,
+				authorAvatar: post.User.profile_picture,
 				date: formatDate(post.publish_date),
 				status: post.status === 'active',
 				categories: post.Categories.map(category => ({
@@ -73,20 +74,51 @@ const UserProfilePage = () => {
 
 	const fetchUserPosts = async () => {
 		try {
-			const writtenResponse = await UserHandler.getUserPosts(id);
-			const likedResponse = await UserHandler.getUserLikedPosts(id);
-			if (isOwnProfile) {
-				const favouritesResponse = await UserHandler.getUserFavourites(token);
-				const formattedFavouritePosts = await Promise.all(favouritesResponse.data.map(item => formatPost(item.Post)));
-				setFavouritePosts(formattedFavouritePosts);
+			const formattedWrittenPosts = [];
+			const formattedLikedPosts = [];
+			const formattedFavouritePosts = [];
+
+			// Получение написанных постов
+			try {
+				const writtenResponse = await UserHandler.getUserPosts(id);
+				if (writtenResponse?.data) {
+					const posts = await Promise.all(writtenResponse.data.map(formatPost));
+					formattedWrittenPosts.push(...posts);
+				}
+			} catch (error) {
+				if (error.response?.status !== 404) console.error('Ошибка получения написанных постов:', error.message);
 			}
 
-			const formattedWrittenPosts = await Promise.all(writtenResponse.data.map(formatPost));
-			const formattedLikedPosts = await Promise.all(likedResponse.data.map(item => formatPost(item.Post)));
+			// Получение понравившихся постов
+			try {
+				const likedResponse = await UserHandler.getUserLikedPosts(id);
+				if (likedResponse?.data) {
+					const posts = await Promise.all(likedResponse.data.map(item => formatPost(item.Post)));
+					formattedLikedPosts.push(...posts);
+				}
+			} catch (error) {
+				if (error.response?.status !== 404) console.error('Ошибка получения понравившихся постов:', error.message);
+			}
 
+			// Получение избранных постов, если это профиль текущего пользователя
+			if (isOwnProfile) {
+				try {
+					const favouritesResponse = await UserHandler.getUserFavourites(token);
+					if (favouritesResponse?.data) {
+						const posts = await Promise.all(favouritesResponse.data.map(item => formatPost(item.Post)));
+						formattedFavouritePosts.push(...posts);
+					}
+				} catch (error) {
+					if (error.response?.status !== 404) console.error('Ошибка получения избранных постов:', error.message);
+				}
+			}
+
+			// Установка данных
 			setWrittenPosts(formattedWrittenPosts);
 			setLikedPosts(formattedLikedPosts);
+			setFavouritePosts(formattedFavouritePosts);
 		} catch (error) {
+			console.error('Общая ошибка загрузки постов:', error.message);
 			setError();
 		} finally {
 			setLoading(false);

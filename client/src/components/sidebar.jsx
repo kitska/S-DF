@@ -21,13 +21,13 @@ const Sidebar = () => {
 					</button>
 				</Link>
 
-				{user?.role === 'admin' && (
+				{/* {user?.role === 'admin' && (
 					<Link to='/create-user' className='w-full pr-6 ml-6'>
 						<button className='flex items-center justify-start w-full px-4 py-2 text-left text-gray-300 transition-colors duration-300 bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none'>
 							<span className='text-sm font-semibold'>Create User</span>
 						</button>
 					</Link>
-				)}
+				)} */}
 
 				<Link to='/posts?page=1' className='w-full'>
 					<button className='flex items-center justify-start w-full px-4 py-3 text-left text-gray-300 transition-colors duration-300 bg-gray-600 rounded-md hover:bg-gray-400 focus:outline-none'>
@@ -49,13 +49,13 @@ const Sidebar = () => {
 					</button>
 				</Link>
 
-				{token && (
+				{/* {token && (
 					<Link to='/create-category' className='w-full pr-6 ml-6'>
 						<button className='flex items-center justify-start w-full px-4 py-2 text-left text-gray-300 transition-colors duration-300 bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none'>
 							<span className='text-sm font-semibold'>Create Category</span>
 						</button>
 					</Link>
-				)}
+				)} */}
 			</nav>
 		</aside>
 	);
