@@ -21,10 +21,10 @@ const CommentHandler = {
 	},
 
 	// Получение лайков для комментария
-	getLikesForComment: async (commentId, likeType) => {
+	getLikesForComment: async (commentId, likeType, authorId) => {
 		try {
 			const response = await apiClient.get(`/${commentId}/like`, {
-				params: { type: likeType },
+				params: { type: likeType, author_id: authorId }, // Добавляем author_id в параметры
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {

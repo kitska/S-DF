@@ -22,16 +22,35 @@ exports.getCommentById = async (req, res) => {
 exports.getLikesForComment = async (req, res) => {
 	try {
 		const { comment_id } = req.params;
-		const { type } = req.query;
+		const { type, author_id } = req.query;
 
-		const likeCount = await Like.count({
+		const comment = await Comment.findByPk(comment_id);
+		if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+		const totalLikes = await Like.count({
 			where: { comment_id, ...(type && { type }) },
 		});
 
-		res.status(200).json({ comment_id, likes: likeCount });
+		let userLikes = [];
+		if (author_id) {
+			userLikes = await Like.findAll({
+				where: {
+					comment_id,
+					author_id,
+					...(type && { type }),
+				},
+				attributes: ['publish_date', 'id', 'author_id', 'type'],
+			});
+		}
+
+		res.json({
+			comment_id,
+			likeCount: totalLikes,
+			userLikes,
+		});
 	} catch (error) {
-		console.error('Error when getting number of likes:', error);
-		res.status(500).json({ message: 'Error getting number of likes' });
+		console.error('Error when getting number of likes for comment:', error);
+		res.status(500).json({ message: 'Error getting number of likes for comment' });
 	}
 };
 

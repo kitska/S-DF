@@ -20,17 +20,22 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 	useEffect(() => {
 		const fetchLikesAndDislikes = async () => {
 			try {
-				const likeResponse = await CommentHandler.getLikesForComment(comment.id, 'like');
-				setLikes(likeResponse.data.likes);
-				const dislikeResponse = await CommentHandler.getLikesForComment(comment.id, 'dislike');
-				setDislikes(dislikeResponse.data.likes);
+				const likeResponse = await CommentHandler.getLikesForComment(comment.id, 'like', user?.id);
+				setLikes(likeResponse.data.likeCount);
+				setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null);
+
+				const dislikeResponse = await CommentHandler.getLikesForComment(comment.id, 'dislike', user?.id);
+				setDislikes(dislikeResponse.data.likeCount);
+				if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
+					setUserReaction('dislike');
+				}
 			} catch (error) {
 				console.error('Ошибка при получении лайков и дизлайков для комментария:', error);
 			}
 		};
 
 		fetchLikesAndDislikes();
-	}, [comment.id]);
+	}, [comment.id, user?.id]); // Изменено на user?.id
 
 	const handleReplySubmit = async () => {
 		if (!replyContent) return;
@@ -90,7 +95,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 
 	const handleDelete = async () => {
 		try {
-			await CommentHandler.deleteComment(comment.id, token);
+			await CommentHandler.deleteComment(comment .id, token);
 			setComments(prevComments => {
 				return prevComments.reduce((acc, c) => {
 					if (c.id === comment.id) {
@@ -114,7 +119,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			setLikes(prev => prev - 1);
 			setUserReaction(null);
 		} else {
-			if (userReaction === 'dis like') {
+			if (userReaction === 'dislike') {
 				await CommentHandler.deleteLikeForComment(comment.id, token);
 				setDislikes(prev => prev - 1);
 			}
@@ -180,7 +185,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 							<span className='text-gray-300'>{dislikes}</span>
 						</div>
 						{!isReply && (
-							<button className='ml-4 text-blue-400 hover:text-blue-200' onClick={() => setShowReplyForm(!showReplyForm)}>
+							<button className='ml-4 text-blue-400 hover:text -blue-200' onClick={() => setShowReplyForm(!showReplyForm)}>
 								{showReplyForm ? 'Отменить' : 'Ответить'}
 							</button>
 						)}
@@ -201,7 +206,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			{showReplyForm && (
 				<div className='mt-4'>
 					<textarea
-						className='w-full p-3 bg-gray-700 rounded-lg text -white'
+						className='w-full p-3 text-white bg-gray-700 rounded-lg'
 						value={replyContent}
 						onChange={e => setReplyContent(e.target.value)}
 						placeholder='Введите ответ...'
