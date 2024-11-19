@@ -84,15 +84,17 @@ export default App;
 	/todo: empty comments + posts errors handl
 	/todo: markdown in posts
 	/todo: new post/edit post/delete post |  post creator | 
-	todo: edit/delete comment
+	/todo: edit/delete comment
 	/todo: admin premisions
-	todo: filter post/sort post
-	todo: sort/comments
-	todo: filter users/sort users
+	/todo: filter post/sort post
+
+	
 	todo: like/dislike posts/comments
 	todo: favourites add delete
 	todo: search
 
 	? todo: link in post to user profile + in comments
 	? todo: category edit/delete/create
+	? todo: sort/comments
+	? todo: filter users/sort users
 */

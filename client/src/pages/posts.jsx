@@ -7,21 +7,24 @@ import Post from '../components/UI/post';
 import Pagination from '../components/UI/pagination';
 import PostHandler from '../api/postHandler';
 import { formatDate } from '../utils/formatDate';
+import SortSelects from '../components/UI/sortSelects'; // Импортируем новый компонент
 
 const PostsPage = () => {
 	const [posts, setPosts] = useState([]);
 	const [totalPages, setTotalPages] = useState(1);
 	const [error, setError] = useState(null);
-	const [loading, setLoading] = useState(true); // Добавляем состояние для отслеживания загрузки
-
-	// Получаем `page` из URL
+	const [loading, setLoading] = useState(true);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPage = Number(searchParams.get('page')) || 1;
 
-	const fetchPosts = async page => {
-		setLoading(true); // Устанавливаем загрузку в true при начале запроса
+	// Состояния для сортировки
+	const [sortBy, setSortBy] = useState('date'); // По умолчанию сортируем по дате
+	const [sortOrder, setSortOrder] = useState('asc');
+
+	const fetchPosts = async (page) => {
+		setLoading(true);
 		try {
-			const response = await PostHandler.getAllPosts(page);
+			const response = await PostHandler.getAllPosts(page, '', '', sortBy, sortOrder);
 			if (response.status === 200) {
 				const formattedPosts = await Promise.all(
 					response.data.posts.map(async post => {
@@ -53,17 +56,16 @@ const PostsPage = () => {
 		} catch (error) {
 			setError(error.message);
 		} finally {
-			setLoading(false); // Отключаем состояние загрузки после завершения запроса
+			setLoading(false);
 		}
 	};
 
-	// Обновляем данные при изменении страницы
 	useEffect(() => {
 		fetchPosts(currentPage);
-	}, [currentPage]);
+	}, [currentPage, sortBy, sortOrder]);
 
-	const handlePageChange = page => {
-		setSearchParams({ page }); // Обновляем URL при смене страницы
+	const handlePageChange = (page) => {
+		setSearchParams({ page, sortBy, sortOrder });
 	};
 
 	return (
@@ -71,9 +73,12 @@ const PostsPage = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-700'>
-					{loading && <p className='text-gray-300'>Загрузка постов...</p>} {/* Индикатор загрузки */}
+				<div className='flex-grow p-6 bg-gray-800'>
+					{loading && <p className='text-gray-300'>Загрузка постов...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
+
+					<SortSelects sortBy={sortBy} setSortBy={setSortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} />
+
 					{posts.map(post => (
 						<Post key={post.id} {...post} />
 					))}

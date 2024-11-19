@@ -43,7 +43,7 @@ exports.getAllPosts = async (req, res) => {
 					through: { attributes: [] },
 				},
 			],
-			order: [[sortBy, sortOrder]],
+			order: [[sortBy, sortOrder]], // Применение сортировки
 			distinct: true,
 		});
 
