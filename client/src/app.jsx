@@ -85,7 +85,7 @@ export default App;
 	/todo: markdown in posts
 	/todo: new post/edit post/delete post |  post creator | 
 	todo: edit/delete comment
-	todo: admin premisions
+	/todo: admin premisions
 	todo: filter post/sort post
 	todo: sort/comments
 	todo: filter users/sort users

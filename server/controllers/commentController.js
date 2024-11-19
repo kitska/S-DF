@@ -129,7 +129,14 @@ exports.updateComment = async (req, res) => {
 	const { content, status } = req.body;
 
 	try {
-		const comment = await Comment.findByPk(commentId);
+		const comment = await Comment.findByPk(commentId, {
+			include: [
+				{
+					model: User,
+					attributes: ['id', 'login', 'profile_picture'],
+				},
+			],
+		});
 
 		if (!comment) {
 			return res.status(404).json({ message: 'Comment not found' });
