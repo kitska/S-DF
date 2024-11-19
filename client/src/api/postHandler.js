@@ -65,11 +65,19 @@ const PostHandler = {
 	},
 
 	// Получение лайков для поста
-	getLikesAndDislikesForPost: async (postId, type) => {
+	getLikesAndDislikesForPost: async (postId, type, authorId) => {
 		try {
-			// Добавляем type как параметр запроса
+			// Создаем объект параметров запроса
+			const params = { type };
+
+			// Если authorId указан, добавляем его в параметры
+			if (authorId) {
+				params.author_id = authorId;
+			}
+
+			// Выполняем запрос с параметрами
 			const response = await apiClient.get(`/${postId}/like`, {
-				params: { type }, // Здесь мы передаем тип как query параметр
+				params, // Передаем параметры в запрос
 			});
 
 			return { data: response.data, status: response.status };

@@ -67,11 +67,11 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					</div>
 					<div className='flex flex-col items-end w-1/4'>
 						<div className='flex items-center mb-2 space-x-2 text-gray-400'>
-							<button className='flex items-center hover:text-gray-200'>
-								<FaThumbsUp className='mr-1' /> {likes}
+							<button className='flex items-center '>
+								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
 							</button>
-							<button className='flex items-center hover:text-gray-200'>
-								<FaThumbsDown className='mr-1' /> {dislikes}
+							<button className='flex items-center'>
+								<FaThumbsDown className='mr-1 text-red-600' /> {dislikes}
 							</button>
 							<button className={`flex items-center hover:text-yellow-400 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'}`} onClick={toggleFavorite}>
 								<FaStar className='mr-1' />

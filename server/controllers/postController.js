@@ -43,7 +43,7 @@ exports.getAllPosts = async (req, res) => {
 					through: { attributes: [] },
 				},
 			],
-			order: [[sortBy, sortOrder]], // Применение сортировки
+			order: [[sortBy, sortOrder]],
 			distinct: true,
 		});
 
@@ -155,12 +155,11 @@ exports.createComment = async (req, res) => {
 			content,
 		});
 
-		// Fetch the comment along with user details
 		const commentWithUser = await Comment.findOne({
 			where: { id: newComment.id },
 			include: {
 				model: User,
-				attributes: ['id', 'login', 'profile_picture'], // Include only relevant fields
+				attributes: ['id', 'login', 'profile_picture'],
 			},
 		});
 
@@ -173,7 +172,6 @@ exports.createComment = async (req, res) => {
 		res.status(500).json({ message: 'Server error when creating a comment' });
 	}
 };
-
 
 exports.getCategoriesForPost = async (req, res) => {
 	const { post_id } = req.params;
@@ -206,22 +204,37 @@ exports.getCategoriesForPost = async (req, res) => {
 exports.getLikesForPost = async (req, res) => {
 	try {
 		const { post_id } = req.params;
-		const { type } = req.query;
+		const { type, author_id } = req.query;
 
 		const post = await Post.findByPk(post_id);
 		if (!post) return res.status(404).json({ message: 'Post not found' });
 
-		const likeCount = await Like.count({
+		const totalLikes = await Like.count({
 			where: { post_id, ...(type && { type }) },
 		});
 
-		res.json({ post_id, likeCount });
+		let userLikes = [];
+		if (author_id) {
+			userLikes = await Like.findAll({
+				where: {
+					post_id,
+					author_id,
+					...(type && { type }),
+				},
+				attributes: ['publish_date', 'id', 'comment_id', 'author_id', 'type'],
+			});
+		}
+
+		res.json({
+			post_id,
+			likeCount: totalLikes,
+			userLikes,
+		});
 	} catch (error) {
 		console.error(`Error fetching likes for post ID ${req.params.post_id}:`, error);
 		res.status(500).json({ message: 'Server error when receiving likes' });
 	}
 };
-
 
 exports.createPost = async (req, res) => {
 	const { title, content, categories } = req.body;

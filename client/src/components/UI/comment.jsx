@@ -2,27 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import CommentHandler from '../../api/commentsHandler';
-import { decodeToken } from '../../utils/decodeJWT'; // Import the decodeToken function
+import { decodeToken } from '../../utils/decodeJWT';
 
 const Comment = ({ comment, postId, setComments, isReply = false }) => {
 	const [replyContent, setReplyContent] = useState('');
 	const [showReplyForm, setShowReplyForm] = useState(false);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
+	const [userReaction, setUserReaction] = useState(null); // 'like', 'dislike', or null
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState(comment.content);
 
-	// Decode the token to get user information
 	const token = localStorage.getItem('token');
 	const user = token ? decodeToken(token) : null;
-	// Check if the user can edit or delete the comment
 	const canEditOrDelete = user && (user.id === comment.author_id || user.role === 'admin');
 
 	useEffect(() => {
 		const fetchLikesAndDislikes = async () => {
 			try {
-				const response = await CommentHandler.getLikesForComment(comment.id, 'like');
-				setLikes(response.data.likes);
+				const likeResponse = await CommentHandler.getLikesForComment(comment.id, 'like');
+				setLikes(likeResponse.data.likes);
 				const dislikeResponse = await CommentHandler.getLikesForComment(comment.id, 'dislike');
 				setDislikes(dislikeResponse.data.likes);
 			} catch (error) {
@@ -67,13 +66,13 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 		try {
 			const updatedCommentData = { content: editedContent };
 			const response = await CommentHandler.updateComment(comment.id, updatedCommentData, token);
-			const updatedComment = response.data.comment; // Assuming the API returns the updated comment
+			const updatedComment = response.data.comment;
+
 			setComments(prevComments => {
 				return prevComments.map(c => {
 					if (c.id === comment.id) {
-						return updatedComment; // Update the comment with the response from the server
+						return updatedComment;
 					}
-					// Update replies if they exist
 					if (c.replies) {
 						return {
 							...c,
@@ -95,10 +94,8 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			setComments(prevComments => {
 				return prevComments.reduce((acc, c) => {
 					if (c.id === comment.id) {
-						// If the comment is found, do not include it in the new array
-						return acc;
+						return acc; // Do not include the deleted comment
 					}
-					// If the comment has replies, filter out the deleted comment from replies
 					if (c.replies) {
 						const updatedReplies = c.replies.filter(reply => reply.id !== comment.id);
 						return [...acc, { ...c, replies: updatedReplies }];
@@ -108,6 +105,38 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			});
 		} catch (error) {
 			console.error('Ошибка при удалении комментария:', error.message);
+		}
+	};
+
+	const handleLike = async () => {
+		if (userReaction === 'like') {
+			await CommentHandler.deleteLikeForComment(comment.id, token);
+			setLikes(prev => prev - 1);
+			setUserReaction(null);
+		} else {
+			if (userReaction === 'dis like') {
+				await CommentHandler.deleteLikeForComment(comment.id, token);
+				setDislikes(prev => prev - 1);
+			}
+			await CommentHandler.createLikeForComment(comment.id, { type: 'like' }, token);
+			setLikes(prev => prev + 1);
+			setUserReaction('like');
+		}
+	};
+
+	const handleDislike = async () => {
+		if (userReaction === 'dislike') {
+			await CommentHandler.deleteLikeForComment(comment.id, token);
+			setDislikes(prev => prev - 1);
+			setUserReaction(null);
+		} else {
+			if (userReaction === 'like') {
+				await CommentHandler.deleteLikeForComment(comment.id, token);
+				setLikes(prev => prev - 1);
+			}
+			await CommentHandler.createLikeForComment(comment.id, { type: 'dislike' }, token);
+			setDislikes(prev => prev + 1);
+			setUserReaction('dislike');
 		}
 	};
 
@@ -141,11 +170,15 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			) : (
 				<>
 					<p className='text-lg text-gray-200'>{comment.content}</p>
-					<div className='flex items-center mt-2'>
-						<FaThumbsUp className='mr-2 text-blue-600' />
-						<span className='text-gray-300'>{likes}</span>
-						<FaThumbsDown className='ml-4 mr-2 text-red-600' />
-						<span className='text-gray-300'>{dislikes}</span>
+					<div className='flex items-center mt-2 text-gray-300'>
+						<div className='flex items-center cursor-pointer' onClick={handleLike}>
+							<FaThumbsUp className={`mr-2 ${userReaction === 'like' ? 'text-blue-600' : 'hover:text-blue-400'}`} />
+							<span className='text-gray-300'>{likes}</span>
+						</div>
+						<div className='flex items-center cursor-pointer' onClick={handleDislike}>
+							<FaThumbsDown className={`ml-4 mr-2 ${userReaction === 'dislike' ? 'text-red-600' : 'hover:text-red-400'}`} />
+							<span className='text-gray-300'>{dislikes}</span>
+						</div>
 						{!isReply && (
 							<button className='ml-4 text-blue-400 hover:text-blue-200' onClick={() => setShowReplyForm(!showReplyForm)}>
 								{showReplyForm ? 'Отменить' : 'Ответить'}
@@ -168,7 +201,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			{showReplyForm && (
 				<div className='mt-4'>
 					<textarea
-						className='w-full p-3 text-white bg-gray-700 rounded-lg'
+						className='w-full p-3 bg-gray-700 rounded-lg text -white'
 						value={replyContent}
 						onChange={e => setReplyContent(e.target.value)}
 						placeholder='Введите ответ...'

@@ -87,9 +87,7 @@ export default App;
 	/todo: edit/delete comment
 	/todo: admin premisions
 	/todo: filter post/sort post
-
-	
-	todo: like/dislike posts/comments
+	/todo: like/dislike posts/comments
 	todo: favourites add delete
 	todo: search
 

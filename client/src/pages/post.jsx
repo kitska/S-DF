@@ -18,6 +18,7 @@ const PostPage = () => {
 	const [post, setPost] = useState(null);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
+	const [userReaction, setUserReaction] = useState(null); // 'like', 'dislike', or null
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
@@ -42,30 +43,36 @@ const PostPage = () => {
 					authorId: post.User.id,
 					authorAvatar: post.User.profile_picture,
 					date: formatDate(post.publish_date),
-					status: post.status === 'active', // Ensure this is a boolean
+					status: post.status === 'active',
 					categories: post.Categories.map(category => ({
 						id: category.id,
 						title: category.title,
 					})),
 				};
-				
+
 				setPost(formattedPost);
 				setEditedContent(formattedPost.content);
 				setEditedTitle(formattedPost.title);
 				setEditedStatus(formattedPost.status ? 'active' : 'inactive');
 
-				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like');
+				// Получаем лайки, дизлайки и реакцию пользователя
+				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
 				setLikes(likeResponse.data.likeCount);
+				setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null); // Проверяем, есть ли лайки пользователя
 
-				const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike');
+				const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike', user?.id);
 				setDislikes(dislikeResponse.data.likeCount);
+				if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
+					setUserReaction('dislike'); // Проверяем, есть ли дизлайки пользователя
+				}
+
 			} catch (err) {
 				setError(err.message);
 			}
 		};
 
 		fetchPostData();
-	}, [postId]);
+	}, [postId, token, user?.id]);
 
 	const toggleFavorite = () => {
 		setIsFavorite(!isFavorite);
@@ -87,7 +94,7 @@ const PostPage = () => {
 				status: editedStatus,
 			};
 			await PostHandler.updatePost(postId, postData, token);
-			setPost(prevPost => ({ ...prevPost, content: editedContent, title: editedTitle, status: editedStatus === `active` }));
+			setPost(prevPost => ({ ...prevPost, content: editedContent, title: editedTitle, status: editedStatus === 'active' }));
 			setIsEditing(false);
 		} catch (err) {
 			setError(err.message);
@@ -104,10 +111,47 @@ const PostPage = () => {
 	const handleDelete = async () => {
 		try {
 			await PostHandler.deletePost(postId, token);
-			// Optionally, navigate back to the post list or show a success message
-			navigate('/'); // Adjust the path as needed
+			navigate('/'); // Navigate back to the post list or show a success message
 		} catch (err) {
 			setError(err.message); // Handle error appropriately
+		}
+	};
+
+	const handleLike = async () => {
+		if (userReaction === 'like') {
+			// If already liked, remove like
+			await PostHandler.deleteLikeForPost(postId, token);
+			setLikes(prev => prev - 1);
+			setUserReaction(null);
+		} else {
+			// If disliked, remove dislike first
+			if (userReaction === 'dislike') {
+				await PostHandler.deleteLikeForPost(postId, token);
+				setDislikes(prev => prev - 1);
+			}
+			// Add like
+			await PostHandler.createLikeForPost(postId, { type: 'like' }, token);
+			setLikes(prev => prev + 1);
+			setUserReaction('like');
+		}
+	};
+
+	const handleDislike = async () => {
+		if (userReaction === 'dislike') {
+			// If already disliked, remove dislike
+			await PostHandler.deleteLikeForPost(postId, token);
+			setDislikes(prev => prev - 1);
+			setUserReaction(null);
+		} else {
+			// If liked, remove like first
+			if (userReaction === 'like') {
+				await PostHandler.deleteLikeForPost(postId, token);
+				setLikes(prev => prev - 1);
+			}
+			// Add dislike
+			await PostHandler.createLikeForPost(postId, { type: 'dislike' }, token);
+			setDislikes(prev => prev + 1);
+			setUserReaction('dislike');
 		}
 	};
 
@@ -167,15 +211,11 @@ const PostPage = () => {
 											className='hidden'
 										/>
 										<div
-											className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${
-												editedStatus === 'active' ? 'bg-green-500' : 'bg-red-500'
-											}`}
+											className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${editedStatus === 'active' ? 'bg-green-500' : 'bg-red-500'}`}
 											onClick={() => setEditedStatus(editedStatus === 'active' ? 'inactive' : 'active')}
 										>
 											<div
-												className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
-													editedStatus === 'active' ? 'translate-x-6' : 'translate-x-0'
-												}`}
+												className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${editedStatus === 'active' ? 'translate-x-6' : 'translate-x-0'}`}
 											></div>
 										</div>
 									</div>
@@ -209,12 +249,12 @@ const PostPage = () => {
 							></span>
 						</div>
 						<div className='flex mt-4 space-x-6 text-gray-300'>
-							<div className='flex items-center'>
-								<FaThumbsUp className='mr-2 text-blue-600 transition-all hover:text-blue-400' />
+							<div className='flex items-center cursor-pointer' onClick={handleLike}>
+								<FaThumbsUp className={`mr-2 ${userReaction === 'like' ? 'text-blue-600' : 'hover:text-blue-400'}`} />
 								<span>{likes}</span>
 							</div>
-							<div className='flex items-center'>
-								<FaThumbsDown className='mr-2 text-red-600 transition-all hover:text-red-400' />
+							<div className='flex items-center cursor-pointer' onClick={handleDislike}>
+								<FaThumbsDown className={`mr-2 ${userReaction === 'dislike' ? 'text-red-600' : 'hover:text-red-400'}`} />
 								<span>{dislikes}</span>
 							</div>
 							<div className='flex items-center'>

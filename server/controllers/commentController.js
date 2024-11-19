@@ -107,7 +107,6 @@ exports.replyToComment = async (req, res) => {
 			comment_id,
 		});
 
-		// Загрузка пользователя, связанного с комментарием
 		const replyWithUser = await Comment.findByPk(reply.id, {
 			include: [
 				{
