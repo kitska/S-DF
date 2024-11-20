@@ -2,13 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';
 import UserHandler from '../api/userHandler';
+import PostHandler from '../api/postHandler'; // Импортируем обработчик постов
 import { decodeToken } from '../utils/decodeJWT';
+import User from './UI/user'; // Импортируем компонент User
+import Post from './UI/post'; // Импортируем компонент Post
 
 const Header = () => {
 	const token = localStorage.getItem('token');
 	const [userAvatar, setUserAvatar] = useState(null);
 	const [login, setLogin] = useState(null);
 	const [userId, setUserId] = useState(null);
+	const [searchTerm, setSearchTerm] = useState('');
+	const [searchResults, setSearchResults] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [showResults, setShowResults] = useState(false);
+	const [showHint, setShowHint] = useState(false); // Состояние для управления видимостью подсказки
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -32,6 +40,88 @@ const Header = () => {
 		fetchUserData();
 	}, [token]);
 
+	const handleSearch = async e => {
+		e.preventDefault(); // Предотвращаем перезагрузку страницы
+		setLoading(true);
+		setShowResults(true); // Показываем результаты поиска
+
+		if (!searchTerm) {
+			setLoading(false);
+			return; // Если поле пустое, выходим
+		}
+
+		try {
+			let response;
+			if (searchTerm.startsWith('user:')) {
+				const login = searchTerm.replace('user:', '').trim();
+				if (!login) {
+					setLoading(false);
+					setSearchResults([]); // Если ничего после user:, очищаем результаты
+					return;
+				}
+				response = await UserHandler.getAllUsers(1, 10, login);
+				if (Array.isArray(response.data.users)) {
+					setSearchResults(response.data.users.map(user => ({ type: 'user', ...user })));
+				} else {
+					console.error('Ошибка: ожидается массив пользователей', response);
+					setSearchResults([]); // Очищаем результаты, если данные не массив
+				}
+			} else if (searchTerm.startsWith('post:')) {
+				const title = searchTerm.replace('post:', '').trim();
+				if (!title) {
+					setLoading(false);
+					setSearchResults([]); // Если ничего после post:, очищаем результаты
+					return;
+				}
+				response = await PostHandler.getAllPosts(1, title);
+				if (Array.isArray(response.data.posts)) {
+					setSearchResults(
+						response.data.posts.map(post => ({
+							type: 'post',
+							id: post.id,
+							title: post.title,
+							content: `${post.content.slice(0, 100)}...`, // Обрезаем контент для отображения
+							author: post.User.login,
+							authorAvatar: post.User.profile_picture,
+							date: post.publish_date,
+							status: post.status === 'active',
+							categories: post.Categories.map(category => ({
+								id: category.id,
+								title: category.title,
+							})),
+						}))
+					);
+				} else {
+					console.error('Ошибка: ожидается массив постов', response);
+					setSearchResults([]); // Очищаем результаты, если данные не массив
+				}
+			} else {
+				setSearchResults([]); // Если не user: и не post:, очищаем результаты
+			}
+		} catch (error) {
+		 console.error('Ошибка при поиске:', error);
+			setSearchResults([]); // Очищаем результаты в случае ошибки
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleInputChange = e => {
+		setSearchTerm(e.target.value);
+		if (e.target.value === '') {
+			setShowResults(false); // Скрываем результаты, если поле ввода пустое
+			setShowHint(true); // Показываем подсказку
+		} else {
+			setShowHint(false); // Скрываем подсказку, если есть текст
+			handleSearch(e); // Выполняем поиск при вводе
+		}
+	};
+
+	const handleResultClick = () => {
+		setSearchTerm(''); // Очищаем поле ввода
+		setShowResults(false); // Скрываем результаты
+	};
+
 	return (
 		<header className='fixed top-0 left-0 z-50 w-full py-4 bg-gray-900'>
 			<div className='container flex items-center justify-between max-w-5xl p-2 mx-auto bg-gray-800 rounded-lg shadow-lg'>
@@ -43,15 +133,25 @@ const Header = () => {
 				</div>
 
 				{/* Search Bar */}
-				<div className='flex-grow mx-3'>
-					<input type='text' placeholder='Search...' className='w-full p-1 text-white bg-gray-700 border border-gray-600 rounded-full' />
-				</div>
+				<form className='flex-grow mx-3' onSubmit={handleSearch}>
+					<input
+						type='text'
+						placeholder='Search...'
+						className='w-full p-1 text-white bg-gray-700 border border-gray-600 rounded-full'
+						value={searchTerm}
+						onChange={handleInputChange}
+						onFocus={() => {
+							if (searchTerm) setShowResults(true); // Показываем результаты, если есть текст
+						}}
+						onBlur={() => setShowHint(false)} // Скрываем подсказку при уходе курсора
+					/>
+				</form>
 
 				{/* User Avatar and Login Block */}
 				<div className='flex items-center space-x-3'>
 					{userAvatar ? (
 						<Link to={`/user/${userId}`} className='flex items-center p-1 space-x-2 transition duration-200 rounded-lg hover:bg-gray-700'>
-							<img src={userAvatar} alt='User Avatar' className='object-cover border-2 border-gray-500 rounded-full w-11 h-11' />
+							<img src={userAvatar} alt='User  Avatar' className='object-cover border-2 border-gray-500 rounded-full w-11 h-11' />
 							<span className='font-semibold text-white'>{login}</span>
 						</Link>
 					) : (
@@ -61,6 +161,48 @@ const Header = () => {
 					)}
 				</div>
 			</div>
+
+			{/* Search Results */}
+			{showResults && (
+				<div className='absolute w-1/2 mt-2 transform -translate-x-1/2 bg-gray-800 rounded-md shadow-lg left-1/2' style={{ maxHeight: '300px', overflowY: 'auto' }}>
+					<ul>
+						{searchResults.length > 0 ? (
+							searchResults.map(item => (
+								<li key={item.id} className='p-2 hover:bg-gray-700' onClick={handleResultClick}>
+									{item.type === 'user' ? (
+										<User
+											fullName={item.login.length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
+											profilePicture={`${process.env.REACT_APP_BASE_URL}/${item.profile_picture}`}
+											rating={item.rating}
+											userId={item.id}
+										/>
+									) : (
+										<Post
+											id={item.id}
+											title={item.title}
+											content={item.content}
+											author={item.author}
+											authorAvatar={item.authorAvatar}
+											date={item.date}
+											status={item.status}
+											categories={item.categories}
+										/>
+									)}
+								</li>
+							))
+						) : (
+							<li className='p-2 text-white'>Нет результатов</li>
+						)}
+					</ul>
+				</div>
+			)}
+			{showHint && (
+				<div className='absolute w-1/2 mt-2 transform -translate-x-1/2 bg-gray-800 rounded-md shadow-lg left-1/2'>
+					<p className='p-2 text-white'>
+						Введите <strong>user:</strong> для поиска пользователей или <strong>post:</strong> для поиска постов.
+					</p>
+				</div>
+			)}
 		</header>
 	);
 };

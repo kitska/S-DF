@@ -89,6 +89,7 @@ export default App;
 	/todo: filter post/sort post
 	/todo: like/dislike posts/comments
 	/todo: favourites add delete
+	todo: category post page style
 	todo: search
 
 	? todo: link in post to user profile + in comments
