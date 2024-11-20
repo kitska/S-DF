@@ -88,7 +88,7 @@ export default App;
 	/todo: admin premisions
 	/todo: filter post/sort post
 	/todo: like/dislike posts/comments
-	todo: favourites add delete
+	/todo: favourites add delete
 	todo: search
 
 	? todo: link in post to user profile + in comments

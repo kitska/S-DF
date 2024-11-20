@@ -1,18 +1,38 @@
 // src/components/UI/Post.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
 import { Link } from 'react-router-dom';
+import PostHandler from '../../api/postHandler'; // Импортируем API для работы с постами
+import { decodeToken } from '../../utils/decodeJWT'; // Импортируем функцию для декодирования токена
+import UserHandler from '../../api/userHandler';
 
 const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date, status, categories = [] }) => {
 	const [showAllCategories, setShowAllCategories] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
 	const [isFavorite, setIsFavorite] = useState(false);
 	const timeoutRef = useRef(null);
+	const token = localStorage.getItem('token');
+	const user = decodeToken(token);
 
 	const maxVisibleCategories = 3;
 	const visibleCategories = categories.slice(0, maxVisibleCategories);
 	const hasMoreCategories = categories.length > maxVisibleCategories;
+
+	useEffect(() => {
+		// Проверяем, находится ли пост в избранном
+		const checkIfFavorite = async () => {
+			try {
+				const favouritesResponse = await UserHandler.getUserFavourites(token);
+				const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
+				setIsFavorite(favouritePostIds.includes(parseInt(id))); // Проверяем, есть ли пост в избранном
+			} catch (error) {
+				console.warn('Ошибка при получении избранных постов:', error);
+			}
+		};
+
+		checkIfFavorite();
+	}, [id, token]);
 
 	const handleMouseEnter = () => {
 		setIsHovered(true);
@@ -31,8 +51,20 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 		setShowAllCategories(!showAllCategories);
 	};
 
-	const toggleFavorite = () => {
-		setIsFavorite(!isFavorite);
+	const toggleFavorite = async () => {
+		try {
+			if (isFavorite) {
+				// Если пост уже в избранном, удаляем его
+				await PostHandler.deletePostFromFavourites(id, token);
+				setIsFavorite(false);
+			} else {
+				// Если пост не в избранном, добавляем его
+				await PostHandler.addPostToFavourites(id, token);
+				setIsFavorite(true);
+			}
+		} catch (error) {
+			console.error('Ошибка при добавлении/удалении из избранного:', error);
+		}
 	};
 
 	const handleMouseEnterCategories = () => {
@@ -68,7 +100,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					<div className='flex flex-col items-end w-1/4'>
 						<div className='flex items-center mb-2 space-x-2 text-gray-400'>
 							<button className='flex items-center '>
-								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
+ <FaThumbsUp className='mr-1 text-blue-600' /> {likes}
 							</button>
 							<button className='flex items-center'>
 								<FaThumbsDown className='mr-1 text-red-600' /> {dislikes}

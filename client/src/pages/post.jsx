@@ -11,6 +11,7 @@ import Category from '../components/UI/category';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import { decodeToken } from '../utils/decodeJWT';
+import UserHandler from '../api/userHandler';
 
 const PostPage = () => {
 	const navigate = useNavigate();
@@ -29,53 +30,77 @@ const PostPage = () => {
 	const token = localStorage.getItem('token');
 	const user = decodeToken(token);
 
-	useEffect(() => {
-		const fetchPostData = async () => {
-			try {
-				const postResponse = await PostHandler.getPostById(postId);
-				const post = postResponse.data.post;
+useEffect(() => {
+	const fetchPostData = async () => {
+		try {
+			const postResponse = await PostHandler.getPostById(postId);
+			const post = postResponse.data.post;
 
-				const formattedPost = {
-					id: post.id,
-					title: post.title,
-					content: post.content,
-					author: post.User.login,
-					authorId: post.User.id,
-					authorAvatar: post.User.profile_picture,
-					date: formatDate(post.publish_date),
-					status: post.status === 'active',
-					categories: post.Categories.map(category => ({
-						id: category.id,
-						title: category.title,
-					})),
-				};
+			const formattedPost = {
+				id: post.id,
+				title: post.title,
+				content: post.content,
+				author: post.User.login,
+				authorId: post.User.id,
+				authorAvatar: post.User.profile_picture,
+				date: formatDate(post.publish_date),
+				status: post.status === 'active',
+				categories: post.Categories.map(category => ({
+					id: category.id,
+					title: category.title,
+				})),
+			};
 
-				setPost(formattedPost);
-				setEditedContent(formattedPost.content);
-				setEditedTitle(formattedPost.title);
-				setEditedStatus(formattedPost.status ? 'active' : 'inactive');
+			setPost(formattedPost);
+			setEditedContent(formattedPost.content);
+			setEditedTitle(formattedPost.title);
+			setEditedStatus(formattedPost.status ? 'active' : 'inactive');
 
-				// Получаем лайки, дизлайки и реакцию пользователя
-				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
-				setLikes(likeResponse.data.likeCount);
-				setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null); // Проверяем, есть ли лайки пользователя
+			// Получаем лайки, дизлайки и реакцию пользователя
+			const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
+			setLikes(likeResponse.data.likeCount);
+			setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null);
 
-				const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike', user?.id);
-				setDislikes(dislikeResponse.data.likeCount);
-				if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
-					setUserReaction('dislike'); // Проверяем, есть ли дизлайки пользователя
-				}
-
-			} catch (err) {
-				setError(err.message);
+			const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike', user?.id);
+			setDislikes(dislikeResponse.data.likeCount);
+			if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
+				setUserReaction('dislike');
 			}
-		};
 
-		fetchPostData();
-	}, [postId, token, user?.id]);
+			// Проверяем, добавлен ли пост в избранное
+			try {
+				const favouritesResponse = await UserHandler.getUserFavourites(token);
+				const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
+				// Устанавливаем состояние isFavorite в зависимости от наличия поста в избранных
+				setIsFavorite(favouritePostIds.includes(parseInt(postId)));
+			} catch (favouritesError) {
+				// Игнорируем ошибку, если у пользователя нет избранных
+				console.warn(favouritesError);
+				// Устанавливаем isFavorite в false, если не удалось получить избранные
+				setIsFavorite(false);
+			}
+		} catch (err) {
+			setError(err.message);
+		}
+	};
 
-	const toggleFavorite = () => {
-		setIsFavorite(!isFavorite);
+	fetchPostData();
+}, [postId, token, user?.id]);
+
+	const toggleFavorite = async () => {
+		try {
+			if (isFavorite) {
+				// Если пост уже в избранном, удаляем его
+				await PostHandler.deletePostFromFavourites(postId, token);
+				setIsFavorite(false);
+			} else {
+				// Если пост не в избранном, добавляем его
+				await PostHandler.addPostToFavourites(postId, token);
+				setIsFavorite(true);
+			}
+		} catch (error) {
+			setError(error.message);
+		}
 	};
 
 	const convertToHTML = markdown => {
@@ -211,11 +236,15 @@ const PostPage = () => {
 											className='hidden'
 										/>
 										<div
-											className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${editedStatus === 'active' ? 'bg-green-500' : 'bg-red-500'}`}
+											className={`w-14 h-8 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${
+												editedStatus === 'active' ? 'bg-green-500' : 'bg-red-500'
+											}`}
 											onClick={() => setEditedStatus(editedStatus === 'active' ? 'inactive' : 'active')}
 										>
 											<div
-												className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${editedStatus === 'active' ? 'translate-x-6' : 'translate-x-0'}`}
+												className={`bg-white w-6 h-6 rounded-full shadow-md transform transition-transform duration-300 ${
+													editedStatus === 'active' ? 'translate-x-6' : 'translate-x-0'
+												}`}
 											></div>
 										</div>
 									</div>
@@ -258,7 +287,7 @@ const PostPage = () => {
 								<span>{dislikes}</span>
 							</div>
 							<div className='flex items-center'>
-								<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-500 transition-all`} onClick={toggleFavorite} />
+								<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-400' : 'text-gray- 400'} hover:text-yellow-500 transition-all`} onClick={toggleFavorite} />
 							</div>
 						</div>
 						<div className='mt-6'>
