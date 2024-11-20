@@ -49,9 +49,14 @@ const UserProfilePage = () => {
 	};
 
 	const formatPost = async post => {
+		if (!post) {
+			return null;
+		}
+
 		try {
 			const likeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'like');
 			const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'dislike');
+
 			return {
 				id: post.id,
 				title: post.title,
@@ -64,11 +69,12 @@ const UserProfilePage = () => {
 					id: category.id,
 					title: category.title,
 				})),
-				likes: likeResponse.data.likeCount || 0,
-				dislikes: dislikeResponse.data.dislikeCount || 0,
+				likes: likeResponse?.data?.likeCount || 0,
+				dislikes: dislikeResponse?.data?.dislikeCount || 0,
 			};
 		} catch (error) {
-			setError('Ошибка при загрузке данных о лайках и дизлайках');
+			console.error('Ошибка при загрузке данных о лайках и дизлайках:', error.message);
+			return null;
 		}
 	};
 
