@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';
 import UserHandler from '../api/userHandler';
 import PostHandler from '../api/postHandler'; // Импортируем обработчик постов
+import CategoryHandler from '../api/categoryHandler'; // Импортируем обработчик категорий
 import { decodeToken } from '../utils/decodeJWT';
 import User from './UI/user'; // Импортируем компонент User
 import Post from './UI/post'; // Импортируем компонент Post
+import Category from './UI/category'; // Импортируем компонент Category
+import { formatDate } from '../utils/formatDate';
 
 const Header = () => {
 	const token = localStorage.getItem('token');
@@ -41,22 +44,25 @@ const Header = () => {
 	}, [token]);
 
 	const handleSearch = async e => {
-		e.preventDefault(); // Предотвращаем перезагрузку страницы
-		setLoading(true);
+		const term = e.target.value;
+		setSearchTerm(term);
 		setShowResults(true); // Показываем результаты поиска
 
-		if (!searchTerm) {
-			setLoading(false);
-			return; // Если поле пустое, выходим
+		if (term.trim() === '') {
+			setSearchResults([]); // Если поле пустое, очищаем результаты
+			setShowHint(true); // Показываем подсказку
+			return;
 		}
+
+		setLoading(true);
+		setShowHint(false); // Скрываем подсказку
 
 		try {
 			let response;
-			if (searchTerm.startsWith('user:')) {
-				const login = searchTerm.replace('user:', '').trim();
+			if (term.startsWith('u:')) {
+				const login = term.replace('u:', '').trim();
 				if (!login) {
-					setLoading(false);
-					setSearchResults([]); // Если ничего после user:, очищаем результаты
+					setSearchResults([]);
 					return;
 				}
 				response = await UserHandler.getAllUsers(1, 10, login);
@@ -64,13 +70,12 @@ const Header = () => {
 					setSearchResults(response.data.users.map(user => ({ type: 'user', ...user })));
 				} else {
 					console.error('Ошибка: ожидается массив пользователей', response);
-					setSearchResults([]); // Очищаем результаты, если данные не массив
+					setSearchResults([]);
 				}
-			} else if (searchTerm.startsWith('post:')) {
-				const title = searchTerm.replace('post:', '').trim();
+			} else if (term.startsWith('p:')) {
+				const title = term.replace('p:', '').trim();
 				if (!title) {
-					setLoading(false);
-					setSearchResults([]); // Если ничего после post:, очищаем результаты
+					setSearchResults([]);
 					return;
 				}
 				response = await PostHandler.getAllPosts(1, title);
@@ -80,10 +85,10 @@ const Header = () => {
 							type: 'post',
 							id: post.id,
 							title: post.title,
-							content: `${post.content.slice(0, 100)}...`, // Обрезаем контент для отображения
+							content: `${post.content.slice(0, 100)}...`,
 							author: post.User.login,
 							authorAvatar: post.User.profile_picture,
-							date: post.publish_date,
+							date: formatDate(post.publish_date),
 							status: post.status === 'active',
 							categories: post.Categories.map(category => ({
 								id: category.id,
@@ -93,23 +98,39 @@ const Header = () => {
 					);
 				} else {
 					console.error('Ошибка: ожидается массив постов', response);
-					setSearchResults([]); // Очищаем результаты, если данные не массив
+					setSearchResults([]);
+				}
+			} else if (term.startsWith('c:')) {
+				const categoryTitle = term.replace('c:', '').trim();
+				if (!categoryTitle) {
+					setSearchResults([]);
+					return;
+				}
+				response = await CategoryHandler.getAllCategories(1, 10, categoryTitle);
+				if (Array.isArray(response.data.categories)) {
+					setSearchResults(response.data.categories.map(category => ({ type: 'category', ...category })));
+				} else {
+					console.error('Ошибка: ожидается массив категорий', response);
+					setSearchResults([]);
 				}
 			} else {
-				setSearchResults([]); // Если не user: и не post:, очищаем результаты
+				setSearchResults([]); // Если не u:, p: или c:, очищаем результаты
 			}
 		} catch (error) {
-		 console.error('Ошибка при поиске:', error);
-			setSearchResults([]); // Очищаем результаты в случае ошибки
+			console.error('Ошибка при поиске:', error);
+			setSearchResults([]);
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	const handleInputChange = e => {
-		setSearchTerm(e.target.value);
-		if (e.target.value === '') {
-			setShowResults(false); // Скрываем результаты, если поле ввода пустое
+		const term = e.target.value;
+		setSearchTerm(term);
+
+		if (term === '') {
+			setSearchResults([]); // Очищаем результаты
+			setShowResults(false); // Скрываем результаты
 			setShowHint(true); // Показываем подсказку
 		} else {
 			setShowHint(false); // Скрываем подсказку, если есть текст
@@ -119,7 +140,21 @@ const Header = () => {
 
 	const handleResultClick = () => {
 		setSearchTerm(''); // Очищаем поле ввода
+		setSearchResults([]); // Сбрасываем результаты
 		setShowResults(false); // Скрываем результаты
+	};
+
+	const handleBlur = () => {
+		setShowResults(false); // Скрываем результаты при уходе курсора
+		setShowHint(false);
+	};
+
+	const handleFocus = () => {
+		if (searchTerm === '') {
+			setShowHint(true); // Показываем подсказку, если поле пустое
+		} else {
+			setShowResults(true); // Показываем результаты, если есть текст
+		}
 	};
 
 	return (
@@ -133,17 +168,15 @@ const Header = () => {
 				</div>
 
 				{/* Search Bar */}
-				<form className='flex-grow mx-3' onSubmit={handleSearch}>
+				<form className='flex-grow mx-3' onSubmit={e => e.preventDefault()}>
 					<input
 						type='text'
 						placeholder='Search...'
 						className='w-full p-1 text-white bg-gray-700 border border-gray-600 rounded-full'
 						value={searchTerm}
 						onChange={handleInputChange}
-						onFocus={() => {
-							if (searchTerm) setShowResults(true); // Показываем результаты, если есть текст
-						}}
-						onBlur={() => setShowHint(false)} // Скрываем подсказку при уходе курсора
+						onFocus={handleFocus} // Обработчик фокуса
+						onBlur={handleBlur} // Скрываем результаты и подсказку при уходе курсора
 					/>
 				</form>
 
@@ -168,7 +201,7 @@ const Header = () => {
 					<ul>
 						{searchResults.length > 0 ? (
 							searchResults.map(item => (
-								<li key={item.id} className='p-2 hover:bg-gray-700' onClick={handleResultClick}>
+								<li key={item.id} className='p-2' onClick={handleResultClick}>
 									{item.type === 'user' ? (
 										<User
 											fullName={item.login.length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
@@ -176,7 +209,7 @@ const Header = () => {
 											rating={item.rating}
 											userId={item.id}
 										/>
-									) : (
+									) : item.type === 'post' ? (
 										<Post
 											id={item.id}
 											title={item.title}
@@ -187,7 +220,9 @@ const Header = () => {
 											status={item.status}
 											categories={item.categories}
 										/>
-									)}
+									) : item.type === 'category' ? (
+										<Category categoryId={item.id} name={item.title} />
+									) : null}
 								</li>
 							))
 						) : (
@@ -199,7 +234,7 @@ const Header = () => {
 			{showHint && (
 				<div className='absolute w-1/2 mt-2 transform -translate-x-1/2 bg-gray-800 rounded-md shadow-lg left-1/2'>
 					<p className='p-2 text-white'>
-						Введите <strong>user:</strong> для поиска пользователей или <strong>post:</strong> для поиска постов.
+						Введите <strong>u:</strong> для поиска пользователей, <strong>p:</strong> для поиска постов или <strong>c:</strong> для поиска категорий.
 					</p>
 				</div>
 			)}
