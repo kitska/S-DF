@@ -30,7 +30,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, pageType }) => {
 			<button
 				onClick={handlePrevious}
 				disabled={currentPage === 1}
-				className={`px-3 py-1 rounded-lg ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+				className={`px-3 py-1 rounded-lg ${currentPage === 1 ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
 			>
 				&larr; Prev
 			</button>
@@ -39,7 +39,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, pageType }) => {
 				<button
 					key={page}
 					onClick={() => handlePageChange(page)}
-					className={`px-3 py-1 rounded-lg transition ${currentPage === page ? 'bg-blue-700 text-white font-semibold' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+					className={`px-3 py-1 rounded-lg transition ${currentPage === page ? 'bg-blue-700 text-white font-semibold' : 'bg-gray-400 text-gray-700 hover:bg-gray-300'}`}
 				>
 					{page}
 				</button>
@@ -48,7 +48,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, pageType }) => {
 			<button
 				onClick={handleNext}
 				disabled={currentPage === totalPages}
-				className={`px-3 py-1 rounded-lg ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+				className={`px-3 py-1 rounded-lg ${currentPage === totalPages ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
 			>
 				Next &rarr;
 			</button>

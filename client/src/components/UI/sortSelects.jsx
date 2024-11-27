@@ -20,8 +20,7 @@ const SortSelects = ({ sortBy, setSortBy, sortOrder, setSortOrder }) => {
 						onChange={handleSortByChange}
 						className='block w-full px-4 py-2 pr-8 text-gray-300 transition-all duration-200 bg-gray-600 border border-gray-500 rounded-lg appearance-none focus:outline-none focus:ring-2 hover:bg-gray-500'
 					>
-						<option value='date'>Дате</option>
-						<option value='likes'>Лайкам</option>
+						<option value='publish_date'>Дате</option>
 					</select>
 					<span className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
 						<svg className='w-4 h-4 text-gray-300' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'>
