@@ -1,21 +1,30 @@
-// src/pages/CategoryPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import PostHandler from '../api/postHandler';
 import CategoryHandler from '../api/categoryHandler';
-import Post from '../components/UI/post';
 import { formatDate } from '../utils/formatDate';
+import Header from '../components/header';
+import Footer from '../components/footer';
+import Sidebar from '../components/sidebar';
+import Category from '../components/UI/category';
+
+const LazyPost = React.lazy(() => import('../components/UI/post'));
 
 const CategoryPage = () => {
 	const { categoryId } = useParams();
-	const [posts, setPosts] = useState([]);
+	const [allPosts, setAllPosts] = useState([]); // Храним все посты
+	const [visiblePosts, setVisiblePosts] = useState([]); // Посты, которые будут отображаться
 	const [error, setError] = useState(null);
+	const [cat, setCat] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const [postsPerPage, setPostsPerPage] = useState(20); // Количество постов для загрузки
 
 	const fetchPostsByCategory = async () => {
+		setLoading(true);
 		try {
-			const response = await CategoryHandler.getPostsByCategory(categoryId);
+			const response = await CategoryHandler.getPostsByCategory(categoryId); // Получаем все посты
 			if (response.status === 200) {
-				console.log(response.data);
 				const formattedPosts = await Promise.all(
 					response.data.posts.map(async post => {
 						const likeResponse = await PostHandler.getLikesAndDislikesForPost(post.id, 'like');
@@ -26,6 +35,7 @@ const CategoryPage = () => {
 							title: post.title,
 							content: `${post.content.slice(0, 100)}...`,
 							author: post.User.login,
+							authorAvatar: post.User.profile_picture,
 							date: formatDate(post.publish_date),
 							status: post.status === 'active',
 							categories: post.Categories.map(category => ({
@@ -33,26 +43,76 @@ const CategoryPage = () => {
 								title: category.title,
 							})),
 							likes: likeResponse.data.likeCount || 0,
-							dislikes: dislikeResponse.data.likeCount || 0,
+							dislikes: dislikeResponse.data.dislikeCount || 0,
 						};
 					})
 				);
-				setPosts(formattedPosts);
+				setAllPosts(formattedPosts); // Сохраняем все посты
+				setVisiblePosts(formattedPosts.slice(0, postsPerPage)); // Отображаем только первые посты
 			}
+		} catch (error) {
+			setError(error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchCategory = async () => {
+		try {
+			const category = await CategoryHandler.getCategoryById(categoryId);
+			setCat(category.data.category);
 		} catch (error) {
 			setError(error.message);
 		}
 	};
 
 	useEffect(() => {
-		fetchPostsByCategory();
+		fetchCategory();
+		fetchPostsByCategory(); // Загружаем все посты
 	}, [categoryId]);
 
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loadingMore && !loading) {
+				setLoadingMore(true);
+				setTimeout(() => {
+					setVisiblePosts(prevVisiblePosts => {
+						const nextPosts = allPosts.slice(prevVisiblePosts.length, prevVisiblePosts.length + postsPerPage);
+						return [...prevVisiblePosts, ...nextPosts];
+					});
+					setLoadingMore(false);
+				}, 1000); // Задержка для имитации загрузки
+			}
+		};
+
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [loadingMore, loading, allPosts]);
+
 	return (
-		<div className='p-6'>
-			<h1 className='text-2xl font-semibold'>Posts in Category</h1>
-			{error && <p className='text-red-500'>{error}</p>}
-			{posts.length > 0 ? posts.map(post => <Post key={post.id} {...post} />) : <p className='text-gray-200'>Посты не найдены.</p>}
+		<div className='flex flex-col min-h-screen text-gray-300 bg-gray-800'>
+			<Header />
+			<div className='flex flex-grow mt-20'>
+				<Sidebar />
+				<main className='flex-grow p-6'>
+					<div className='flex items-center justify-center mb-8 center'>
+						<h1 className='text-3xl font-bold text-center text-gray-100'>Posts in Category: </h1>
+						{cat && <Category name={cat.title} categoryId={cat.id} isLinkEnabled={false} />}
+					</div>
+					{loading && <p className='text-center text-gray-400'>Loading posts...</p>}
+					{error && <p className='text-center text-red-500'>{error}</p>}
+
+					<Suspense fallback={<p className='text-center text-gray-400'>Loading post...</p>}>
+						{visiblePosts.length > 0
+							? visiblePosts.map(post => <LazyPost key={post.id} {...post} />)
+							: !loading && <p className='text-center text-gray-400'>No posts found in this category.</p>}
+					</Suspense>
+					{loadingMore && <p className='text-center text-gray-400'>Loading more posts...</p>}
+				</main>
+			</div>
+			<Footer />
 		</div>
 	);
 };
