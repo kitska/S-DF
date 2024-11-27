@@ -16,6 +16,7 @@ import ScrollToTopButton from './components/UI/scrollToTopButton';
 import EmailConfirmPage from './pages/emailConfirm';
 import ResetPasswordPage from './pages/passwordReset';
 import PasswordResetRequestPage from './pages/passwordResetRequest';
+import AddCategory from './pages/createCategory';
 import { marked } from 'marked';
 import './styles/main.scss';
 import 'highlight.js/styles/github.css';
@@ -64,12 +65,13 @@ function App() {
 				<Route path='/user/:id/edit-profile' element={<EditProfilePage />} />
 				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/create-post' element={<CreatePostPage />} />
+				<Route path='/create-category' element={<AddCategory />} ></Route>
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
 				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
 				<Route path='/reset-password' element={<PasswordResetRequestPage />} />
 				<Route path='/reset-password/:token' element={<ResetPasswordPage />} />
 				<Route path='/error' element={<ErrorPage />} />
-				{/* <Route path='*' element={<NavigateToErrorPage />} /> */}
+				<Route path='*' element={<NavigateToErrorPage />} />
 			</Routes>
 			<ScrollToTopButton />
 		</Router>

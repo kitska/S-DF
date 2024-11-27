@@ -91,7 +91,7 @@ const Header = () => {
 							date: formatDate(post.publish_date),
 							status: post.status === 'active',
 							categories: post.Categories.map(category => ({
-								id: category.id,
+								id: category.id, 
 								title: category.title,
 							})),
 						}))
@@ -138,15 +138,11 @@ const Header = () => {
 		}
 	};
 
-	const handleResultClick = () => {
-		setSearchTerm(''); // Очищаем поле ввода
-		setSearchResults([]); // Сбрасываем результаты
-		setShowResults(false); // Скрываем результаты
-	};
-
 	const handleBlur = () => {
-		setShowResults(false); // Скрываем результаты при уходе курсора
-		setShowHint(false);
+		setTimeout(() => {
+			setShowResults(false); // Скрываем результаты при уходе курсора
+			setShowHint(false);
+		}, 100); // Задержка в 100 мс
 	};
 
 	const handleFocus = () => {
@@ -201,10 +197,10 @@ const Header = () => {
 					<ul>
 						{searchResults.length > 0 ? (
 							searchResults.map(item => (
-								<li key={item.id} className='p-2' onClick={handleResultClick}>
+								<li key={item.id} className='p-2'>
 									{item.type === 'user' ? (
 										<User
-											fullName={item.login.length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
+											fullName={item.login .length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
 											profilePicture={`${process.env.REACT_APP_BASE_URL}/${item.profile_picture}`}
 											rating={item.rating}
 											userId={item.id}

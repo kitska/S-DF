@@ -30,62 +30,62 @@ const PostPage = () => {
 	const token = localStorage.getItem('token');
 	const user = decodeToken(token);
 
-useEffect(() => {
-	const fetchPostData = async () => {
-		try {
-			const postResponse = await PostHandler.getPostById(postId);
-			const post = postResponse.data.post;
-
-			const formattedPost = {
-				id: post.id,
-				title: post.title,
-				content: post.content,
-				author: post.User.login,
-				authorId: post.User.id,
-				authorAvatar: post.User.profile_picture,
-				date: formatDate(post.publish_date),
-				status: post.status === 'active',
-				categories: post.Categories.map(category => ({
-					id: category.id,
-					title: category.title,
-				})),
-			};
-
-			setPost(formattedPost);
-			setEditedContent(formattedPost.content);
-			setEditedTitle(formattedPost.title);
-			setEditedStatus(formattedPost.status ? 'active' : 'inactive');
-
-			// Получаем лайки, дизлайки и реакцию пользователя
-			const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
-			setLikes(likeResponse.data.likeCount);
-			setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null);
-
-			const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike', user?.id);
-			setDislikes(dislikeResponse.data.likeCount);
-			if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
-				setUserReaction('dislike');
-			}
-
-			// Проверяем, добавлен ли пост в избранное
+	useEffect(() => {
+		const fetchPostData = async () => {
 			try {
-				const favouritesResponse = await UserHandler.getUserFavourites(token);
-				const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
-				// Устанавливаем состояние isFavorite в зависимости от наличия поста в избранных
-				setIsFavorite(favouritePostIds.includes(parseInt(postId)));
-			} catch (favouritesError) {
-				// Игнорируем ошибку, если у пользователя нет избранных
-				console.warn(favouritesError);
-				// Устанавливаем isFavorite в false, если не удалось получить избранные
-				setIsFavorite(false);
-			}
-		} catch (err) {
-			setError(err.message);
-		}
-	};
+				const postResponse = await PostHandler.getPostById(postId);
+				const post = postResponse.data.post;
 
-	fetchPostData();
-}, [postId, token, user?.id]);
+				const formattedPost = {
+					id: post.id,
+					title: post.title,
+					content: post.content,
+					author: post.User.login,
+					authorId: post.User.id,
+					authorAvatar: post.User.profile_picture,
+					date: formatDate(post.publish_date),
+					status: post.status === 'active',
+					categories: post.Categories.map(category => ({
+						id: category.id,
+						title: category.title,
+					})),
+				};
+
+				setPost(formattedPost);
+				setEditedContent(formattedPost.content);
+				setEditedTitle(formattedPost.title);
+				setEditedStatus(formattedPost.status ? 'active' : 'inactive');
+
+				// Получаем лайки, дизлайки и реакцию пользователя
+				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
+				setLikes(likeResponse.data.likeCount);
+				setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null);
+
+				const dislikeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'dislike', user?.id);
+				setDislikes(dislikeResponse.data.likeCount);
+				if (userReaction === null && dislikeResponse.data.userLikes.length > 0) {
+					setUserReaction('dislike');
+				}
+
+				// Проверяем, добавлен ли пост в избранное
+				try {
+					const favouritesResponse = await UserHandler.getUserFavourites(token);
+					const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
+					// Устанавливаем состояние isFavorite в зависимости от наличия поста в избранных
+					setIsFavorite(favouritePostIds.includes(parseInt(postId)));
+				} catch (favouritesError) {
+					// Игнорируем ошибку, если у пользователя нет избранных
+					console.warn(favouritesError);
+					// Устанавливаем isFavorite в false, если не удалось получить избранные
+					setIsFavorite(false);
+				}
+			} catch (err) {
+				setError(err.message);
+			}
+		};
+
+		fetchPostData();
+	}, [postId, token, user?.id]);
 
 	const toggleFavorite = async () => {
 		try {
@@ -131,6 +131,7 @@ useEffect(() => {
 		setEditedContent(post.content);
 		setEditedTitle(post.title);
 		setEditedStatus(post.status ? 'active' : 'inactive');
+		setPost(currPost => ({ ...currPost }));
 	};
 
 	const handleDelete = async () => {
