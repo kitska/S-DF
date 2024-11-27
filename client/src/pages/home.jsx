@@ -54,7 +54,7 @@ const Home = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-700'>
+				<div className='flex-grow p-6 bg-gray-800'>
 					{error && <p className='text-red-500'>{error}</p>}
 					{posts.map(post => (
 						<Post key={post.id} {...post} />

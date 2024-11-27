@@ -75,7 +75,7 @@ const EditProfilePage = () => {
 				login: profileData.login,
 				full_name: profileData.full_name,
 			};
-			const response = await UserHandler.updateUser (id, userData, token);
+			const response = await UserHandler.updateUser(id, userData, token);
 			if (response.status === 200) {
 				setMessage('Profile updated successfully.');
 				setTimeout(() => navigate(`/user/${id}`), 2000);
@@ -107,22 +107,20 @@ const EditProfilePage = () => {
 					<form onSubmit={handleSubmit}>
 						<div className='relative mb-4'>
 							{previewImage && (
-								<div
-									className='relative flex justify-center'
-									onMouseEnter={() => setIsHovered(true)}
-									onMouseLeave={() => setIsHovered(false)}
-									onClick={() => document.getElementById('fileInput').click()} // Клик по затемненной области открывает выбор файла
-								>
+								<div className='relative flex justify-center' onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
 									<img
 										src={previewImage}
 										alt='Profile Preview'
 										className={`w-24 h-24 mt-2 rounded-full cursor-pointer transition-all duration-300 ${isHovered ? 'opacity-70' : ''}`}
+										onClick={() => document.getElementById('fileInput').click()} // Клик по изображению открывает выбор файла
 									/>
 									{isHovered && (
-										<div className='absolute flex items-center justify-center w-24 h-24 bg-black bg-opacity-50 rounded-full top-2 left-18'>
-											<label htmlFor='fileInput' className='text-white cursor-pointer'>
-												<FaEdit className='w-8 h-8' />
-											</label>
+										<div
+											className='absolute flex items-center justify-center w-24 h-24 bg-black bg-opacity-50 rounded-full cursor-pointer top-2 left-18'
+											onClick={() => document.getElementById('fileInput').click()} // Клик по затемненной области открывает выбор файла
+										>
+											<label htmlFor='fileInput' className='text-white cursor-pointer'></label>
+											<FaEdit className='w-8 h-8 text-white' />
 											<input type='file' id='fileInput' accept='image/*' onChange={handleImageChange} className='hidden' />
 										</div>
 									)}

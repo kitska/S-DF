@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 const User = ({ userId, fullName, profilePicture, rating, className = '' }) => {
 	return (
-		<Link to={`/user/${userId}`} >
-			<div className={`flex items-center p-2 overflow-hidden bg-gray-800 rounded-lg shadow-md ${className} space-x-2`}>
+		<Link to={`/user/${userId}`}>
+			<div className={`flex items-center p-2 overflow-hidden bg-gray-900 rounded-lg shadow-md ${className} space-x-2`}>
 				<img src={profilePicture} alt={fullName} className='object-cover border-2 border-gray-500 rounded-full w-11 h-11' />
 				<div className='flex flex-col'>
 					<span className='overflow-hidden text-lg font-semibold text-gray-100 whitespace-nowrap text-ellipsis'>{fullName}</span>

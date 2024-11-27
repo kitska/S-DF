@@ -35,7 +35,7 @@ const TopUsers = () => {
 	};
 
 	return (
-		<aside className='p-6 bg-gray-600 shadow-lg w-1/7 min-h-max'>
+		<aside className='p-6 bg-gray-700 shadow-lg w-1/7 min-h-max'>
 			{error ? (
 				<p className='text-red-500'>{error}</p>
 			) : (

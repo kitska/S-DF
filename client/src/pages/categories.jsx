@@ -42,7 +42,7 @@ const CategoriesPage = () => {
 	};
 
 	return (
-		<div className='flex flex-col min-h-screen bg-gray-700'>
+		<div className='flex flex-col min-h-screen bg-gray-800'>
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
@@ -51,7 +51,7 @@ const CategoriesPage = () => {
 					{error && <p className='text-red-500'>{error}</p>}
 					<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{categories.map(category => (
-							<div key={category.id} className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
+							<div key={category.id} className='p-4 bg-gray-700 rounded-lg shadow-md hover:bg-gray-600'>
 								<Category name={category.title} categoryId={category.id} />
 							</div>
 						))}

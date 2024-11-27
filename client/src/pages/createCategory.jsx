@@ -30,12 +30,12 @@ const AddCategory = () => {
 	};
 
 	return (
-		<div className='flex flex-col min-h-screen bg-gray-700'>
+		<div className='flex flex-col min-h-screen bg-gray-800'>
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-10'>
-					<div className='max-w-2xl p-8 mx-auto bg-gray-800 rounded-lg shadow-lg'>
+					<div className='max-w-2xl p-8 mx-auto bg-gray-700 rounded-lg shadow-lg'>
 						<h1 className='mb-6 text-3xl font-bold text-center text-white'>Добавить категорию</h1>
 						<form onSubmit={handleSubmit} className='space-y-6'>
 							<div>
@@ -47,7 +47,7 @@ const AddCategory = () => {
 									id='categoryName'
 									value={categoryName}
 									onChange={e => setCategoryName(e.target.value)}
-									className='w-full p-3 text-gray-300 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
+									className='w-full p-3 text-gray-300 bg-gray-600 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
 									placeholder='Введите название категории'
 									required
 								/>

@@ -44,7 +44,7 @@ const UsersPage = () => {
 	};
 
 	return (
-		<div className='flex flex-col min-h-screen bg-gray-700'>
+		<div className='flex flex-col min-h-screen bg-gray-800'>
 			<Header />
 			<div className='flex flex-grow mt-24'>
 				<Sidebar />
@@ -56,7 +56,7 @@ const UsersPage = () => {
 						{/* Добавили grid */}
 						{users.map(user => (
 							<Link key={user.id} to={`/user/${user.id}`}>
-								<div className='p-4 bg-gray-800 rounded-lg shadow-md hover:bg-gray-600'>
+								<div className='p-4 rounded-lg hover:bg-gray-600'>
 									<User
 										fullName={user.login.length > 15 ? `${user.login.slice(0, 15)}...` : user.login}
 										profilePicture={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`}
