@@ -92,7 +92,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 						<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
 						<p className='flex items-center mt-1 text-xs text-gray-500'>
 							{/* Display avatar */}
-							<img src={avatarUrl} alt={`${author}'s avatar`} className='w-6 h-6 mr-2 rounded-full' />
+							<img src={avatarUrl} alt={`${author}'s avatar`} className='object-cover w-6 h-6 mr-2 rounded-full' />
 							{author} | {date}
 							<span className={`ml-2 inline-block w-2 h-2 rounded-full ${status ? 'bg-green-500' : 'bg-red-500'}`} title={status ? 'Активен' : 'Неактивен'}></span>
 						</p>
@@ -100,7 +100,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					<div className='flex flex-col items-end w-1/4'>
 						<div className='flex items-center mb-2 space-x-2 text-gray-400'>
 							<button className='flex items-center '>
- <FaThumbsUp className='mr-1 text-blue-600' /> {likes}
+ 								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
 							</button>
 							<button className='flex items-center'>
 								<FaThumbsDown className='mr-1 text-red-600' /> {dislikes}

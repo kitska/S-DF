@@ -42,13 +42,15 @@ CREATE TABLE post_categories (
 
 CREATE TABLE comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    post_id INT,
-    author_id INT,
-    publish_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    post_id INT NOT NULL,
+    author_id INT NOT NULL,
+    comment_id INT NULL,
+    publish_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     content TEXT NOT NULL,
     status ENUM('active', 'inactive') DEFAULT 'active',
     FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
-    FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 );
 
 CREATE TABLE likes (
@@ -62,3 +64,12 @@ CREATE TABLE likes (
     FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 );
+
+CREATE TABLE favourites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    post_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE
+);
+

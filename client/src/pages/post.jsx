@@ -269,7 +269,7 @@ useEffect(() => {
 							)}
 						</div>
 						<div className='flex items-center mt-4'>
-							<img src={avatarUrl} alt={`${post.author}'s avatar`} className='w-10 h-10 mr-2 rounded-full' />
+							<img src={avatarUrl} alt={`${post.author}'s avatar`} className='object-cover w-10 h-10 mr-2 rounded-full' />
 							<span className='text-sm text-gray-500'>{post.author}</span>
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>
 							<span

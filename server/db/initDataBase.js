@@ -92,15 +92,15 @@ const insertTestData = async () => {
 				email_confirmed: true,
 				role: 'admin',
 			},
-			// ...Array.from({ length: 1000 }).map(() => ({
-			// 	login: faker.internet.username(),
-			// 	password: faker.internet.password(),
-			// 	full_name: faker.person.fullName(),
-			// 	email: faker.internet.email(),
-			// 	profile_picture: randomPP.getRandomProfilePicture(),
-			// 	rating: Math.floor(Math.random() * 400) - 200,
-			// 	email_confirmed: true,
-			// })),
+			...Array.from({ length: 1000 }).map(() => ({
+				login: faker.internet.username(),
+				password: faker.internet.password(),
+				full_name: faker.person.fullName(),
+				email: faker.internet.email(),
+				profile_picture: randomPP.getRandomProfilePicture(),
+				rating: Math.floor(Math.random() * 400) - 200,
+				email_confirmed: true,
+			})),
 		];
 
 		const hashedUsers = await Promise.all(
@@ -112,66 +112,66 @@ const insertTestData = async () => {
 
 		await User.bulkCreate(hashedUsers, { ignoreDuplicates: true });
 
-		// const testCategories = Array.from({ length: 200 }).map(() => ({
-		// 	title: faker.commerce.department(),
-		// 	description: faker.lorem.sentence(),
-		// }));
+		const testCategories = Array.from({ length: 200 }).map(() => ({
+			title: faker.commerce.department(),
+			description: faker.lorem.sentence(),
+		}));
 
-		// await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
+		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
 
-		// const testPosts = Array.from({ length: 10000 }).map(() => ({
-		// 	title: faker.lorem.sentence(),
-		// 	content: faker.lorem.paragraphs(3),
-		// 	status: faker.helpers.arrayElement(['active', 'inactive']),
-		// 	author_id: faker.number.int({ min: 1, max: 1000 }),
-		// }));
+		const testPosts = Array.from({ length: 10000 }).map(() => ({
+			title: faker.lorem.sentence(),
+			content: faker.lorem.paragraphs(3),
+			status: faker.helpers.arrayElement(['active', 'inactive']),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
+		}));
 
-		// await Post.bulkCreate(testPosts, { ignoreDuplicates: true });
+		await Post.bulkCreate(testPosts, { ignoreDuplicates: true });
 
-		// const testCategoriesAll = await Category.findAll();
-		// const testPostsAll = await Post.findAll();
+		const testCategoriesAll = await Category.findAll();
+		const testPostsAll = await Post.findAll();
 
-		// for (const post of testPostsAll) {
-		// 	const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 8);
-		// 	await post.addCategories(categories);
-		// }
+		for (const post of testPostsAll) {
+			const categories = testCategoriesAll.sort(() => 0.5 - Math.random()).slice(0, 8);
+			await post.addCategories(categories);
+		}
 
-		// const testComments = Array.from({ length: 8000 }).map(() => ({
-		// 	content: faker.lorem.sentence(),
-		// 	post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
-		// 	author_id: faker.number.int({ min: 1, max: 1000 }),
-		// }));
+		const testComments = Array.from({ length: 8000 }).map(() => ({
+			content: faker.lorem.sentence(),
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
+		}));
 
-		// const insertedComments = await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
+		const insertedComments = await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
 
-		// const nestedComments = Array.from({ length: 4000 }).map(() => {
-		// 	const parentComment = insertedComments[Math.floor(Math.random() * insertedComments.length)];
-		// 	return {
-		// 		content: faker.lorem.sentence(),
-		// 		post_id: parentComment.post_id,
-		// 		author_id: faker.number.int({ min: 1, max: 1000 }),
-		// 		comment_id: parentComment.id,
-		// 	};
-		// });
+		const nestedComments = Array.from({ length: 4000 }).map(() => {
+			const parentComment = insertedComments[Math.floor(Math.random() * insertedComments.length)];
+			return {
+				content: faker.lorem.sentence(),
+				post_id: parentComment.post_id,
+				author_id: faker.number.int({ min: 1, max: 1000 }),
+				comment_id: parentComment.id,
+			};
+		});
 
-		// await Comment.bulkCreate(nestedComments, { ignoreDuplicates: true });
+		await Comment.bulkCreate(nestedComments, { ignoreDuplicates: true });
 
-		// const testLikes = Array.from({ length: 8000 }).map(() => ({
-		// 	post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
-		// 	author_id: faker.number.int({ min: 1, max: 1000 }),
-		// 	type: faker.helpers.arrayElement(['like', 'dislike']),
-		// }));
+		const testLikes = Array.from({ length: 8000 }).map(() => ({
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
+			type: faker.helpers.arrayElement(['like', 'dislike']),
+		}));
 
-		// await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
+		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
 
-		// const testFavourites = Array.from({ length: 5000 }).map(() => ({
-		// 	user_id: faker.number.int({ min: 1, max: 1000 }),
-		// 	post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
-		// }));
+		const testFavourites = Array.from({ length: 5000 }).map(() => ({
+			user_id: faker.number.int({ min: 1, max: 1000 }),
+			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
+		}));
 
-		// await Favourite.bulkCreate(testFavourites, { ignoreDuplicates: true });
+		await Favourite.bulkCreate(testFavourites, { ignoreDuplicates: true });
 
-		// console.log('Test data inserted successfully!');
+		console.log('Test data inserted successfully!');
 	} catch (error) {
 		console.error('Error adding test data:', error);
 	}
