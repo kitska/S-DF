@@ -111,8 +111,8 @@ const CreatePostPage = () => {
 			<Header />
 			<div className='flex flex-1 mt-20'>
 				<Sidebar />
-				<main className='flex flex-col items-center justify-center flex-1 p-6'>
-					<div className='w-full max-w-6xl p-12 bg-gray-700 rounded shadow-lg'>
+				<main className='flex flex-col items-center justify-center flex-1 p-6 overflow-hidden'>
+					<div className='w-full max-w-6xl p-12 overflow-hidden bg-gray-700 rounded shadow-lg'>
 						<h2 className='text-3xl font-bold text-center text-white'>Create New Post</h2>
 						<form onSubmit={handleSubmit} className='mt-6 space-y-6'>
 							<div>
@@ -121,7 +121,7 @@ const CreatePostPage = () => {
 									type='text'
 									value={title}
 									onChange={e => setTitle(e.target.value)}
-									className='w-full px-6 py-4 text-gray-900 bg-gray-500 rounded focus:outline-none'
+									className='w-full px-6 py-4 overflow-hidden text-gray-900 bg-gray-500 rounded focus:outline-none'
 									placeholder='Enter post title'
 									required
 								/>
@@ -133,7 +133,7 @@ const CreatePostPage = () => {
 									value={content}
 									onChange={e => setContent(e.target.value)}
 									onKeyDown={handleKeyDown}
-									className='w-full px-6 py-4 text-gray-900 bg-gray-500 rounded focus:outline-none'
+									className='w-full px-6 py-4 overflow-hidden text-gray-900 bg-gray-500 rounded focus:outline-none'
 									placeholder='Write your post content here (Markdown supported)'
 									rows='8'
 									required
@@ -146,7 +146,7 @@ const CreatePostPage = () => {
 									type='text'
 									value={categorySearch}
 									onChange={handleCategorySearch}
-									className='w-full px-6 py-4 text-gray-900 bg-gray-500 rounded focus:outline-none'
+									className='w-full px-6 py-4 overflow-hidden text-gray-900 bg-gray-500 rounded focus:outline-none'
 									placeholder='Search categories...'
 									onFocus={() => categorySearch && setShowDropdown(true)}
 								/>
@@ -179,10 +179,11 @@ const CreatePostPage = () => {
 						</form>
 					</div>
 
-					<div className='w-full max-w-6xl p-8 mx-auto mt-6 bg-gray-900 rounded-lg shadow-md'>
+					<div className='w-full max-w-6xl p-8 mx-auto mt-6 overflow-hidden bg-gray-900 rounded-lg shadow-md'>
 						<h3 className='text-2xl font-bold text-gray-100'>Post Preview</h3>
 						<div className='mt-4 text-white'>
-							<h1 className='text-4xl font-bold text-gray-100'>{title}</h1>
+							<h1 className='text-4xl font-bold text-gray-100 break-words'>{title}</h1>
+							<hr className='h-1 my-4 border-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' />
 							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' ref={previewRef} dangerouslySetInnerHTML={{ __html: convertToHTML(content) }} />
 
 							<div className='flex items-center pt-4 mt-6'>
@@ -194,7 +195,6 @@ const CreatePostPage = () => {
 							</div>
 
 							<div className='flex flex-wrap mt-4'>
-								{' '}
 								{selectedCategories.length > 0 ? (
 									selectedCategories.map(cat => (
 										<Category key={cat.id} name={cat.title} categoryId={cat.id} isLinkEnabled={false} onClick={() => handleRemoveCategory(cat.id)} />
@@ -214,7 +214,8 @@ const CreatePostPage = () => {
 									<span>{dislikes}</span>
 								</div>
 								<div className='flex items-center'>
-									<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-500 transition-all`} onClick={toggleFavorite} />
+									<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-500' : 'text-gray-400'} transition-all hover:text-yellow-300`} onClick={toggleFavorite} />
+									<span>{isFavorite ? 'Favorite' : 'Add to favorites'}</span>
 								</div>
 							</div>
 						</div>

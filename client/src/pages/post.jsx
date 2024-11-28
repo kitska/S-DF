@@ -185,12 +185,11 @@ const PostPage = () => {
 			<Header />
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
-				<div className='flex-grow p-6 bg-gray-700'>
+				<div className='flex-grow p-6 overflow-x-hidden bg-gray-700'>
 					<div className='p-8 mx-auto mb-8 transition-transform duration-300 bg-gray-900 rounded-lg shadow-md max-w-screen-2xl'>
-						<div className='flex items-center justify-between'>
-							<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
+						<div className='flex flex-col'>
 							{canEditOrDelete && (
-								<div className='flex space-x-4'>
+								<div className='flex justify-end mb-2 space-x-4'>
 									<button className='flex items-center px-4 py-2 text-white transition duration-200 bg-blue-600 rounded hover:bg-blue-500' onClick={handleEdit}>
 										<FaEdit className='mr-1' /> Edit
 									</button>
@@ -199,6 +198,7 @@ const PostPage = () => {
 									</button>
 								</div>
 							)}
+							<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
 						</div>
 						<a href='https://github.com/DMYTRO-DOLHII'>
 							<hr className='h-1 my-4 border-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' />
@@ -262,7 +262,7 @@ const PostPage = () => {
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>
 							<span
 								className={`ml-2 inline-block w-2 h-2 rounded-full ${post.status ? 'bg-green-500' : 'bg-red-500'}`}
-								title={post.status === 'active' ? 'Active': 'Inactive'}
+								title={post.status === 'active' ? 'Active' : 'Inactive'}
 							></span>
 						</div>
 						<div className='flex mt-4 space-x-6 text-gray-300'>
@@ -275,7 +275,7 @@ const PostPage = () => {
 								<span>{dislikes}</span>
 							</div>
 							<div className='flex items-center'>
-								<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-400' : 'text-gray- 400'} hover:text-yellow-500 transition-all`} onClick={toggleFavorite} />
+								<FaStar className={`mr-2 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-500 transition-all`} onClick={toggleFavorite} />
 							</div>
 						</div>
 						<div className='mt-6'>

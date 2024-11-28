@@ -165,10 +165,10 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 						onChange={e => setEditedContent(e.target.value)}
 						placeholder='Edit a comment...'
 					/>
-					<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleEditSubmit}>
+					<button className='px-2 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleEditSubmit}>
 						<FaSave className='inline mr-1' /> Save
 					</button>
-					<button className='px-4 py-2 mt-2 ml-2 text-gray-400 bg-gray-600 rounded-lg hover:bg-gray-500' onClick={() => setIsEditing(false)}>
+					<button className='px-2 py-2 mt-2 ml-2 text-gray-400 bg-gray-600 rounded-lg hover:bg-gray-500' onClick={() => setIsEditing(false)}>
 						<FaTimes className='inline mr-1' /> Cancel
 					</button>
 				</div>
