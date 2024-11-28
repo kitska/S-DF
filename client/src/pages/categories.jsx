@@ -13,7 +13,6 @@ const CategoriesPage = () => {
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	// Получаем `page` из URL
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPage = Number(searchParams.get('page')) || 1;
 
@@ -32,13 +31,12 @@ const CategoriesPage = () => {
 		}
 	};
 
-	// Обновляем данные при изменении страницы
 	useEffect(() => {
 		fetchCategories(currentPage);
 	}, [currentPage]);
 
 	const handlePageChange = page => {
-		setSearchParams({ page }); // Обновляем URL при смене страницы
+		setSearchParams({ page });
 	};
 
 	return (
@@ -47,7 +45,7 @@ const CategoriesPage = () => {
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-6'>
-					{loading && <p className='text-gray-300'>Загрузка категорий...</p>}
+					{loading && <p className='text-gray-300'>Loading category...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 					<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{categories.map(category => (

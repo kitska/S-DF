@@ -5,8 +5,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange, pageType }) => {
 	const navigate = useNavigate();
 
 	const handlePageChange = page => {
-		onPageChange(page); // Передаем номер страницы в родительский компонент
-		navigate(`/${pageType}?page=${page}`); // Изменяем маршрут для соответствующей страницы
+		onPageChange(page);
+		navigate(`/${pageType}?page=${page}`);
 	};
 
 	const handlePrevious = () => {

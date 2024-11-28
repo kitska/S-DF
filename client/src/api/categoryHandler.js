@@ -1,4 +1,3 @@
-// client/src/api/CategoryHandler.js
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -6,7 +5,6 @@ const apiClient = axios.create({
 });
 
 const CategoryHandler = {
-	// Получение всех категорий с параметрами фильтрации и сортировки
 	getAllCategories: async (page = 1, pageSize = 10, title = '', sortBy = 'id', sortOrder = 'asc') => {
 		try {
 			const response = await apiClient.get('/', {
@@ -14,7 +12,7 @@ const CategoryHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при получении списка категорий:', error);
+			console.error('Error when receiving a list of categories:', error);
 			throw {
 				message: error.response?.data?.message || 'Error fetching categories',
 				status: error.response?.status || 500,
@@ -22,13 +20,12 @@ const CategoryHandler = {
 		}
 	},
 
-	// Получение категории по ID
 	getCategoryById: async categoryId => {
 		try {
 			const response = await apiClient.get(`/${categoryId}`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении категории с ID ${categoryId}:`, error);
+			console.error(`Error when receiving a category with ID ${categoryId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error fetching category',
 				status: error.response?.status || 500,
@@ -36,13 +33,12 @@ const CategoryHandler = {
 		}
 	},
 
-	// Получение постов по категории
 	getPostsByCategory: async categoryId => {
 		try {
 			const response = await apiClient.get(`/${categoryId}/posts`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении постов для категории с ID ${categoryId}:`, error);
+			console.error(`Error when receiving posts for category with ID ${categoryId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error fetching posts for category',
 				status: error.response?.status || 500,
@@ -50,7 +46,6 @@ const CategoryHandler = {
 		}
 	},
 
-	// Создание категории
 	createCategory: async (categoryData, token) => {
 		try {
 			const response = await apiClient.post('/', categoryData, {
@@ -58,7 +53,7 @@ const CategoryHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при создании категории:', error);
+			console.error('Error in creating a category:', error);
 			throw {
 				message: error.response?.data?.message || 'Error creating category',
 				status: error.response?.status || 500,
@@ -66,7 +61,6 @@ const CategoryHandler = {
 		}
 	},
 
-	// Обновление категории
 	updateCategory: async (categoryId, categoryData, token) => {
 		try {
 			const response = await apiClient.patch(`/${categoryId}`, categoryData, {
@@ -74,7 +68,7 @@ const CategoryHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при обновлении категории с ID ${categoryId}:`, error);
+			console.error(`Error when updating category with ID ${categoryId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error updating category',
 				status: error.response?.status || 500,
@@ -82,7 +76,6 @@ const CategoryHandler = {
 		}
 	},
 
-	// Удаление категории
 	deleteCategory: async (categoryId, token) => {
 		try {
 			const response = await apiClient.delete(`/${categoryId}`, {
@@ -90,7 +83,7 @@ const CategoryHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при удалении категории с ID ${categoryId}:`, error);
+			console.error(`Error when removing category with ID ${categoryId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error deleting category',
 				status: error.response?.status || 500,

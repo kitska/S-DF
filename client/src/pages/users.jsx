@@ -14,7 +14,6 @@ const UsersPage = () => {
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
 
-	// Получаем `page` из URL
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const currentPage = Number(searchParams.get('page')) || 1;
@@ -34,13 +33,12 @@ const UsersPage = () => {
 		}
 	};
 
-	// Обновляем данные при изменении страницы
 	useEffect(() => {
 		fetchUsers(currentPage);
 	}, [currentPage]);
 
 	const handlePageChange = page => {
-		setSearchParams({ page }); // Обновляем URL при смене страницы
+		setSearchParams({ page });
 	};
 
 	return (
@@ -49,11 +47,10 @@ const UsersPage = () => {
 			<div className='flex flex-grow mt-24'>
 				<Sidebar />
 				<div className='flex-grow p-6'>
-					{loading && <p className='text-gray-300'>Загрузка пользователей...</p>}
+					{loading && <p className='text-gray-300'>User loading...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 					<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{' '}
-						{/* Добавили grid */}
 						{users.map(user => (
 							<Link key={user.id} to={`/user/${user.id}`}>
 								<div className='p-4 rounded-lg hover:bg-gray-600'>

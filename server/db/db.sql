@@ -65,7 +65,7 @@ CREATE TABLE likes (
     FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE CASCADE
 );
 
-CREATE TABLE favourites (
+CREATE TABLE favorites (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     post_id INT NOT NULL,

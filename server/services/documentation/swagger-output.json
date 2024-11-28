@@ -27,7 +27,7 @@
 		},
 		{
 			"name": "Auth",
-			"description": "Operations related to authentification"
+			"description": "Operations related to authentication"
 		},
 		{
 			"name": "General",
@@ -157,7 +157,7 @@
 		"/api/auth/logout": {
 			"post": {
 				"tags": ["Auth"],
-				"description": "Loug out authorized user",
+				"description": "Log out authorized user",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -348,10 +348,10 @@
 				}
 			}
 		},
-		"/api/users/favourites": {
+		"/api/users/favorites": {
 			"get": {
 				"tags": ["Users"],
-				"description": "Get user favourites",
+				"description": "Get user favorites",
 				"parameters": [
 					{
 						"name": "authorization",
@@ -941,10 +941,10 @@
 				}
 			}
 		},
-		"/api/posts/{post_id}/favourite": {
+		"/api/posts/{post_id}/favorite": {
 			"post": {
 				"tags": ["Posts"],
-				"description": "Create favourite post",
+				"description": "Create favorite post",
 				"parameters": [
 					{
 						"name": "post_id",
@@ -978,7 +978,7 @@
 			},
 			"delete": {
 				"tags": ["Posts"],
-				"description": "Delete favourite post",
+				"description": "Delete favorite post",
 				"parameters": [
 					{
 						"name": "post_id",

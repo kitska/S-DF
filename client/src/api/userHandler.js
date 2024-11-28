@@ -1,4 +1,3 @@
-// src/api/UserHandler.js
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -6,7 +5,6 @@ const apiClient = axios.create({
 });
 
 const UserHandler = {
-	// Получение всех пользователей с параметрами фильтрации и сортировки
 	getAllUsers: async (page = 1, pageSize = 10, login = '', sortBy = 'id', sortOrder = 'asc') => {
 		try {
 			const response = await apiClient.get('/', {
@@ -14,39 +12,37 @@ const UserHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при получении списка пользователей:', error);
+			console.error('Error when receiving a list of users:', error);
 			throw {
-				message: error.response?.data?.message || 'Ошибка получения списка пользователей',
+				message: error.response?.data?.message || 'Error obtaining a user list',
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Получение пользователя по ID
 	getUserById: async userId => {
 		try {
 			const response = await apiClient.get(`/${userId}`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении пользователя с ID ${userId}:`, error);
+			console.error(`Error when receiving a user with ID ${userId}:`, error);
 			throw {
-				message: error.response?.data?.message || `Ошибка получения пользователя с ID ${userId}`,
+				message: error.response?.data?.message || `User receipt error with ID ${userId}`,
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Получение избранных элементов пользователя
-	getUserFavourites: async token => {
+	getUserFavorites: async token => {
 		try {
-			const response = await apiClient.get('/favourites', {
+			const response = await apiClient.get('/favorites', {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при получении избранного пользователя:', error);
+			console.error('Error when receiving a favorites from user:', error);
 			throw {
-				message: error.response?.data?.message || 'Ошибка получения избранного пользователя',
+				message: error.response?.data?.message || 'Error obtaining a favorites from user',
 				status: error.response?.status || 500,
 			};
 		}
@@ -57,29 +53,27 @@ const UserHandler = {
 			const response = await apiClient.get(`/${userId}/posts`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении постов пользователя с ID ${userId}:`, error);
+			console.error(`Error when receiving user posts with ID ${userId}:`, error);
 			throw {
-				message: error.response?.data?.message || `Ошибка получения постов пользователя с ID ${userId}`,
+				message: error.response?.data?.message || `Error in obtaining user posts with ID ${userId}`,
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Получение лайкнутых постов пользователя
 	getUserLikedPosts: async userId => {
 		try {
 			const response = await apiClient.get(`/${userId}/liked-posts`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении лайкнутых постов пользователя с ID ${userId}:`, error);
+			console.error(`Error when getting a buck posts of the user with ID ${userId}:`, error);
 			throw {
-				message: error.response?.data?.message || `Ошибка получения лайкнутых постов пользователя с ID ${userId}`,
+				message: error.response?.data?.message || `Error in obtaining barking user posts with ID ${userId}`,
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Создание пользователя (админ)
 	createUser: async (userData, token) => {
 		try {
 			const response = await apiClient.post('/', userData, {
@@ -87,15 +81,14 @@ const UserHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при создании пользователя:', error);
+			console.error('Error when creating a user:', error);
 			throw {
-				message: error.response?.data?.message || 'Ошибка создания пользователя',
+				message: error.response?.data?.message || 'User creation error',
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Обновление аватара пользователя
 	updateAvatar: async (avatarFile, token) => {
 		try {
 			const formData = new FormData();
@@ -109,15 +102,14 @@ const UserHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка при обновлении аватара пользователя:', error);
+			console.error('Error when updating user avatar:', error);
 			throw {
-				message: error.response?.data?.message || 'Ошибка обновления аватара',
+				message: error.response?.data?.message || 'Avatar update error',
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Обновление данных пользователя (админ/пользователь)
 	updateUser: async (userId, userData, token) => {
 		try {
 			const response = await apiClient.patch(`/${userId}`, userData, {
@@ -125,15 +117,14 @@ const UserHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при обновлении пользователя с ID ${userId}:`, error);
+			console.error(`Error when updating user with ID ${userId}:`, error);
 			throw {
-				message: error.response?.data?.message || `Ошибка обновления пользователя с ID ${userId}`,
+				message: error.response?.data?.message || `User update error with ID ${userId}`,
 				status: error.response?.status || 500,
 			};
 		}
 	},
 
-	// Удаление пользователя (админ/пользователь)
 	deleteUser: async (userId, token) => {
 		try {
 			const response = await apiClient.delete(`/${userId}`, {
@@ -141,9 +132,9 @@ const UserHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при удалении пользователя с ID ${userId}:`, error);
+			console.error(`Error when removing the user with ID ${userId}:`, error);
 			throw {
-				message: error.response?.data?.message || `Ошибка удаления пользователя с ID ${userId}`,
+				message: error.response?.data?.message || `User removal error with ID ${userId}`,
 				status: error.response?.status || 500,
 			};
 		}

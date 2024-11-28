@@ -4,7 +4,7 @@ const PostCategory = require('../models/post_category');
 const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
-const Favourite = require('../models/favourite');
+const favorite = require('../models/favorite');
 const { Op } = require('sequelize');
 
 exports.getAllPosts = async (req, res) => {
@@ -409,31 +409,31 @@ exports.deleteLike = async (req, res) => {
 	}
 };
 
-exports.addPostToFavourites = async (req, res) => {
+exports.addPostToFavorites = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		const { post_id } = req.params;
 
-		const [favourite, created] = await Favourite.findOrCreate({
+		const [favorite, created] = await favorite.findOrCreate({
 			where: { user_id: userId, post_id },
 		});
 
 		if (created) {
 			res.status(201).json({ message: 'Post added to favorites' });
 		} else {
-			res.status(200).json({ message: 'Post already favorited' });
+			res.status(200).json({ message: 'Post already in favorites' });
 		}
 	} catch (error) {
 		res.status(500).json({ error: 'Error when adding a post to favorites' });
 	}
 };
 
-exports.removePostFromFavourites = async (req, res) => {
+exports.removePostFromFavorites = async (req, res) => {
 	try {
 		const userId = req.user.id;
 		const { post_id } = req.params;
 
-		const result = await Favourite.destroy({
+		const result = await favorite.destroy({
 			where: { user_id: userId, post_id },
 		});
 

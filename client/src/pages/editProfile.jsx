@@ -5,7 +5,7 @@ import UserHandler from '../api/userHandler';
 import AuthHandler from '../api/authHandler';
 import Header from '../components/header';
 import Footer from '../components/footer';
-import { FaEdit } from 'react-icons/fa'; // Импортируем иконку
+import { FaEdit } from 'react-icons/fa';
 
 const EditProfilePage = () => {
 	const { id } = useParams();
@@ -21,7 +21,7 @@ const EditProfilePage = () => {
 	const [error, setError] = useState(null);
 	const [message, setMessage] = useState(null);
 	const [email, setEmail] = useState('');
-	const [isHovered, setIsHovered] = useState(false); // State to track hover
+	const [isHovered, setIsHovered] = useState(false);
 
 	useEffect(() => {
 		const fetchProfileData = async () => {
@@ -112,12 +112,12 @@ const EditProfilePage = () => {
 										src={previewImage}
 										alt='Profile Preview'
 										className={`w-24 h-24 mt-2 rounded-full cursor-pointer transition-all duration-300 ${isHovered ? 'opacity-70' : ''}`}
-										onClick={() => document.getElementById('fileInput').click()} // Клик по изображению открывает выбор файла
+										onClick={() => document.getElementById('fileInput').click()}
 									/>
 									{isHovered && (
 										<div
 											className='absolute flex items-center justify-center w-24 h-24 bg-black bg-opacity-50 rounded-full cursor-pointer top-2 left-18'
-											onClick={() => document.getElementById('fileInput').click()} // Клик по затемненной области открывает выбор файла
+											onClick={() => document.getElementById('fileInput').click()}
 										>
 											<label htmlFor='fileInput' className='text-white cursor-pointer'></label>
 											<FaEdit className='w-8 h-8 text-white' />

@@ -1,4 +1,3 @@
-// client/src/api/authHandler.js
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -6,13 +5,12 @@ const apiClient = axios.create({
 });
 
 const AuthHandler = {
-	// Регистрация пользователя
 	registerUser: async userData => {
 		try {
 			const response = await apiClient.post('/register', userData);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка регистрации:', error);
+			console.error('Registration error:', error);
 			throw {
 				message: error.response?.data?.message || 'Registration error',
 				status: error.response?.status || 500,
@@ -20,13 +18,12 @@ const AuthHandler = {
 		}
 	},
 
-	// Вход пользователя
 	loginUser: async loginData => {
 		try {
 			const response = await apiClient.post('/login', loginData);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка входа:', error);
+			console.error('Entrance error:', error);
 			throw {
 				message: error.response?.data?.message || 'Login error',
 				status: error.response?.status || 500,
@@ -34,7 +31,6 @@ const AuthHandler = {
 		}
 	},
 
-	// Выход пользователя
 	logoutUser: async token => {
 		try {
 			const response = await apiClient.post(
@@ -48,7 +44,7 @@ const AuthHandler = {
 			);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка выхода:', error);
+			console.error('Exit error:', error);
 			throw {
 				message: error.response?.data?.message || 'Logout error',
 				status: error.response?.status || 500,
@@ -56,13 +52,12 @@ const AuthHandler = {
 		}
 	},
 
-	// Отправка ссылки для сброса пароля
 	sendPasswordResetLink: async email => {
 		try {
 			const response = await apiClient.post('/password-reset', { email });
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка отправки ссылки для сброса пароля:', error);
+			console.error('Password reset error:', error);
 			throw {
 				message: error.response?.data?.message || 'Password reset link error',
 				status: error.response?.status || 500,
@@ -70,13 +65,12 @@ const AuthHandler = {
 		}
 	},
 
-	// Сброс пароля
 	resetPassword: async (token, passwordData) => {
 		try {
 			const response = await apiClient.post(`/password-reset/${token}`, passwordData);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка сброса пароля:', error);
+			console.error('Password reset error:', error);
 			throw {
 				message: error.response?.data?.message || 'Password reset error',
 				status: error.response?.status || 500,
@@ -84,13 +78,12 @@ const AuthHandler = {
 		}
 	},
 
-	// Подтверждение email
 	confirmEmail: async token => {
 		try {
 			const response = await apiClient.get(`/confirm-email/${token}`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error('Ошибка подтверждения email:', error);
+			console.error('Email confirmation error:', error);
 			throw {
 				message: error.response?.data?.message || 'Email confirmation error',
 				status: error.response?.status || 500,

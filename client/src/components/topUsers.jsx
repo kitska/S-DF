@@ -11,10 +11,10 @@ const TopUsers = () => {
 			try {
 				const response = await UserHandler.getAllUsers(1, 10,'', 'rating', 'desc');
 				if (response.status === 200) {
-					setUsers(response.data.users); // Предполагается, что массив пользователей находится в `response.data.users`
+					setUsers(response.data.users);
 				}
 			} catch (error) {
-				setError(error.message || 'Ошибка при загрузке пользователей');
+				setError(error.message || 'User loading error');
 			}
 		};
 

@@ -14,7 +14,7 @@ const CommentsList = ({ postId }) => {
 				const commentTree = buildCommentTree(response.data.comments);
 				setComments(commentTree);
 			} catch (error) {
-				console.error('Ошибка при загрузке комментариев:', error);
+				console.error('Error when downloading comments:', error);
 			}
 		};
 
@@ -29,7 +29,6 @@ const CommentsList = ({ postId }) => {
 		try {
 			const newCommentData = { content: newCommentContent, comment_id: null };
 			const response = await PostHandler.createCommentForPost(postId, newCommentData, token);
-			// Извлекаем новый комментарий из ответа сервера
 			const newComment = response.data.comment;
 
 			setComments(prevComments => [
@@ -51,7 +50,7 @@ const CommentsList = ({ postId }) => {
 				behavior: 'smooth',
 			});
 		} catch (error) {
-			console.error('Ошибка при создании комментария:', error.message);
+			console.error('Error in creating a comment:', error.message);
 		}
 	};
 
@@ -62,10 +61,10 @@ const CommentsList = ({ postId }) => {
 					className='w-full p-3 text-white bg-gray-700 rounded-lg'
 					value={newCommentContent}
 					onChange={e => setNewCommentContent(e.target.value)}
-					placeholder='Введите новый комментарий...'
+					placeholder='Enter a new comment...'
 				/>
 				<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleNewCommentSubmit}>
-					Отправить
+					Send
 				</button>
 			</div>
 

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';
 import UserHandler from '../api/userHandler';
-import PostHandler from '../api/postHandler'; // Импортируем обработчик постов
-import CategoryHandler from '../api/categoryHandler'; // Импортируем обработчик категорий
+import PostHandler from '../api/postHandler';
+import CategoryHandler from '../api/categoryHandler';
 import { decodeToken } from '../utils/decodeJWT';
-import User from './UI/user'; // Импортируем компонент User
-import Post from './UI/post'; // Импортируем компонент Post
-import Category from './UI/category'; // Импортируем компонент Category
+import User from './UI/user';
+import Post from './UI/post';
+import Category from './UI/category';
 import { formatDate } from '../utils/formatDate';
 
 const Header = () => {
@@ -19,7 +19,7 @@ const Header = () => {
 	const [searchResults, setSearchResults] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [showResults, setShowResults] = useState(false);
-	const [showHint, setShowHint] = useState(false); // Состояние для управления видимостью подсказки
+	const [showHint, setShowHint] = useState(false);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -34,7 +34,7 @@ const Header = () => {
 						setLogin(response.data.login);
 						setUserId(response.data.id);
 					} catch (error) {
-						console.error('Ошибка при получении данных пользователя:', error);
+						console.error('Error when receiving user data:', error);
 					}
 				}
 			}
@@ -46,16 +46,16 @@ const Header = () => {
 	const handleSearch = async e => {
 		const term = e.target.value;
 		setSearchTerm(term);
-		setShowResults(true); // Показываем результаты поиска
+		setShowResults(true);
 
 		if (term.trim() === '') {
-			setSearchResults([]); // Если поле пустое, очищаем результаты
-			setShowHint(true); // Показываем подсказку
+			setSearchResults([]);
+			setShowHint(true);
 			return;
 		}
 
 		setLoading(true);
-		setShowHint(false); // Скрываем подсказку
+		setShowHint(false);
 
 		try {
 			let response;
@@ -69,7 +69,7 @@ const Header = () => {
 				if (Array.isArray(response.data.users)) {
 					setSearchResults(response.data.users.map(user => ({ type: 'user', ...user })));
 				} else {
-					console.error('Ошибка: ожидается массив пользователей', response);
+					console.error('Error: an array of users is expected', response);
 					setSearchResults([]);
 				}
 			} else if (term.startsWith('p:')) {
@@ -97,7 +97,7 @@ const Header = () => {
 						}))
 					);
 				} else {
-					console.error('Ошибка: ожидается массив постов', response);
+					console.error('Error: an array of posts is expected', response);
 					setSearchResults([]);
 				}
 			} else if (term.startsWith('c:')) {
@@ -110,14 +110,14 @@ const Header = () => {
 				if (Array.isArray(response.data.categories)) {
 					setSearchResults(response.data.categories.map(category => ({ type: 'category', ...category })));
 				} else {
-					console.error('Ошибка: ожидается массив категорий', response);
+					console.error('Error: Categories are expected', response);
 					setSearchResults([]);
 				}
 			} else {
-				setSearchResults([]); // Если не u:, p: или c:, очищаем результаты
+				setSearchResults([]);
 			}
 		} catch (error) {
-			console.error('Ошибка при поиске:', error);
+			console.error('Exact when searching:', error);
 			setSearchResults([]);
 		} finally {
 			setLoading(false);
@@ -129,41 +129,39 @@ const Header = () => {
 		setSearchTerm(term);
 
 		if (term === '') {
-			setSearchResults([]); // Очищаем результаты
-			setShowResults(false); // Скрываем результаты
-			setShowHint(true); // Показываем подсказку
+			setSearchResults([]);
+			setShowResults(false);
+			setShowHint(true);
 		} else {
-			setShowHint(false); // Скрываем подсказку, если есть текст
-			handleSearch(e); // Выполняем поиск при вводе
+			setShowHint(false);
+			handleSearch(e);
 		}
 	};
 
 	const handleBlur = () => {
 		setTimeout(() => {
-			setShowResults(false); // Скрываем результаты при уходе курсора
+			setShowResults(false);
 			setShowHint(false);
-		}, 100); // Задержка в 100 мс
+		}, 100);
 	};
 
 	const handleFocus = () => {
 		if (searchTerm === '') {
-			setShowHint(true); // Показываем подсказку, если поле пустое
+			setShowHint(true);
 		} else {
-			setShowResults(true); // Показываем результаты, если есть текст
+			setShowResults(true);
 		}
 	};
 
 	return (
 		<header className='fixed top-0 left-0 z-50 w-full py-4 bg-gray-900'>
 			<div className='container flex items-center justify-between max-w-5xl p-2 mx-auto bg-gray-800 rounded-lg shadow-lg'>
-				{/* Logo */}
 				<div className='flex-shrink-0'>
 					<a href='/'>
 						<img src={logoImage} alt='Logo' className='w-auto h-8' />
 					</a>
 				</div>
 
-				{/* Search Bar */}
 				<form className='flex-grow mx-3' onSubmit={e => e.preventDefault()}>
 					<input
 						type='text'
@@ -171,12 +169,11 @@ const Header = () => {
 						className='w-full p-1 text-white bg-gray-700 border border-gray-600 rounded-full'
 						value={searchTerm}
 						onChange={handleInputChange}
-						onFocus={handleFocus} // Обработчик фокуса
-						onBlur={handleBlur} // Скрываем результаты и подсказку при уходе курсора
+						onFocus={handleFocus}
+						onBlur={handleBlur}
 					/>
 				</form>
 
-				{/* User Avatar and Login Block */}
 				<div className='flex items-center space-x-3'>
 					{userAvatar ? (
 						<Link to={`/user/${userId}`} className='flex items-center p-1 space-x-2 transition duration-200 rounded-lg hover:bg-gray-700'>
@@ -191,7 +188,6 @@ const Header = () => {
 				</div>
 			</div>
 
-			{/* Search Results */}
 			{showResults && (
 				<div className='absolute w-1/2 mt-2 transform -translate-x-1/2 bg-gray-800 rounded-md shadow-lg left-1/2' style={{ maxHeight: '300px', overflowY: 'auto' }}>
 					<ul>
@@ -222,7 +218,7 @@ const Header = () => {
 								</li>
 							))
 						) : (
-							<li className='p-2 text-white'>Нет результатов</li>
+							<li className='p-2 text-white'>There are no results</li>
 						)}
 					</ul>
 				</div>
@@ -230,7 +226,7 @@ const Header = () => {
 			{showHint && (
 				<div className='absolute w-1/2 mt-2 transform -translate-x-1/2 bg-gray-800 rounded-md shadow-lg left-1/2'>
 					<p className='p-2 text-white'>
-						Введите <strong>u:</strong> для поиска пользователей, <strong>p:</strong> для поиска постов или <strong>c:</strong> для поиска категорий.
+						Enter <strong> u: </strong> to search for users, <strong> p: </strong> for searching for posts or <strong> c: </strong> to search for categories.
 					</p>
 				</div>
 			)}

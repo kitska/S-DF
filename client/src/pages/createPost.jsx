@@ -32,7 +32,7 @@ const CreatePostPage = () => {
 				const response = await CategoryHandler.getAllCategories(1, total.data.totalPages);
 				setAllCategories(response.data.categories || []);
 			} catch (error) {
-				console.error('Ошибка при загрузке категорий:', error.message);
+				console.error('Error when loading categories:', error.message);
 			}
 		};
 		fetchCategories();
@@ -76,7 +76,7 @@ const CreatePostPage = () => {
 			const response = await PostHandler.createPost(postData, token);
 			navigate(`/post/${response.data.post.id}`);
 		} catch (error) {
-			console.error('Ошибка при создании поста:', error);
+			console.error('Error in creating a post:', error);
 		}
 	};
 

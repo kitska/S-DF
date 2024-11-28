@@ -7,7 +7,7 @@ import Post from '../components/UI/post';
 import Pagination from '../components/UI/pagination';
 import PostHandler from '../api/postHandler';
 import { formatDate } from '../utils/formatDate';
-import SortSelects from '../components/UI/sortSelects'; // Импортируем новый компонент
+import SortSelects from '../components/UI/sortSelects';
 
 const PostsPage = () => {
 	const [posts, setPosts] = useState([]);
@@ -17,8 +17,7 @@ const PostsPage = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPage = Number(searchParams.get('page')) || 1;
 
-	// Состояния для сортировки
-	const [sortBy, setSortBy] = useState('date'); // По умолчанию сортируем по дате
+	const [sortBy, setSortBy] = useState('date');
 	const [sortOrder, setSortOrder] = useState('asc');
 
 	const fetchPosts = async (page) => {
@@ -51,7 +50,7 @@ const PostsPage = () => {
 				setPosts(formattedPosts);
 				setTotalPages(response.data.totalPages);
 			} else {
-				setError('Не удалось загрузить посты. Попробуйте позже.');
+				setError('It was not possible to load the posts.Try it later.');
 			}
 		} catch (error) {
 			setError(error.message);
@@ -74,7 +73,7 @@ const PostsPage = () => {
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-6 bg-gray-800'>
-					{loading && <p className='text-gray-300'>Загрузка постов...</p>}
+					{loading && <p className='text-gray-300'>Loading posts...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 
 					<SortSelects sortBy={sortBy} setSortBy={setSortBy} sortOrder={sortOrder} setSortOrder={setSortOrder} />

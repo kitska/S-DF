@@ -9,7 +9,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 	const [showReplyForm, setShowReplyForm] = useState(false);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
-	const [userReaction, setUserReaction] = useState(null); // 'like', 'dislike', or null
+	const [userReaction, setUserReaction] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState(comment.content);
 
@@ -30,12 +30,12 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 					setUserReaction('dislike');
 				}
 			} catch (error) {
-				console.error('Ошибка при получении лайков и дизлайков для комментария:', error);
+				console.error('Error when receiving likes and dislikes for commentary:', error);
 			}
 		};
 
 		fetchLikesAndDislikes();
-	}, [comment.id, user?.id]); // Изменено на user?.id
+	}, [comment.id, user?.id]);
 
 	const handleReplySubmit = async () => {
 		if (!replyContent) return;
@@ -63,7 +63,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			setReplyContent('');
 			setShowReplyForm(false);
 		} catch (error) {
-			console.error('Ошибка при ответе на комментарий:', error.message);
+			console.error('An error when answering a comment:', error.message);
 		}
 	};
 
@@ -89,7 +89,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			});
 			setIsEditing(false);
 		} catch (error) {
-			console.error('Ошибка при редактировании комментария:', error.message);
+			console.error('Error in editing comment:', error.message);
 		}
 	};
 
@@ -99,17 +99,17 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			setComments(prevComments => {
 				return prevComments.reduce((acc, c) => {
 					if (c.id === comment.id) {
-						return acc; // Do not include the deleted comment
+						return acc;
 					}
 					if (c.replies) {
 						const updatedReplies = c.replies.filter(reply => reply.id !== comment.id);
 						return [...acc, { ...c, replies: updatedReplies }];
 					}
-					return [...acc, c]; // Include the comment if it doesn't match
+					return [...acc, c];
 				}, []);
 			});
 		} catch (error) {
-			console.error('Ошибка при удалении комментария:', error.message);
+			console.error('Error when deleting a comment:', error.message);
 		}
 	};
 
@@ -163,13 +163,13 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 						className='w-full p-3 text-white bg-gray-700 rounded-lg'
 						value={editedContent}
 						onChange={e => setEditedContent(e.target.value)}
-						placeholder='Редактировать комментарий...'
+						placeholder='Edit a comment...'
 					/>
 					<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleEditSubmit}>
-						<FaSave className='inline mr-1' /> Сохранить
+						<FaSave className='inline mr-1' /> Save
 					</button>
 					<button className='px-4 py-2 mt-2 ml-2 text-gray-400 bg-gray-600 rounded-lg hover:bg-gray-500' onClick={() => setIsEditing(false)}>
-						<FaTimes className='inline mr-1' /> Отменить
+						<FaTimes className='inline mr-1' /> Cancel
 					</button>
 				</div>
 			) : (
@@ -186,16 +186,16 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 						</div>
 						{!isReply && (
 							<button className='ml-4 text-blue-400 hover:text -blue-200' onClick={() => setShowReplyForm(!showReplyForm)}>
-								{showReplyForm ? 'Отменить' : 'Ответить'}
+								{showReplyForm ? 'Cancel' : 'Reply'}
 							</button>
 						)}
 						{canEditOrDelete && (
 							<>
 								<button className='ml-4 text-yellow-400 hover:text-yellow-200' onClick={() => setIsEditing(true)}>
-									<FaEdit className='inline mr-1' /> Изменить
+									<FaEdit className='inline mr-1' /> Edit
 								</button>
 								<button className='ml-2 text-red-500 hover:text-red-300' onClick={handleDelete}>
-									<FaTrash className='inline mr-1' /> Удалить
+									<FaTrash className='inline mr-1' /> Delete
 								</button>
 							</>
 						)}
@@ -209,10 +209,10 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 						className='w-full p-3 text-white bg-gray-700 rounded-lg'
 						value={replyContent}
 						onChange={e => setReplyContent(e.target.value)}
-						placeholder='Введите ответ...'
+						placeholder='Enter the reply...'
 					/>
 					<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleReplySubmit}>
-						Отправить
+						Send
 					</button>
 				</div>
 			)}

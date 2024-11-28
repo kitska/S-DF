@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AuthHandler from '../api/authHandler'; // Make sure this path is correct
+import AuthHandler from '../api/authHandler';
 import Header from '../components/header';
 import Footer from '../components/footer';
 

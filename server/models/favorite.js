@@ -3,8 +3,8 @@ const sequelize = require('../db/db').sequelize;
 const User = require('./user');
 const Post = require('./post');
 
-const Favourite = sequelize.define(
-	'Favourite',
+const favorite = sequelize.define(
+	'favorite',
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -30,14 +30,14 @@ const Favourite = sequelize.define(
 	},
 	{
 		timestamps: false,
-		tableName: 'favourites',
+		tableName: 'favorites',
 	}
 );
 
-User.belongsToMany(Post, { through: Favourite, foreignKey: 'user_id' });
-Post.belongsToMany(User, { through: Favourite, foreignKey: 'post_id' });
+User.belongsToMany(Post, { through: favorite, foreignKey: 'user_id' });
+Post.belongsToMany(User, { through: favorite, foreignKey: 'post_id' });
 
-Favourite.belongsTo(User, { foreignKey: 'user_id' });
-Favourite.belongsTo(Post, { foreignKey: 'post_id' });
+favorite.belongsTo(User, { foreignKey: 'user_id' });
+favorite.belongsTo(Post, { foreignKey: 'post_id' });
 
-module.exports = Favourite;
+module.exports = favorite;

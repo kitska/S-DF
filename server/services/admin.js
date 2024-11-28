@@ -7,7 +7,7 @@ const PostCategory = require('../models/post_category');
 const Comment = require('../models/comment');
 const User = require('../models/user');
 const Like = require('../models/like');
-const Favourite = require('../models/favourite');
+const favorite = require('../models/favorite');
 const bcrypt = require('bcrypt');
 
 const authenticate = async (email, password) => {
@@ -37,7 +37,7 @@ const makeRelationships = async req => {
 	if (req.record.params) {
 		const { id } = req.record.params;
 		let uniqueCategories = new Set();
-		let uniqueFavourites = new Set();
+		let uniqueFavorites = new Set();
 
 		for (const key in req.record.params) {
 			if (key.startsWith('categories.')) {
@@ -47,9 +47,9 @@ const makeRelationships = async req => {
 		}
 
 		for (const key in req.record.params) {
-			if (key.startsWith('favourites.')) {
+			if (key.startsWith('favorites.')) {
 				const UserId = req.record.params[key];
-				uniqueFavourites.add(UserId);
+				uniqueFavorites.add(UserId);
 			}
 		}
 
@@ -63,12 +63,12 @@ const makeRelationships = async req => {
 				await post.setCategories(categories);
 			}
 
-			const favourites = await Favourite.findAll({
-				where: { user_id: Array.from(uniqueFavourites) },
+			const favorites = await favorite.findAll({
+				where: { user_id: Array.from(uniqueFavorites) },
 			});
 
-			if (favourites.length > 0) {
-				await post.addFavourites(favourites);
+			if (favorites.length > 0) {
+				await post.addFavorites(favorites);
 			}
 		} catch (err) {
 			console.error('Error when setting categories or favorites:', err);
@@ -233,7 +233,7 @@ const admin = new AdminJS({
 			},
 		},
 		{
-			resource: Favourite,
+			resource: favorite,
 			options: {
 				listProperties: ['id', 'user_id', 'post_id'],
 				filterProperties: ['id', 'user_id', 'post_id'],

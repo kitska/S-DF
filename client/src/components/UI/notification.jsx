@@ -1,4 +1,3 @@
-// src/components/UI/Notification.jsx
 import React from 'react';
 
 const Notification = ({ message, onClose }) => {

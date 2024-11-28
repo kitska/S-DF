@@ -3,19 +3,18 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import ErrorMessage from '../components/UI/errorMessage';
-import AuthHandler from '../api/authHandler'; // Импортируем функцию
+import AuthHandler from '../api/authHandler';
 
 const EmailConfirmPage = () => {
-	const { token } = useParams(); // Получаем токен из URL
-	const [loading, setLoading] = useState(true); // Состояние загрузки
-	const [confirmationStatus, setConfirmationStatus] = useState(null); // Состояние подтверждения
-	const [errorMessage, setErrorMessage] = useState(''); // Сообщение об ошибке
+	const { token } = useParams();
+	const [loading, setLoading] = useState(true);
+	const [confirmationStatus, setConfirmationStatus] = useState(null);
+	const [errorMessage, setErrorMessage] = useState('');
 
 	useEffect(() => {
-		// Функция для отправки запроса на сервер для подтверждения email
 		const handleConfirmEmail = async () => {
 			try {
-				const response = await AuthHandler.confirmEmail(token); // Используем функцию confirmEmail
+				const response = await AuthHandler.confirmEmail(token);
 				setConfirmationStatus(response.data.message || 'Email confirmed successfully!');
 			} catch (error) {
 				setErrorMessage(error.message || 'An error occurred, please try again later.');
@@ -24,7 +23,6 @@ const EmailConfirmPage = () => {
 			}
 		};
 
-		// Вызов функции подтверждения email
 		handleConfirmEmail();
 	}, [token]);
 
@@ -36,9 +34,9 @@ const EmailConfirmPage = () => {
 					<h2 className='mb-4 text-2xl font-semibold text-center text-white'>Email Confirmation</h2>
 
 					{loading ? (
-						<p className='text-center text-white'>Loading...</p> // Показываем "Loading..." при ожидании ответа от сервера
+						<p className='text-center text-white'>Loading...</p>
 					) : confirmationStatus ? (
-						<p className='text-center text-white'>{confirmationStatus}</p> // Показываем результат подтверждения
+						<p className='text-center text-white'>{confirmationStatus}</p>
 					) : (
 						<div>
 							<ErrorMessage errorMessage={errorMessage} />

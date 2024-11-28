@@ -12,18 +12,18 @@ const LazyPost = React.lazy(() => import('../components/UI/post'));
 
 const CategoryPage = () => {
 	const { categoryId } = useParams();
-	const [allPosts, setAllPosts] = useState([]); // Храним все посты
-	const [visiblePosts, setVisiblePosts] = useState([]); // Посты, которые будут отображаться
+	const [allPosts, setAllPosts] = useState([]);
+	const [visiblePosts, setVisiblePosts] = useState([]);
 	const [error, setError] = useState(null);
 	const [cat, setCat] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [loadingMore, setLoadingMore] = useState(false);
-	const [postsPerPage, setPostsPerPage] = useState(20); // Количество постов для загрузки
+	const [postsPerPage, setPostsPerPage] = useState(20);
 
 	const fetchPostsByCategory = async () => {
 		setLoading(true);
 		try {
-			const response = await CategoryHandler.getPostsByCategory(categoryId); // Получаем все посты
+			const response = await CategoryHandler.getPostsByCategory(categoryId);
 			if (response.status === 200) {
 				const formattedPosts = await Promise.all(
 					response.data.posts.map(async post => {
@@ -47,8 +47,8 @@ const CategoryPage = () => {
 						};
 					})
 				);
-				setAllPosts(formattedPosts); // Сохраняем все посты
-				setVisiblePosts(formattedPosts.slice(0, postsPerPage)); // Отображаем только первые посты
+				setAllPosts(formattedPosts);
+				setVisiblePosts(formattedPosts.slice(0, postsPerPage));
 			}
 		} catch (error) {
 			setError(error.message);
@@ -68,7 +68,7 @@ const CategoryPage = () => {
 
 	useEffect(() => {
 		fetchCategory();
-		fetchPostsByCategory(); // Загружаем все посты
+		fetchPostsByCategory();
 	}, [categoryId]);
 
 	useEffect(() => {
@@ -81,7 +81,7 @@ const CategoryPage = () => {
 						return [...prevVisiblePosts, ...nextPosts];
 					});
 					setLoadingMore(false);
-				}, 1000); // Задержка для имитации загрузки
+				}, 1000);
 			}
 		};
 

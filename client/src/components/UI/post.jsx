@@ -1,10 +1,9 @@
-// src/components/UI/Post.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
 import { Link } from 'react-router-dom';
-import PostHandler from '../../api/postHandler'; // Импортируем API для работы с постами
-import { decodeToken } from '../../utils/decodeJWT'; // Импортируем функцию для декодирования токена
+import PostHandler from '../../api/postHandler';
+import { decodeToken } from '../../utils/decodeJWT';
 import UserHandler from '../../api/userHandler';
 
 const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date, status, categories = [] }) => {
@@ -20,14 +19,13 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 	const hasMoreCategories = categories.length > maxVisibleCategories;
 
 	useEffect(() => {
-		// Проверяем, находится ли пост в избранном
 		const checkIfFavorite = async () => {
 			try {
-				const favouritesResponse = await UserHandler.getUserFavourites(token);
-				const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
-				setIsFavorite(favouritePostIds.includes(parseInt(id))); // Проверяем, есть ли пост в избранном
+				const favoritesResponse = await UserHandler.getUserFavorites(token);
+				const favoritePostIds = favoritesResponse.data.map(fav => fav.post_id);
+				setIsFavorite(favoritePostIds.includes(parseInt(id)));
 			} catch (error) {
-				console.warn('Ошибка при получении избранных постов:', error);
+				console.warn('Error when receiving selected posts:', error);
 			}
 		};
 
@@ -54,16 +52,14 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 	const toggleFavorite = async () => {
 		try {
 			if (isFavorite) {
-				// Если пост уже в избранном, удаляем его
-				await PostHandler.deletePostFromFavourites(id, token);
+				await PostHandler.deletePostFromFavorites(id, token);
 				setIsFavorite(false);
 			} else {
-				// Если пост не в избранном, добавляем его
-				await PostHandler.addPostToFavourites(id, token);
+				await PostHandler.addPostToFavorites(id, token);
 				setIsFavorite(true);
 			}
 		} catch (error) {
-			console.error('Ошибка при добавлении/удалении из избранного:', error);
+			console.error('Error when adding/removing from the favorites:', error);
 		}
 	};
 
@@ -91,10 +87,10 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					<div className='w-3/4'>
 						<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
 						<p className='flex items-center mt-1 text-xs text-gray-500'>
-							{/* Display avatar */}
+							{}
 							<img src={avatarUrl} alt={`${author}'s avatar`} className='object-cover w-6 h-6 mr-2 rounded-full' />
 							{author} | {date}
-							<span className={`ml-2 inline-block w-2 h-2 rounded-full ${status ? 'bg-green-500' : 'bg-red-500'}`} title={status ? 'Активен' : 'Неактивен'}></span>
+							<span className={`ml-2 inline-block w-2 h-2 rounded-full ${status ? 'bg-green-500' : 'bg-red-500'}`} title={status ? 'Active' : 'Inactive'}></span>
 						</p>
 					</div>
 					<div className='flex flex-col items-end w-1/4'>

@@ -35,7 +35,6 @@ marked.setOptions({
 	},
 });
 
-// NavigateToErrorPage will handle the redirection for 404 error
 const NavigateToErrorPage = () => {
 	const navigate = useNavigate();
 
@@ -83,19 +82,19 @@ export default App;
 /* 
 	/todo: reset password button in login 
 	/todo: edit profile + reset password in profile edit
-	/todo: empty comments + posts errors handl
+	/todo: empty comments + posts errors handel
 	/todo: markdown in posts
 	/todo: new post/edit post/delete post |  post creator | 
 	/todo: edit/delete comment
-	/todo: admin premisions
-	/todo: filter post/sort post
+	/todo: admin permissions
 	/todo: like/dislike posts/comments
-	/todo: favourites add delete
-	todo: category post page style
+	/todo: favorites add delete
+	/todo: category post page style
 	/todo: search
 
 	? todo: link in post to user profile + in comments
-	? todo: category edit/delete/create
-	? todo: sort/comments
-	? todo: filter users/sort users
+	/? todo: category edit/delete/create
+	? todo: full(likes) filter post/sort post
+	? todo: full(likes) sort/comments
+	? todo: full(rating) filter users/sort users
 */

@@ -1,4 +1,3 @@
-// client/src/api/CommentHandler.js
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -6,13 +5,12 @@ const apiClient = axios.create({
 });
 
 const CommentHandler = {
-	// Получение комментария по ID
 	getCommentById: async commentId => {
 		try {
 			const response = await apiClient.get(`/${commentId}`);
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении комментария с ID ${commentId}:`, error);
+			console.error(`Error when receiving a comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error fetching comment',
 				status: error.response?.status || 500,
@@ -20,15 +18,14 @@ const CommentHandler = {
 		}
 	},
 
-	// Получение лайков для комментария
 	getLikesForComment: async (commentId, likeType, authorId) => {
 		try {
 			const response = await apiClient.get(`/${commentId}/like`, {
-				params: { type: likeType, author_id: authorId }, // Добавляем author_id в параметры
+				params: { type: likeType, author_id: authorId },
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при получении лайков для комментария с ID ${commentId}:`, error);
+			console.error(`Error when receiving likes for comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error fetching likes for comment',
 				status: error.response?.status || 500,
@@ -36,7 +33,6 @@ const CommentHandler = {
 		}
 	},
 
-	// Создание лайка для комментария
 	createLikeForComment: async (commentId, likeData, token) => {
 		try {
 			const response = await apiClient.post(`/${commentId}/like`, likeData, {
@@ -44,7 +40,7 @@ const CommentHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при создании лайка для комментария с ID ${commentId}:`, error);
+			console.error(`Error in creating a like for comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error creating like for comment',
 				status: error.response?.status || 500,
@@ -59,7 +55,7 @@ const CommentHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при ответе на комментарий с ID ${commentId}:`, error);
+			console.error(`Error when answering a comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error replying to comment',
 				status: error.response?.status || 500,
@@ -67,7 +63,6 @@ const CommentHandler = {
 		}
 	},
 
-	// Обновление комментария
 	updateComment: async (commentId, commentData, token) => {
 		try {
 			const response = await apiClient.patch(`/${commentId}`, commentData, {
@@ -75,7 +70,7 @@ const CommentHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при обновлении комментария с ID ${commentId}:`, error);
+			console.error(`Error when updating the comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error updating comment',
 				status: error.response?.status || 500,
@@ -83,7 +78,6 @@ const CommentHandler = {
 		}
 	},
 
-	// Удаление лайка для комментария
 	deleteLikeForComment: async (commentId, token) => {
 		try {
 			const response = await apiClient.delete(`/${commentId}/like`, {
@@ -91,7 +85,7 @@ const CommentHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при удалении лайка для комментария с ID ${commentId}:`, error);
+			console.error(`Error when removing likes for comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error deleting like for comment',
 				status: error.response?.status || 500,
@@ -99,7 +93,6 @@ const CommentHandler = {
 		}
 	},
 
-	// Удаление комментария
 	deleteComment: async (commentId, token) => {
 		try {
 			const response = await apiClient.delete(`/${commentId}`, {
@@ -107,7 +100,7 @@ const CommentHandler = {
 			});
 			return { data: response.data, status: response.status };
 		} catch (error) {
-			console.error(`Ошибка при удалении комментария с ID ${commentId}:`, error);
+			console.error(`Error when deleting a comment with ID ${commentId}:`, error);
 			throw {
 				message: error.response?.data?.message || 'Error deleting comment',
 				status: error.response?.status || 500,

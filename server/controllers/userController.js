@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
-const Favourite = require('../models/favourite');
+const favorite = require('../models/favorite');
 const Post = require('../models/post');
 const Category = require('../models/category');
 const Like = require('../models/like');
@@ -207,7 +207,7 @@ exports.deleteUser = async (req, res) => {
 	}
 };
 
-exports.getUserFavourites = async (req, res) => {
+exports.getUserFavorites = async (req, res) => {
 	try {
 		const userId = req.user.id;
 
@@ -215,7 +215,7 @@ exports.getUserFavourites = async (req, res) => {
 			return res.status(400).json({ error: 'User not found' });
 		}
 
-		const favourites = await Favourite.findAll({
+		const favorites = await favorite.findAll({
 			where: { user_id: userId },
 			include: [
 				{
@@ -235,8 +235,8 @@ exports.getUserFavourites = async (req, res) => {
 			],
 		});
 
-		if (favourites && favourites.length > 0) {
-			res.status(200).json(favourites);
+		if (favorites && favorites.length > 0) {
+			res.status(200).json(favorites);
 		} else {
 			res.status(404).json({ message: 'User has no favorite posts' });
 		}

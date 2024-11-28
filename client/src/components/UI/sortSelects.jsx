@@ -13,14 +13,14 @@ const SortSelects = ({ sortBy, setSortBy, sortOrder, setSortOrder }) => {
 	return (
 		<div className='flex items-center justify-between p-4 mb-4 bg-gray-700 rounded-lg shadow-lg'>
 			<div className='flex items-center'>
-				<label className='mr-2 text-gray-300'>Сортировать по:</label>
+				<label className='mr-2 text-gray-300'>Sort by:</label>
 				<div className='relative'>
 					<select
 						value={sortBy}
 						onChange={handleSortByChange}
 						className='block w-full px-4 py-2 pr-8 text-gray-300 transition-all duration-200 bg-gray-600 border border-gray-500 rounded-lg appearance-none focus:outline-none focus:ring-2 hover:bg-gray-500'
 					>
-						<option value='publish_date'>Дате</option>
+						<option value='publish_date'>Date</option>
 					</select>
 					<span className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
 						<svg className='w-4 h-4 text-gray-300' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'>
@@ -33,15 +33,15 @@ const SortSelects = ({ sortBy, setSortBy, sortOrder, setSortOrder }) => {
 					</span>
 				</div>
 
-				<label className='ml-4 mr-2 text-gray-300'>Порядок:</label>
+				<label className='ml-4 mr-2 text-gray-300'>Order:</label>
 				<div className='relative'>
 					<select
 						value={sortOrder}
 						onChange={handleSortOrderChange}
 						className='block w-full px-4 py-2 pr-8 text-gray-300 transition-all duration-200 bg-gray-600 border border-gray-500 rounded-lg appearance-none focus:outline-none focus:ring-2 hover:bg-gray-500'
 					>
-						<option value='asc'>По возрастанию</option>
-						<option value='desc'>По убыванию</option>
+						<option value='asc'>In ascending</option>
+						<option value='desc'>In descending</option>
 					</select>
 					<span className='absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none'>
 						<svg className='w-4 h-4 text-gray-300' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'>

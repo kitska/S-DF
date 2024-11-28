@@ -6,7 +6,6 @@ const ScrollToTopButton = () => {
 	const [isVisible, setIsVisible] = useState(false);
 
 	useEffect(() => {
-		// Показать кнопку при прокрутке вниз
 		const toggleVisibility = () => {
 			if (window.scrollY > 450) {
 				setIsVisible(true);

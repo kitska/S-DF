@@ -21,7 +21,7 @@ const AddCategory = () => {
 		try {
 			const categoryData = { title: categoryName };
 			await CategoryHandler.createCategory(categoryData, token);
-			navigate('/'); // Navigate to the main page after successful creation
+			navigate('/');
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -36,11 +36,11 @@ const AddCategory = () => {
 				<Sidebar />
 				<div className='flex-grow p-10'>
 					<div className='max-w-2xl p-8 mx-auto bg-gray-700 rounded-lg shadow-lg'>
-						<h1 className='mb-6 text-3xl font-bold text-center text-white'>Добавить категорию</h1>
+						<h1 className='mb-6 text-3xl font-bold text-center text-white'>Add the category</h1>
 						<form onSubmit={handleSubmit} className='space-y-6'>
 							<div>
 								<label htmlFor='categoryName' className='block mb-2 text-lg font-medium text-gray-300'>
-									Название категории
+									The name of the category
 								</label>
 								<input
 									type='text'
@@ -48,7 +48,7 @@ const AddCategory = () => {
 									value={categoryName}
 									onChange={e => setCategoryName(e.target.value)}
 									className='w-full p-3 text-gray-300 bg-gray-600 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
-									placeholder='Введите название категории'
+									placeholder='Enter the name of the category'
 									required
 								/>
 							</div>
@@ -60,7 +60,7 @@ const AddCategory = () => {
 								}`}
 								disabled={loading}
 							>
-								{loading ? 'Создание...' : 'Создать категорию'}
+								{loading ? 'Creating ... ':' Create a category'}
 							</button>
 						</form>
 					</div>

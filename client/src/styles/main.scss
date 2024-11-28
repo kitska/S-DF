@@ -1,11 +1,9 @@
-// src/styles/main.scss
 
 @use 'variables' as *;
 @use 'tailwindcss/base';
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
 
-// Подключение шрифта
 @font-face {
     font-family: 'Asusrog';
     src: url('../assets/fonts/asusrog_regular.ttf') format('truetype');
@@ -39,16 +37,12 @@ nav,.place {
 }
 
 html, body {
-    // height: 100%;
     margin: 0;
-    // overflow: hidden; 
-    font-family: 'IBM Plex Serif', sans-serif;/* Это может помочь убрать скролл */
+    font-family: 'IBM Plex Serif', sans-serif;
 }
 
-/* styles.css */
 .hljs {
     background: rgb(0 0 0 / 0%) !important;
     color: white !important;
 }
 
-/* Добавьте другие стили для различных классов, если необходимо */

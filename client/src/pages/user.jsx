@@ -17,7 +17,7 @@ const UserProfilePage = () => {
 	const [user, setUser] = useState(null);
 	const [writtenPosts, setWrittenPosts] = useState([]);
 	const [likedPosts, setLikedPosts] = useState([]);
-	const [favouritePosts, setFavouritePosts] = useState([]);
+	const [favoritePosts, setFavoritePosts] = useState([]);
 	const [activeTab, setActiveTab] = useState('written');
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ const UserProfilePage = () => {
 	};
 
 	const handleEditProfile = () => {
-		navigate(`/user/${id}/edit-profile`); // Absolute path with leading '/'
+		navigate(`/user/${id}/edit-profile`);
 	};
 
 	const fetchUserData = async userId => {
@@ -41,10 +41,10 @@ const UserProfilePage = () => {
 			if (response.status === 200) {
 				setUser(response.data);
 			} else {
-				setError('Не удалось загрузить данные пользователя.');
+				setError('It was not possible to download the user data.');
 			}
 		} catch (error) {
-			setError(error.message || 'Ошибка при загрузке профиля');
+			setError(error.message || 'Profile loading error');
 		}
 	};
 
@@ -73,7 +73,7 @@ const UserProfilePage = () => {
 				dislikes: dislikeResponse?.data?.dislikeCount || 0,
 			};
 		} catch (error) {
-			console.error('Ошибка при загрузке данных о лайках и дизлайках:', error.message);
+			console.error('Error for loading data about likes and dislikes:', error.message);
 			return null;
 		}
 	};
@@ -82,9 +82,8 @@ const UserProfilePage = () => {
 		try {
 			const formattedWrittenPosts = [];
 			const formattedLikedPosts = [];
-			const formattedFavouritePosts = [];
+			const formattedFavoritePosts = [];
 
-			// Получение написанных постов
 			try {
 				const writtenResponse = await UserHandler.getUserPosts(id);
 				if (writtenResponse?.data) {
@@ -92,10 +91,9 @@ const UserProfilePage = () => {
 					formattedWrittenPosts.push(...posts);
 				}
 			} catch (error) {
-				if (error.response?.status !== 404) console.error('Ошибка получения написанных постов:', error.message);
+				if (error.response?.status !== 404) console.error('Error in obtaining written posts:', error.message);
 			}
 
-			// Получение понравившихся постов
 			try {
 				const likedResponse = await UserHandler.getUserLikedPosts(id);
 				if (likedResponse?.data) {
@@ -103,28 +101,26 @@ const UserProfilePage = () => {
 					formattedLikedPosts.push(...posts);
 				}
 			} catch (error) {
-				if (error.response?.status !== 404) console.error('Ошибка получения понравившихся постов:', error.message);
+				if (error.response?.status !== 404) console.error('Error in obtaining your favorite posts:', error.message);
 			}
 
-			// Получение избранных постов, если это профиль текущего пользователя
 			if (isOwnProfile) {
 				try {
-					const favouritesResponse = await UserHandler.getUserFavourites(token);
-					if (favouritesResponse?.data) {
-						const posts = await Promise.all(favouritesResponse.data.map(item => formatPost(item.Post)));
-						formattedFavouritePosts.push(...posts);
+					const favoritesResponse = await UserHandler.getUserFavorites(token);
+					if (favoritesResponse?.data) {
+						const posts = await Promise.all(favoritesResponse.data.map(item => formatPost(item.Post)));
+						formattedFavoritePosts.push(...posts);
 					}
 				} catch (error) {
-					if (error.response?.status !== 404) console.error('Ошибка получения избранных постов:', error.message);
+					if (error.response?.status !== 404) console.error('Error in obtaining selected posts:', error.message);
 				}
 			}
 
-			// Установка данных
 			setWrittenPosts(formattedWrittenPosts);
 			setLikedPosts(formattedLikedPosts);
-			setFavouritePosts(formattedFavouritePosts);
+			setFavoritePosts(formattedFavoritePosts);
 		} catch (error) {
-			console.error('Общая ошибка загрузки постов:', error.message);
+			console.error('General error of loading posts:', error.message);
 			setError();
 		} finally {
 			setLoading(false);
@@ -139,8 +135,8 @@ const UserProfilePage = () => {
 	}, [id]);
 
 	const renderActiveTab = () => {
-		if (!isOwnProfile && (activeTab === 'liked' || activeTab === 'favourite')) {
-			return <p className='text-gray-300'>У вас нет доступа к этой информации.</p>;
+		if (!isOwnProfile && (activeTab === 'liked' || activeTab === 'favorite')) {
+			return <p className='text-gray-300'>You do not have access to this information.</p>;
 		}
 
 		switch (activeTab) {
@@ -148,8 +144,8 @@ const UserProfilePage = () => {
 				return writtenPosts.map(post => (post?.id ? <Post key={post.id} {...post} /> : null));
 			case 'liked':
 				return likedPosts.map(post => (post?.id ? <Post key={post.id} {...post} /> : null));
-			case 'favourite':
-				return favouritePosts.map(post => (post?.id ? <Post key={post.id} {...post} /> : null));
+			case 'favorite':
+				return favoritePosts.map(post => (post?.id ? <Post key={post.id} {...post} /> : null));
 			default:
 				return null;
 		}
@@ -161,12 +157,11 @@ const UserProfilePage = () => {
 			<div className='flex flex-grow mt-20'>
 				<Sidebar />
 				<div className='flex-grow p-6'>
-					{loading && <p>Загрузка профиля...</p>}
+					{loading && <p>Profile load...</p>}
 					{error && <p className='text-red-500'>{error}</p>}
 
 					{user && (
 						<div className='relative flex flex-col items-center p-8 bg-gray-700 rounded-lg shadow-lg'>
-							{/* Контейнер с кнопками */}
 							<div className='absolute flex flex-col space-y-4 top-4 right-4'>
 								{isOwnProfile && (
 									<button
@@ -183,7 +178,6 @@ const UserProfilePage = () => {
 								)}
 							</div>
 
-							{/* Контент профиля */}
 							<img src={`${process.env.REACT_APP_BASE_URL}/${user.profile_picture}`} alt='Profile' className='object-cover w-32 h-32 mb-4 rounded-full shadow-md' />
 							<h2 className='text-3xl font-semibold text-white'>{user.full_name}</h2>
 							<p className='text-xl text-blue-400'>{user.role}</p>
@@ -191,10 +185,10 @@ const UserProfilePage = () => {
 								<span className='text-gray-200'>{user.login}</span>
 							</p>
 							<p className='text-gray-400'>
-								Рейтинг: <span className={`text-sm ${user.rating > 0 ? 'text-green-500' : user.rating < 0 ? 'text-red-500' : 'text-gray-400'}`}>{user.rating}</span>
+								Rating: <span className={`text-sm ${user.rating > 0 ? 'text-green-500' : user.rating < 0 ? 'text-red-500' : 'text-gray-400'}`}>{user.rating}</span>
 							</p>
 							<p className='text-sm text-gray-400'>
-								Аккаунт создан: <span className='text-gray-300'>{formatDate(user.created_at)}</span>
+								The account was created: <span className='text-gray-300'>{formatDate(user.created_at)}</span>
 							</p>
 						</div>
 					)}
@@ -205,7 +199,7 @@ const UserProfilePage = () => {
 								onClick={() => setActiveTab('written')}
 								className={`px-6 py-2 rounded-lg font-medium ${activeTab === 'written' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'}`}
 							>
-								Написанные посты
+								Written posts
 							</button>
 							{isOwnProfile && (
 								<>
@@ -215,15 +209,15 @@ const UserProfilePage = () => {
 											activeTab === 'liked' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'
 										}`}
 									>
-										Лайкнутые посты
+										Liked posts
 									</button>
 									<button
-										onClick={() => setActiveTab('favourite')}
+										onClick={() => setActiveTab('favorite')}
 										className={`px-6 py-2 rounded-lg font-medium ${
-											activeTab === 'favourite' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'
+											activeTab === 'favorite' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-blue-500'
 										}`}
 									>
-										Избранные посты
+										Favorites posts
 									</button>
 								</>
 							)}

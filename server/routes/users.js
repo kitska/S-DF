@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const { authenticateToken, isAdmin } = require('../middleware/authMW');
 
 router.get('/', userController.getAllUsers);
-router.get('/favourites', authenticateToken, userController.getUserFavourites);
+router.get('/favorites', authenticateToken, userController.getUserFavorites);
 router.get('/:userId', userController.getUserById);
 router.get('/:userId/posts', userController.getUserPosts);
 router.get('/:userId/liked-posts', userController.getUserLikedPosts);

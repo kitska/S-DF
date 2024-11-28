@@ -19,13 +19,13 @@ const PostPage = () => {
 	const [post, setPost] = useState(null);
 	const [likes, setLikes] = useState(0);
 	const [dislikes, setDislikes] = useState(0);
-	const [userReaction, setUserReaction] = useState(null); // 'like', 'dislike', or null
+	const [userReaction, setUserReaction] = useState(null);
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [error, setError] = useState(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState('');
 	const [editedTitle, setEditedTitle] = useState('');
-	const [editedStatus, setEditedStatus] = useState(''); // Default status
+	const [editedStatus, setEditedStatus] = useState('');
 	const postRef = useRef(null);
 	const token = localStorage.getItem('token');
 	const user = decodeToken(token);
@@ -56,7 +56,6 @@ const PostPage = () => {
 				setEditedTitle(formattedPost.title);
 				setEditedStatus(formattedPost.status ? 'active' : 'inactive');
 
-				// Получаем лайки, дизлайки и реакцию пользователя
 				const likeResponse = await PostHandler.getLikesAndDislikesForPost(postId, 'like', user?.id);
 				setLikes(likeResponse.data.likeCount);
 				setUserReaction(likeResponse.data.userLikes.length > 0 ? 'like' : null);
@@ -67,16 +66,12 @@ const PostPage = () => {
 					setUserReaction('dislike');
 				}
 
-				// Проверяем, добавлен ли пост в избранное
 				try {
-					const favouritesResponse = await UserHandler.getUserFavourites(token);
-					const favouritePostIds = favouritesResponse.data.map(fav => fav.post_id);
-					// Устанавливаем состояние isFavorite в зависимости от наличия поста в избранных
-					setIsFavorite(favouritePostIds.includes(parseInt(postId)));
-				} catch (favouritesError) {
-					// Игнорируем ошибку, если у пользователя нет избранных
-					console.warn(favouritesError);
-					// Устанавливаем isFavorite в false, если не удалось получить избранные
+					const favoritesResponse = await UserHandler.getUserFavorites(token);
+					const favoritePostIds = favoritesResponse.data.map(fav => fav.post_id);
+					setIsFavorite(favoritePostIds.includes(parseInt(postId)));
+				} catch (favoritesError) {
+					console.warn(favoritesError);
 					setIsFavorite(false);
 				}
 			} catch (err) {
@@ -90,12 +85,10 @@ const PostPage = () => {
 	const toggleFavorite = async () => {
 		try {
 			if (isFavorite) {
-				// Если пост уже в избранном, удаляем его
-				await PostHandler.deletePostFromFavourites(postId, token);
+				await PostHandler.deletePostFromFavorites(postId, token);
 				setIsFavorite(false);
 			} else {
-				// Если пост не в избранном, добавляем его
-				await PostHandler.addPostToFavourites(postId, token);
+				await PostHandler.addPostToFavorites(postId, token);
 				setIsFavorite(true);
 			}
 		} catch (error) {
@@ -137,25 +130,22 @@ const PostPage = () => {
 	const handleDelete = async () => {
 		try {
 			await PostHandler.deletePost(postId, token);
-			navigate('/'); // Navigate back to the post list or show a success message
+			navigate('/');
 		} catch (err) {
-			setError(err.message); // Handle error appropriately
+			setError(err.message);
 		}
 	};
 
 	const handleLike = async () => {
 		if (userReaction === 'like') {
-			// If already liked, remove like
 			await PostHandler.deleteLikeForPost(postId, token);
 			setLikes(prev => prev - 1);
 			setUserReaction(null);
 		} else {
-			// If disliked, remove dislike first
 			if (userReaction === 'dislike') {
 				await PostHandler.deleteLikeForPost(postId, token);
 				setDislikes(prev => prev - 1);
 			}
-			// Add like
 			await PostHandler.createLikeForPost(postId, { type: 'like' }, token);
 			setLikes(prev => prev + 1);
 			setUserReaction('like');
@@ -164,17 +154,14 @@ const PostPage = () => {
 
 	const handleDislike = async () => {
 		if (userReaction === 'dislike') {
-			// If already disliked, remove dislike
 			await PostHandler.deleteLikeForPost(postId, token);
 			setDislikes(prev => prev - 1);
 			setUserReaction(null);
 		} else {
-			// If liked, remove like first
 			if (userReaction === 'like') {
 				await PostHandler.deleteLikeForPost(postId, token);
 				setLikes(prev => prev - 1);
 			}
-			// Add dislike
 			await PostHandler.createLikeForPost(postId, { type: 'dislike' }, token);
 			setDislikes(prev => prev + 1);
 			setUserReaction('dislike');
@@ -188,7 +175,7 @@ const PostPage = () => {
 	}, [post]);
 
 	if (error) return <div className='text-red-500'>{error}</div>;
-	if (!post) return <div className='text-gray-500'>Загрузка...</div>;
+	if (!post) return <div className='text-gray-500'>Loading...</div>;
 
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${post.authorAvatar}`;
 	const canEditOrDelete = user && (user.id === post.authorId || user.role === 'admin');
@@ -252,10 +239,10 @@ const PostPage = () => {
 								</div>
 								<div className='flex justify-end mt-2 space-x-1'>
 									<button className='flex items-center px-4 py-2 text-white transition duration-200 bg-green-600 rounded hover:bg-green-500' onClick={handleSave}>
-										<FaSave className='mr-1' /> Сохранить
+										<FaSave className='mr-1' /> Save
 									</button>
 									<button className='flex items-center px-4 py-2 text-white transition duration-200 bg-gray-600 rounded hover:bg-gray-500' onClick={handleCancel}>
-										<FaTimes className='mr-1' /> Отменить
+										<FaTimes className='mr-1' /> Cancel
 									</button>
 								</div>
 							</div>
@@ -275,7 +262,7 @@ const PostPage = () => {
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>
 							<span
 								className={`ml-2 inline-block w-2 h-2 rounded-full ${post.status ? 'bg-green-500' : 'bg-red-500'}`}
-								title={post.status === 'active' ? 'Активен' : 'Неактивен'}
+								title={post.status === 'active' ? 'Active': 'Inactive'}
 							></span>
 						</div>
 						<div className='flex mt-4 space-x-6 text-gray-300'>
@@ -292,7 +279,7 @@ const PostPage = () => {
 							</div>
 						</div>
 						<div className='mt-6'>
-							<h2 className='py-2 text-3xl font-semibold text-gray-100'>Комментарии</h2>
+							<h2 className='py-2 text-3xl font-semibold text-gray-100'>Comments</h2>
 							<CommentList postId={postId} />
 						</div>
 					</div>
