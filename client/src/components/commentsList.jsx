@@ -3,7 +3,7 @@ import Comment from './UI/comment';
 import PostHandler from '../api/postHandler';
 import { buildCommentTree } from '../utils/commentBuilder';
 
-const CommentsList = ({ postId }) => {
+const CommentsList = ({ postId, postStatus }) => {
 	const [comments, setComments] = useState([]);
 	const [newCommentContent, setNewCommentContent] = useState('');
 
@@ -56,17 +56,19 @@ const CommentsList = ({ postId }) => {
 
 	return (
 		<div>
-			<div className='mb-4'>
-				<textarea
-					className='w-full p-3 text-white bg-gray-700 rounded-lg'
-					value={newCommentContent}
-					onChange={e => setNewCommentContent(e.target.value)}
-					placeholder='Enter a new comment...'
-				/>
-				<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleNewCommentSubmit}>
-					Send
-				</button>
-			</div>
+			{postStatus && (
+				<div className='mb-4'>
+					<textarea
+						className='w-full p-3 text-white bg-gray-700 rounded-lg'
+						value={newCommentContent}
+						onChange={e => setNewCommentContent(e.target.value)}
+						placeholder='Enter a new comment...'
+					/>
+					<button className='px-4 py-2 mt-2 text-white bg-blue-600 rounded-lg hover:bg-blue-500' onClick={handleNewCommentSubmit}>
+						Send
+					</button>
+				</div>
+			)}
 
 			{comments.map(comment => (
 				<Comment key={comment.id} comment={comment} postId={postId} setComments={setComments} />

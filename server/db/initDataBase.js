@@ -113,8 +113,7 @@ const insertTestData = async () => {
 		await User.bulkCreate(hashedUsers, { ignoreDuplicates: true });
 
 		const testCategories = Array.from({ length: 200 }).map(() => ({
-			title: faker.commerce.department(),
-			description: faker.lorem.sentence(),
+			title: faker.word.noun(),
 		}));
 
 		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });

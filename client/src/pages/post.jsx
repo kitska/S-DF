@@ -280,7 +280,7 @@ const PostPage = () => {
 						</div>
 						<div className='mt-6'>
 							<h2 className='py-2 text-3xl font-semibold text-gray-100'>Comments</h2>
-							<CommentList postId={postId} />
+							<CommentList postId={postId} postStatus={post.status} />
 						</div>
 					</div>
 				</div>
