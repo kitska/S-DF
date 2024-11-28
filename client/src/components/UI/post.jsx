@@ -75,7 +75,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 	};
 
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${authorAvatar}`;
-	
+
 	return (
 		<Link to={`/post/${id}`} className='block'>
 			<div
@@ -83,20 +83,19 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
 			>
-				<div className='flex justify-between'>
-					<div className='w-3/4'>
+				<div className='flex flex-col justify-between md:flex-row'>
+					<div className='w-full md:w-3/4'>
 						<h2 className='text-lg font-semibold text-gray-100'>{title}</h2>
 						<p className='flex items-center mt-1 text-xs text-gray-500'>
-							{}
 							<img src={avatarUrl} alt={`${author}'s avatar`} className='object-cover w-6 h-6 mr-2 rounded-full' />
 							{author} | {date}
 							<span className={`ml-2 inline-block w-2 h-2 rounded-full ${status ? 'bg-green-500' : 'bg-red-500'}`} title={status ? 'Active' : 'Inactive'}></span>
 						</p>
 					</div>
-					<div className='flex flex-col items-end w-1/4'>
+					<div className='flex flex-col items-end w-full mt-4 md:w-1/4 md:mt-0'>
 						<div className='flex items-center mb-2 space-x-2 text-gray-400'>
-							<button className='flex items-center '>
- 								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
+							<button className='flex items-center'>
+								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
 							</button>
 							<button className='flex items-center'>
 								<FaThumbsDown className='mr-1 text-red-600' /> {dislikes}

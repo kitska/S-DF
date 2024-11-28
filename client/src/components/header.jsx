@@ -1,5 +1,6 @@
+// src/components/header.jsx
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';
 import UserHandler from '../api/userHandler';
 import PostHandler from '../api/postHandler';
@@ -10,8 +11,9 @@ import Post from './UI/post';
 import Category from './UI/category';
 import { formatDate } from '../utils/formatDate';
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
 	const token = localStorage.getItem('token');
+	const navigate = useNavigate();
 	const [userAvatar, setUserAvatar] = useState(null);
 	const [login, setLogin] = useState(null);
 	const [userId, setUserId] = useState(null);
@@ -20,6 +22,7 @@ const Header = () => {
 	const [loading, setLoading] = useState(false);
 	const [showResults, setShowResults] = useState(false);
 	const [showHint, setShowHint] = useState(false);
+	const [isMobile, setIsMobile] = useState (window.innerWidth <= 1069);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -42,6 +45,15 @@ const Header = () => {
 
 		fetchUserData();
 	}, [token]);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 1069);
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	const handleSearch = async e => {
 		const term = e.target.value;
@@ -91,7 +103,7 @@ const Header = () => {
 							date: formatDate(post.publish_date),
 							status: post.status === 'active',
 							categories: post.Categories.map(category => ({
-								id: category.id, 
+								id: category.id,
 								title: category.title,
 							})),
 						}))
@@ -117,7 +129,7 @@ const Header = () => {
 				setSearchResults([]);
 			}
 		} catch (error) {
-			console.error('Exact when searching:', error);
+			console.error('Error when searching:', error);
 			setSearchResults([]);
 		} finally {
 			setLoading(false);
@@ -153,11 +165,23 @@ const Header = () => {
 		}
 	};
 
+	const handleLogoClick = (e) => {
+		if (isMobile) {
+			e.preventDefault(); 
+			try {
+				toggleSidebar();
+			} catch (error) {
+				navigate('/');
+			}
+
+		}
+	};
+
 	return (
 		<header className='fixed top-0 left-0 z-50 w-full py-4 bg-gray-900'>
 			<div className='container flex items-center justify-between max-w-5xl p-2 mx-auto bg-gray-800 rounded-lg shadow-lg'>
 				<div className='flex-shrink-0'>
-					<a href='/'>
+					<a href='/' onClick={handleLogoClick}>
 						<img src={logoImage} alt='Logo' className='w-auto h-8' />
 					</a>
 				</div>
@@ -196,7 +220,7 @@ const Header = () => {
 								<li key={item.id} className='p-2'>
 									{item.type === 'user' ? (
 										<User
-											fullName={item.login .length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
+											fullName={item.login.length > 15 ? `${item.login.slice(0, 15)}...` : item.login}
 											profilePicture={`${process.env.REACT_APP_BASE_URL}/${item.profile_picture}`}
 											rating={item.rating}
 											userId={item.id}
