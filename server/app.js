@@ -14,11 +14,21 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
-app.use(
-	cors({
-		origin: `http://localhost:3000`,
-	})
-);
+
+const allowedOrigins = ['http://localhost:3000', `http://${process.env.IP}:3000`];
+
+const corsOptions = {
+	origin: function (origin, callback) {
+		if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new Error('Not allowed by CORS'));
+		}
+	},
+	credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const assetsPath = path.join(__dirname, 'assets', 'img');
 const uploadsPath = path.join(__dirname, 'uploads');

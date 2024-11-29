@@ -201,7 +201,7 @@ const PostPage = () => {
 							<h1 className='text-4xl font-bold text-gray-100'>{post.title}</h1>
 						</div>
 						<a href='https://github.com/DMYTRO-DOLHII'>
-							<hr className='h-1 my-4 border-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500' />
+							<hr className='h-1 my-4 border-0 rounded-full bg-[linear-gradient(to_bottom_left,_#0800A7_0%,_#EC7EEA_91%)]' />
 						</a>
 						{isEditing ? (
 							<div>

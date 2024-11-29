@@ -105,4 +105,4 @@ Now, API should be running on `http://localhost:3000`.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
--   Why project is named S?DF will be revealed in descritption.
+-   Why project is named S?DF will be revealed in description.
