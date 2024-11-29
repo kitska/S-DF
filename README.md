@@ -39,6 +39,7 @@ These instructions will help you set up a local development environment for S?DF
 Make sure you have the following installed on your machine:
 
 -   Node.js (v14 or higher)
+-   React (v18 or higher)
 -   npm (Node Package Manager)
 
 ### Installing
@@ -58,10 +59,10 @@ Make sure you have the following installed on your machine:
 3. Install the required dependencies:
 
     ```bash
-    npm install
+    npm run install:sdf
     ```
 
-4. Create a `.env` file and fill in your environment variables.
+4. Create a `.env` file in **./server** and fill in your environment variables.
 
     You need to set up these variables:
 
@@ -82,13 +83,20 @@ Make sure you have the following installed on your machine:
     > > - DB_NAME - name of database.
     > > - DB_PORT - database port (default value is `3306`)
 
-5. Start the application:
+5. Create a `.env` file in **./client** and fill in your environment variables.
+
+    You need to set up these variables:
+    > > - REACT_APP_BASE_URL - link to API (default value is `http://localhost:3001/api`)
+
+6. Start the application:
 
     ```bash
     npm start
     ```
 
-Now, API should be running on `http://localhost:3000`.
+Now, API should be running on `http://localhost:3001`.
+
+And, Client should be running on `http://localhost:3000`.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -97,6 +105,7 @@ Now, API should be running on `http://localhost:3000`.
 -   [Express](https://expressjs.com/) - Server Framework
 -   [NodeJs](https://nodejs.org/en/) - Server Environment
 -   [Postman](https://www.postman.com) - API testing Software
+-   [React](https://react.dev) - Web Framework
 -   [AdminJS](https://adminjs.co) - Admin panel
 
 ## ✍️ Authors <a name = "authors"></a>
