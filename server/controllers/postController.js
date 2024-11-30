@@ -414,7 +414,7 @@ exports.addPostToFavorites = async (req, res) => {
 		const userId = req.user.id;
 		const { post_id } = req.params;
 
-		const [favorite, created] = await favorite.findOrCreate({
+		const [favoriteRecord, created] = await favorite.findOrCreate({
 			where: { user_id: userId, post_id },
 		});
 
@@ -424,7 +424,8 @@ exports.addPostToFavorites = async (req, res) => {
 			res.status(200).json({ message: 'Post already in favorites' });
 		}
 	} catch (error) {
-		res.status(500).json({ error: 'Error when adding a post to favorites' });
+		console.error('Error when adding a post to favorites:', error);
+		res.status(500).json({ error: error.message || 'Error when adding a post to favorites' });
 	}
 };
 
