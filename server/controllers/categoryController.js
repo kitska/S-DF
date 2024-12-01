@@ -106,9 +106,16 @@ exports.createCategory = async (req, res) => {
 	const { title } = req.body;
 
 	try {
-		const user = req.user;
+		const userRole = req.user.role;
+		const userId = req.user.id
 
-		if (user.role !== 'admin' && user.rating < 50) {
+		const user = await User.findOne({
+			where: { id: userId },
+			attributes: ['rating'],
+		});
+
+
+		if (userRole !== 'admin' && user.rating < 50) {
 			return res.status(403).json({ message: 'Not enough rating. To create a category you must have a minimum rating of 50' });
 		}
 
