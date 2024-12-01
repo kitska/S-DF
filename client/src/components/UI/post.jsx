@@ -113,7 +113,15 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 						</div>
 						<div className='flex items-center space-x-1 text-xs text-gray-500'>
 							{visibleCategories.map((category, index) => (
-								<Category key={category.id} name={category.title} categoryId={category.id} className='mr-2' />
+								<Category
+									key={category.id}
+									name={category.title}
+									categoryId={category.id}
+									onClick={event => {
+										event.stopPropagation();
+									}}
+									className='mr-2'
+								/>
 							))}
 							{hasMoreCategories && (
 								<span

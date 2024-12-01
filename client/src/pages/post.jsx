@@ -92,7 +92,7 @@ const PostPage = () => {
 				setIsFavorite(true);
 			}
 		} catch (error) {
-			setError(error.message);
+			console.error('Error handling favs:', error);
 		}
 	};
 
@@ -137,34 +137,42 @@ const PostPage = () => {
 	};
 
 	const handleLike = async () => {
-		if (userReaction === 'like') {
-			await PostHandler.deleteLikeForPost(postId, token);
-			setLikes(prev => prev - 1);
-			setUserReaction(null);
-		} else {
-			if (userReaction === 'dislike') {
+		try {
+			if (userReaction === 'like') {
 				await PostHandler.deleteLikeForPost(postId, token);
-				setDislikes(prev => prev - 1);
+				setLikes(prev => prev - 1);
+				setUserReaction(null);
+			} else {
+				if (userReaction === 'dislike') {
+					await PostHandler.deleteLikeForPost(postId, token);
+					setDislikes(prev => prev - 1);
+				}
+				await PostHandler.createLikeForPost(postId, { type: 'like' }, token);
+				setLikes(prev => prev + 1);
+				setUserReaction('like');
 			}
-			await PostHandler.createLikeForPost(postId, { type: 'like' }, token);
-			setLikes(prev => prev + 1);
-			setUserReaction('like');
+		} catch (error) {
+			console.error('Error handling like:', error);
 		}
 	};
 
 	const handleDislike = async () => {
-		if (userReaction === 'dislike') {
-			await PostHandler.deleteLikeForPost(postId, token);
-			setDislikes(prev => prev - 1);
-			setUserReaction(null);
-		} else {
-			if (userReaction === 'like') {
+		try {
+			if (userReaction === 'dislike') {
 				await PostHandler.deleteLikeForPost(postId, token);
-				setLikes(prev => prev - 1);
+				setDislikes(prev => prev - 1);
+				setUserReaction(null);
+			} else {
+				if (userReaction === 'like') {
+					await PostHandler.deleteLikeForPost(postId, token);
+					setLikes(prev => prev - 1);
+				}
+				await PostHandler.createLikeForPost(postId, { type: 'dislike' }, token);
+				setDislikes(prev => prev + 1);
+				setUserReaction('dislike');
 			}
-			await PostHandler.createLikeForPost(postId, { type: 'dislike' }, token);
-			setDislikes(prev => prev + 1);
-			setUserReaction('dislike');
+		} catch (error) {
+			console.error('Error handling dislike:', error);
 		}
 	};
 

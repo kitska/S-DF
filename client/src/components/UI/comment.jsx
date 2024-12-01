@@ -114,34 +114,42 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 	};
 
 	const handleLike = async () => {
-		if (userReaction === 'like') {
-			await CommentHandler.deleteLikeForComment(comment.id, token);
-			setLikes(prev => prev - 1);
-			setUserReaction(null);
-		} else {
-			if (userReaction === 'dislike') {
+		try {
+			if (userReaction === 'like') {
 				await CommentHandler.deleteLikeForComment(comment.id, token);
-				setDislikes(prev => prev - 1);
+				setLikes(prev => prev - 1);
+				setUserReaction(null);
+			} else {
+				if (userReaction === 'dislike') {
+					await CommentHandler.deleteLikeForComment(comment.id, token);
+					setDislikes(prev => prev - 1);
+				}
+				await CommentHandler.createLikeForComment(comment.id, { type: 'like' }, token);
+				setLikes(prev => prev + 1);
+				setUserReaction('like');
 			}
-			await CommentHandler.createLikeForComment(comment.id, { type: 'like' }, token);
-			setLikes(prev => prev + 1);
-			setUserReaction('like');
+		} catch (error) {
+			console.error('Error handling like for comment:', error);
 		}
 	};
 
 	const handleDislike = async () => {
-		if (userReaction === 'dislike') {
-			await CommentHandler.deleteLikeForComment(comment.id, token);
-			setDislikes(prev => prev - 1);
-			setUserReaction(null);
-		} else {
-			if (userReaction === 'like') {
+		try {
+			if (userReaction === 'dislike') {
 				await CommentHandler.deleteLikeForComment(comment.id, token);
-				setLikes(prev => prev - 1);
+				setDislikes(prev => prev - 1);
+				setUserReaction(null);
+			} else {
+				if (userReaction === 'like') {
+					await CommentHandler.deleteLikeForComment(comment.id, token);
+					setLikes(prev => prev - 1);
+				}
+				await CommentHandler.createLikeForComment(comment.id, { type: 'dislike' }, token);
+				setDislikes(prev => prev + 1);
+				setUserReaction('dislike');
 			}
-			await CommentHandler.createLikeForComment(comment.id, { type: 'dislike' }, token);
-			setDislikes(prev => prev + 1);
-			setUserReaction('dislike');
+		} catch (error) {
+			console.error('Error handling dislike for comment:', error);
 		}
 	};
 
