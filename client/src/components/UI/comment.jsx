@@ -76,12 +76,12 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 			setComments(prevComments => {
 				return prevComments.map(c => {
 					if (c.id === comment.id) {
-						return updatedComment;
+						return { ...c, ...updatedComment, replies: c.replies || [] };
 					}
 					if (c.replies) {
 						return {
 							...c,
-							replies: c.replies.map(reply => (reply.id === comment.id ? updatedComment : reply)),
+							replies: c.replies.map(reply => (reply.id === comment.id ? { ...reply, ...updatedComment } : reply)),
 						};
 					}
 					return c;
@@ -95,7 +95,7 @@ const Comment = ({ comment, postId, setComments, isReply = false }) => {
 
 	const handleDelete = async () => {
 		try {
-			await CommentHandler.deleteComment(comment .id, token);
+			await CommentHandler.deleteComment(comment.id, token);
 			setComments(prevComments => {
 				return prevComments.reduce((acc, c) => {
 					if (c.id === comment.id) {
