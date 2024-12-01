@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaThumbsUp, FaThumbsDown, FaStar } from 'react-icons/fa';
 import Category from './category';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PostHandler from '../../api/postHandler';
 import { decodeToken } from '../../utils/decodeJWT';
 import UserHandler from '../../api/userHandler';
 
 const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date, status, categories = [] }) => {
+	const navigate = useNavigate();
 	const [showAllCategories, setShowAllCategories] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
 	const [isFavorite, setIsFavorite] = useState(false);
@@ -49,7 +50,8 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 		setShowAllCategories(!showAllCategories);
 	};
 
-	const toggleFavorite = async () => {
+	const toggleFavorite = async event => {
+		event.stopPropagation();
 		try {
 			if (isFavorite) {
 				await PostHandler.deletePostFromFavorites(id, token);
@@ -74,14 +76,19 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 		}, 200);
 	};
 
+	const handlePostClick = () => {
+		navigate(`/post/${id}`)
+	};
+
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${authorAvatar}`;
 
 	return (
-		<Link to={`/post/${id}`} className='block'>
+		<div className='block cursor-pointer'>
 			<div
 				className={`relative p-4 mb-4 bg-gray-900 rounded-lg shadow-md transition-transform duration-300 ${isHovered ? 'scale-[101%] z-10' : ''}`}
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
+				onClick={handlePostClick}
 			>
 				<div className='flex flex-col justify-between md:flex-row'>
 					<div className='w-full md:w-3/4'>
@@ -94,10 +101,10 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					</div>
 					<div className='flex flex-col items-end w-full mt-4 md:w-1/4 md:mt-0'>
 						<div className='flex items-center mb-2 space-x-2 text-gray-400'>
-							<button className='flex items-center'>
+							<button className='flex items-center' onClick={event => event.stopPropagation()}>
 								<FaThumbsUp className='mr-1 text-blue-600' /> {likes}
 							</button>
-							<button className='flex items-center'>
+							<button className='flex items-center' onClick={event => event.stopPropagation()}>
 								<FaThumbsDown className='mr-1 text-red-600' /> {dislikes}
 							</button>
 							<button className={`flex items-center hover:text-yellow-400 ${isFavorite ? 'text-yellow-400' : 'text-gray-400'}`} onClick={toggleFavorite}>
@@ -113,7 +120,10 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 									className='px-2 py-1 mt-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded cursor-pointer select-none'
 									onMouseEnter={handleMouseEnterCategories}
 									onMouseLeave={handleMouseLeaveCategories}
-									onClick={handleToggleCategories}
+									onClick={event => {
+										event.stopPropagation();
+										handleToggleCategories();
+									}}
 								>
 									...
 								</span>
@@ -137,7 +147,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 					</div>
 				)}
 			</div>
-		</Link>
+		</div>
 	);
 };
 

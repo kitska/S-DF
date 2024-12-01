@@ -22,7 +22,8 @@ const Header = ({ toggleSidebar }) => {
 	const [loading, setLoading] = useState(false);
 	const [showResults, setShowResults] = useState(false);
 	const [showHint, setShowHint] = useState(false);
-	const [isMobile, setIsMobile] = useState (window.innerWidth <= 1069);
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1069);
+	const [isLoadingUser, setIsLoadingUser] = useState(true);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -38,8 +39,14 @@ const Header = ({ toggleSidebar }) => {
 						setUserId(response.data.id);
 					} catch (error) {
 						console.error('Error when receiving user data:', error);
+					} finally {
+						setIsLoadingUser(false);
 					}
+				} else {
+					setIsLoadingUser(false);
 				}
+			} else {
+				setIsLoadingUser(false);
 			}
 		};
 
@@ -165,15 +172,14 @@ const Header = ({ toggleSidebar }) => {
 		}
 	};
 
-	const handleLogoClick = (e) => {
+	const handleLogoClick = e => {
 		if (isMobile) {
-			e.preventDefault(); 
+			e.preventDefault();
 			try {
 				toggleSidebar();
 			} catch (error) {
 				navigate('/');
 			}
-
 		}
 	};
 
@@ -199,7 +205,9 @@ const Header = ({ toggleSidebar }) => {
 				</form>
 
 				<div className='flex items-center space-x-3'>
-					{userAvatar ? (
+					{isLoadingUser ? (
+						<div className='flex w-11 h-11'></div>
+					) : userAvatar ? (
 						<Link to={`/user/${userId}`} className='flex items-center p-1 space-x-2 transition duration-200 rounded-lg hover:bg-gray-700'>
 							<img src={userAvatar} alt='User  Avatar' className='object-cover border-2 border-gray-500 rounded-full w-11 h-11' />
 							<span className='font-semibold text-white'>{login}</span>
