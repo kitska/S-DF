@@ -160,7 +160,7 @@ exports.updateComment = async (req, res) => {
 			return res.status(404).json({ message: 'Comment not found' });
 		}
 
-		if (comment.author_id !== req.user.id) {
+		if (comment.author_id !== req.user.id && req.user.role !== 'admin') {
 			return res.status(403).json({ message: 'You do not have permission to update this comment' });
 		}
 
@@ -191,7 +191,7 @@ exports.deleteComment = async (req, res) => {
 			return res.status(404).json({ message: 'Comment not found' });
 		}
 
-		if (comment.author_id !== req.user.id) {
+		if (comment.author_id !== req.user.id && req.user.role !== 'admin') {
 			return res.status(403).json({ message: 'You do not have permission to delete this comment' });
 		}
 
