@@ -43,7 +43,7 @@ const PostsPage = () => {
 								title: category.title,
 							})),
 							likes: likeResponse.data.likeCount || 0,
-							dislikes: dislikeResponse.data.dislikeCount || 0,
+							dislikes: dislikeResponse.data.likeCount || 0,
 						};
 					})
 				);
