@@ -1,6 +1,14 @@
 import React from 'react';
 
 const Footer = () => {
+	const handlePasxalko = () => {
+		const audio = new Audio('/alo.mp3');
+		audio.play();
+		setTimeout(() => {
+			window.location.href = 'https://github.com/nikFinogenov'; // Перенаправление на внешний URL
+		}, 1000);
+	};
+
 	return (
 		<footer className='w-full p-4 text-sm text-gray-400 bg-gray-900 shadow-inner'>
 			<div className='container flex flex-wrap justify-between mx-auto'>
@@ -8,7 +16,7 @@ const Footer = () => {
 					<a href='/about' className='hover:text-white'>
 						About
 					</a>
-					<a href='/contact' className='hover:text-white'>
+					<a className='hover:text-white' onClick={handlePasxalko}>
 						Contact
 					</a>
 				</div>
