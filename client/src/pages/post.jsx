@@ -6,7 +6,7 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import { formatDate } from '../utils/formatDate';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Category from '../components/UI/category';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
@@ -265,8 +265,10 @@ const PostPage = () => {
 							)}
 						</div>
 						<div className='flex items-center mt-4'>
-							<img src={avatarUrl} alt={`${post.author}'s avatar`} className='object-cover w-10 h-10 mr-2 rounded-full' />
-							<span className='text-sm text-gray-500'>{post.author}</span>
+							<Link to={`/user/${post.authorId}`} className='flex items-center'>
+								<img src={avatarUrl} alt={`${post.author}'s avatar`} className='object-cover w-10 h-10 mr-2 rounded-full' />
+								<span className='text-sm text-gray-500'>{post.author}</span>
+							</Link>
 							<span className='ml-4 text-sm text-gray-500'>{post.date}</span>
 							<span
 								className={`ml-2 inline-block w-2 h-2 rounded-full ${post.status ? 'bg-green-500' : 'bg-red-500'}`}
