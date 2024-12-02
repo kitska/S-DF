@@ -133,7 +133,7 @@ const CreatePostPage = () => {
 									value={content}
 									onChange={e => setContent(e.target.value)}
 									onKeyDown={handleKeyDown}
-									className='w-full px-6 py-4 overflow-hidden text-gray-900 bg-gray-500 rounded focus:outline-none'
+									className='w-full px-6 py-4 overflow-y-auto text-gray-900 bg-gray-500 rounded focus:outline-none'
 									placeholder='Write your post content here (Markdown supported)'
 									rows='8'
 									required
