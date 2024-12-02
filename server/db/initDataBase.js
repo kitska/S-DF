@@ -64,7 +64,6 @@ const createDatabase = async () => {
 		`);
 
 		if (tableExists[0].length === 0) {
-
 			await sequelize.sync({ force: false });
 			console.log('Tables successfully created based on models');
 
@@ -83,15 +82,18 @@ const createDatabase = async () => {
 
 const insertTestData = async () => {
 	try {
+		const adminUser = {
+			login: 'admin',
+			password: 'password1',
+			full_name: 'Admin One',
+			email: 'Admin@example.com',
+			email_confirmed: true,
+			role: 'admin',
+		};
+
+		await User.create(adminUser);
+
 		const testUsers = [
-			{
-				login: 'admin',
-				password: 'password1',
-				full_name: 'Admin One',
-				email: 'Admin@example.com',
-				email_confirmed: true,
-				role: 'admin',
-			},
 			...Array.from({ length: 1000 }).map(() => ({
 				login: faker.internet.username(),
 				password: faker.internet.password(),
@@ -118,7 +120,7 @@ const insertTestData = async () => {
 
 		await Category.bulkCreate(testCategories, { ignoreDuplicates: true });
 
-		const testPosts = Array.from({ length: 10000 }).map(() => ({
+		const testPosts = Array.from({ length: 2000 }).map(() => ({
 			title: faker.lorem.sentence(),
 			content: faker.lorem.paragraphs(3),
 			status: faker.helpers.arrayElement(['active', 'inactive']),
@@ -135,7 +137,7 @@ const insertTestData = async () => {
 			await post.addCategories(categories);
 		}
 
-		const testComments = Array.from({ length: 8000 }).map(() => ({
+		const testComments = Array.from({ length: 20000 }).map(() => ({
 			content: faker.lorem.sentence(),
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
@@ -143,7 +145,7 @@ const insertTestData = async () => {
 
 		const insertedComments = await Comment.bulkCreate(testComments, { ignoreDuplicates: true });
 
-		const nestedComments = Array.from({ length: 4000 }).map(() => {
+		const nestedComments = Array.from({ length: 20000 }).map(() => {
 			const parentComment = insertedComments[Math.floor(Math.random() * insertedComments.length)];
 			return {
 				content: faker.lorem.sentence(),
@@ -155,13 +157,29 @@ const insertTestData = async () => {
 
 		await Comment.bulkCreate(nestedComments, { ignoreDuplicates: true });
 
-		const testLikes = Array.from({ length: 8000 }).map(() => ({
+		const testLikes = Array.from({ length: 50000 }).map(() => ({
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 			type: faker.helpers.arrayElement(['like', 'dislike']),
 		}));
 
 		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
+
+		const commentLikes = Array.from({ length: 50000 }).map(() => ({
+			comment_id: faker.number.int({ min: 1, max: insertedComments.length }),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
+			type: faker.helpers.arrayElement(['like', 'dislike']),
+		}));
+
+		await Like.bulkCreate(commentLikes, { ignoreDuplicates: true });
+
+		const nestedCommentLikes = Array.from({ length: 50000 }).map(() => ({
+			comment_id: faker.number.int({ min: 1, max: nestedComments.length }),
+			author_id: faker.number.int({ min: 1, max: 1000 }),
+			type: faker.helpers.arrayElement(['like', 'dislike']),
+		}));
+
+		await Like.bulkCreate(nestedCommentLikes, { ignoreDuplicates: true });
 
 		const testFavorites = Array.from({ length: 5000 }).map(() => ({
 			user_id: faker.number.int({ min: 1, max: 1000 }),
@@ -175,6 +193,5 @@ const insertTestData = async () => {
 		console.error('Error adding test data:', error);
 	}
 };
-
 
 module.exports = createDatabase;
