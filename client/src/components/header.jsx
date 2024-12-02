@@ -1,4 +1,3 @@
-// src/components/header.jsx
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/images/2-3.png';

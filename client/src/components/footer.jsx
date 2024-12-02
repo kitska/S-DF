@@ -5,7 +5,7 @@ const Footer = () => {
 		const audio = new Audio('/alo.mp3');
 		audio.play();
 		setTimeout(() => {
-			window.location.href = 'https://github.com/nikFinogenov'; // Перенаправление на внешний URL
+			window.location.href = 'https://github.com/nikFinogenov';
 		}, 1000);
 	};
 

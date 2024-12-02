@@ -20,7 +20,7 @@ const PostsPage = () => {
 	const [sortBy, setSortBy] = useState('date');
 	const [sortOrder, setSortOrder] = useState('asc');
 
-	const fetchPosts = async (page) => {
+	const fetchPosts = async page => {
 		setLoading(true);
 		try {
 			const response = await PostHandler.getAllPosts(page, '', '', sortBy, sortOrder);
@@ -63,7 +63,7 @@ const PostsPage = () => {
 		fetchPosts(currentPage);
 	}, [currentPage, sortBy, sortOrder]);
 
-	const handlePageChange = (page) => {
+	const handlePageChange = page => {
 		setSearchParams({ page, sortBy, sortOrder });
 	};
 

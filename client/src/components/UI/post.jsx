@@ -77,7 +77,7 @@ const Post = ({ id, title, content, author, authorAvatar, likes, dislikes, date,
 	};
 
 	const handlePostClick = () => {
-		navigate(`/post/${id}`)
+		navigate(`/post/${id}`);
 	};
 
 	const avatarUrl = `${process.env.REACT_APP_BASE_URL}/${authorAvatar}`;

@@ -1,48 +1,48 @@
-
 @use 'variables' as *;
 @use 'tailwindcss/base';
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
 
 @font-face {
-    font-family: 'Asusrog';
-    src: url('../assets/fonts/asusrog_regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'Asusrog';
+	src: url('../assets/fonts/asusrog_regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-    font-family: 'Azonix';
-    src: url('../assets/fonts/Azonix.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'Azonix';
+	src: url('../assets/fonts/Azonix.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-    font-family: 'IBM Plex Serif';
-    src: url('../assets/fonts/IBMPlexSerif-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'IBM Plex Serif';
+	src: url('../assets/fonts/IBMPlexSerif-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-    font-family: 'Alternate Gothic No1';
-    src: url('../assets/fonts/alternategothicno1.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+	font-family: 'Alternate Gothic No1';
+	src: url('../assets/fonts/alternategothicno1.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
 }
 
-nav,.place {
-    font-family: 'Azonix', sans-serif;
+nav,
+.place {
+	font-family: 'Azonix', sans-serif;
 }
 
-html, body {
-    margin: 0;
-    font-family: 'IBM Plex Serif', sans-serif;
+html,
+body {
+	margin: 0;
+	font-family: 'IBM Plex Serif', sans-serif;
 }
 
 .hljs {
-    background: rgb(0 0 0 / 0%) !important;
-    color: white !important;
+	background: rgb(0 0 0 / 0%) !important;
+	color: white !important;
 }
-

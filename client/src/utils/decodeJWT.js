@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 
-export const decodeToken = (token) => {
+export const decodeToken = token => {
 	if (!token) {
 		console.error('No token provided');
 		return null;

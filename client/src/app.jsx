@@ -64,7 +64,7 @@ function App() {
 				<Route path='/user/:id/edit-profile' element={<EditProfilePage />} />
 				<Route path='/post/:postId' element={<PostPage />} />
 				<Route path='/create-post' element={<CreatePostPage />} />
-				<Route path='/create-category' element={<AddCategory />} ></Route>
+				<Route path='/create-category' element={<AddCategory />}></Route>
 				<Route path='/category/:categoryId' element={<CategoryPostsPage />} />
 				<Route path='/confirm-email/:token' element={<EmailConfirmPage />} />
 				<Route path='/reset-password' element={<PasswordResetRequestPage />} />
@@ -92,7 +92,7 @@ export default App;
 	/todo: category post page style
 	/todo: search
 
-	? todo: link in post to user profile + in comments
+	/? todo: link in post to user profile + in comments
 	/? todo: category edit/delete/create
 	? todo: full(likes) filter post/sort post
 	? todo: full(likes) sort/comments

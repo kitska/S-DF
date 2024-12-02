@@ -1,4 +1,3 @@
-// SortSelects.js
 import React from 'react';
 
 const SortSelects = ({ sortBy, setSortBy, sortOrder, setSortOrder }) => {

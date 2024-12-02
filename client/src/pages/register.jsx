@@ -72,7 +72,7 @@ const RegisterPage = () => {
 		e.preventDefault();
 		validateEmail(email);
 		validatePasswordConfirmation(password, password_confirmation);
-		
+
 		if (!emailError && !passwordConfirmationError) {
 			try {
 				const response = await AuthHandler.registerUser({

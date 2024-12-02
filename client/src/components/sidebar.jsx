@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { decodeToken } from '../utils/decodeJWT';
 
-const Sidebar = ({isOpen, toggleSidebar }) => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
 	const token = localStorage.getItem('token');
 	const user = decodeToken(token);
 
@@ -29,11 +29,7 @@ const Sidebar = ({isOpen, toggleSidebar }) => {
 						: 'sticky top-0 h-full w-64 bg-gray-700 shadow-lg z-40'
 				}`}
 			>
-				<nav className={`${
-					isMobile 
-					? `fixed mt-20 flex flex-col px-4 py-6 space-y-4'` : `fixed flex flex-col px-4 py-6 space-y-4'`
-				}`}
-				>
+				<nav className={`${isMobile ? `fixed mt-20 flex flex-col px-4 py-6 space-y-4'` : `fixed flex flex-col px-4 py-6 space-y-4'`}`}>
 					<Link to='/' onClick={() => isMobile && toggleSidebar()}>
 						<button className='w-full px-4 py-3 text-left text-gray-300 transition-colors duration-300 bg-gray-700 rounded-md hover:bg-gray-400 focus:outline-none'>
 							<span className='text-lg font-semibold'>Home</span>

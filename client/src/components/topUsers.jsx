@@ -9,7 +9,7 @@ const TopUsers = () => {
 	useEffect(() => {
 		const fetchUsers = async () => {
 			try {
-				const response = await UserHandler.getAllUsers(1, 10,'', 'rating', 'desc');
+				const response = await UserHandler.getAllUsers(1, 10, '', 'rating', 'desc');
 				if (response.status === 200) {
 					setUsers(response.data.users);
 				}

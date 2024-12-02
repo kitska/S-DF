@@ -55,12 +55,10 @@ const AddCategory = () => {
 							{error && <p className='text-red-500'>{error}</p>}
 							<button
 								type='submit'
-								className={`w-full py-3 text-lg font-medium text-white rounded-lg ${
-									loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-								}`}
+								className={`w-full py-3 text-lg font-medium text-white rounded-lg ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
 								disabled={loading}
 							>
-								{loading ? 'Creating ... ':' Create a category'}
+								{loading ? 'Creating ... ' : ' Create a category'}
 							</button>
 						</form>
 					</div>
