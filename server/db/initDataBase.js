@@ -157,7 +157,7 @@ const insertTestData = async () => {
 
 		await Comment.bulkCreate(nestedComments, { ignoreDuplicates: true });
 
-		const testLikes = Array.from({ length: 50000 }).map(() => ({
+		const testLikes = Array.from({ length: 10000 }).map(() => ({
 			post_id: faker.number.int({ min: 1, max: testPostsAll.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 			type: faker.helpers.arrayElement(['like', 'dislike']),
@@ -165,7 +165,7 @@ const insertTestData = async () => {
 
 		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
 
-		const commentLikes = Array.from({ length: 50000 }).map(() => ({
+		const commentLikes = Array.from({ length: 10000 }).map(() => ({
 			comment_id: faker.number.int({ min: 1, max: (insertedComments.length + nestedComments.length) }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 			type: faker.helpers.arrayElement(['like', 'dislike']),
