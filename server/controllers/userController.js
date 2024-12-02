@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const multer = require('multer');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 const favorite = require('../models/favorite');
 const Post = require('../models/post');
@@ -80,11 +79,11 @@ exports.createUser = async (req, res) => {
 			return res.status(400).json({ message: 'A user with this email already exists' });
 		}
 
-		const hashedPassword = await bcrypt.hash(password, 10);
+		// const hashedPassword = await bcrypt.hash(password, 10);
 
 		const newUser = await User.create({
 			login,
-			password: hashedPassword,
+			password: password,
 			email,
 			role,
 			full_name,

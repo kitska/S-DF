@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:3000', `http://${process.env.IP}:3000`];
+const allowedOrigins = ['http://localhost:3000', `http://${process.env.IP}:3000`, 'http://localhost:3001'];
 
 const corsOptions = {
 	origin: function (origin, callback) {

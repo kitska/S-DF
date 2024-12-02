@@ -29,13 +29,13 @@ exports.register = async (req, res) => {
 			return res.status(400).json({ message: 'Login is already taken' });
 		}
 
-		const hashedPassword = await bcrypt.hash(password, 10);
+		// const hashedPassword = await bcrypt.hash(password, 10);
 
 		const emailToken = crypto.randomBytes(32).toString('hex');
 
 		const newUser = await User.create({
 			login,
-			password: hashedPassword,
+			password: password,
 			full_name,
 			email,
 			profile_picture: randomPP.getRandomProfilePicture(),
