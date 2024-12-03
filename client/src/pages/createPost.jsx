@@ -186,7 +186,11 @@ const CreatePostPage = () => {
 							<a href='https://github.com/DMYTRO-DOLHII'>
 								<hr className='h-1 my-4 border-0 rounded-full bg-[linear-gradient(to_bottom_left,_#0800A7_0%,_#EC7EEA_91%)]' />
 							</a>
-							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' ref={previewRef} dangerouslySetInnerHTML={{ __html: convertToHTML(content) }} />
+							<div
+								className='mt-4 prose prose-lg text-gray-200 break-all prose-invert'
+								ref={previewRef}
+								dangerouslySetInnerHTML={{ __html: convertToHTML(content) }}
+							/>
 
 							<div className='flex items-center pt-4 mt-6'>
 								<img src={`https://placehold.it/40x40`} alt='Author Avatar' className='w-10 h-10 mr-2 rounded-full' />

@@ -255,7 +255,11 @@ const PostPage = () => {
 								</div>
 							</div>
 						) : (
-							<div className='mt-4 prose prose-lg text-gray-200 prose-invert' ref={postRef} dangerouslySetInnerHTML={{ __html: convertToHTML(post.content) }}></div>
+							<div
+								className='mt-4 prose prose-lg text-gray-200 break-all prose-invert'
+								ref={postRef}
+								dangerouslySetInnerHTML={{ __html: convertToHTML(post.content) }}
+							></div>
 						)}
 						<div className='flex flex-wrap mt-4 space-x-1'>
 							{post.categories.length > 0 ? (
