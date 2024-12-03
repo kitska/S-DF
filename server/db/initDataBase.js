@@ -125,6 +125,7 @@ const insertTestData = async () => {
 			content: faker.lorem.paragraphs(3),
 			status: faker.helpers.arrayElement(['active', 'inactive']),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
+			publish_date: faker.date.between({ from: '2020-01-01',to: '2024-12-04'}),
 		}));
 
 		await Post.bulkCreate(testPosts, { ignoreDuplicates: true });
@@ -166,7 +167,7 @@ const insertTestData = async () => {
 		await Like.bulkCreate(testLikes, { ignoreDuplicates: true });
 
 		const commentLikes = Array.from({ length: 7000 }).map(() => ({
-			comment_id: faker.number.int({ min: 1, max: (insertedComments.length + nestedComments.length) }),
+			comment_id: faker.number.int({ min: 1, max: insertedComments.length + nestedComments.length }),
 			author_id: faker.number.int({ min: 1, max: 1000 }),
 			type: faker.helpers.arrayElement(['like', 'dislike']),
 		}));
